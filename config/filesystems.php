@@ -37,7 +37,8 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => $_SERVER['DOCUMENT_ROOT'] . '/images/',
+            //    'root' => $_SERVER['DOCUMENT_ROOT'] . '/images/',
+            'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
