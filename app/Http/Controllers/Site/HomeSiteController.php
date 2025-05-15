@@ -38,15 +38,15 @@ class HomeSiteController extends Controller
     }
     public function index()
     {
-        $promotions = Produit::join('images', 'images.produit_id', 'produits.id')
-            ->join('promotions', 'promotions.produit_id', 'produits.id')->get();
+        // $promotions = Produit::join('images', 'images.produit_id', 'produits.id')
+        //     ->join('promotions', 'promotions.produit_id', 'produits.id')->get();
         try {
             $deadline = str_replace("-", '/', Promotion::orderBy('deadline', 'DESC')->first('deadline')->deadline);
         } catch (Exception $exc) {
             $deadline = now();
         }
         // dd($deadline);
-        $produits = Produit::join('images', 'produit_id', 'produits.id')->groupBy('produit_id')->paginate(20);
+        // $produits = Produit::join('images', 'produit_id', 'produits.id')->groupBy('produit_id')->paginate(20);
         $categories = Categorie::join('images', 'categorie_id', 'categories.id')
             ->where('visible', '1')
             ->orwhere('visible', null)
@@ -59,10 +59,10 @@ class HomeSiteController extends Controller
         return view('acceuil', [
             'center_img' => $center_img,
             'pub_img' => $pub_img,
-            'produits' => $produits,
+            'produits' => [],
             'categories' => $categories,
             'actualites' => $actualite,
-            'promotions' => $promotions,
+            'promotions' => [],
             'news' => $news,
             'deadline' => $deadline
         ]);
