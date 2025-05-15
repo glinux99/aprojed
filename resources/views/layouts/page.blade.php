@@ -18,25 +18,25 @@
 
 
     <!-- Schema.org markup for Google+ -->
-    <meta itemprop="name" content="{{ __('APROJED')}}">
+    <meta itemprop="name" content="APROJED">
     <meta itemprop="description" content="__('APROJED ')">
     <meta itemprop="image" content="">
 
     <!-- Twitter Card data -->
     <meta name="twitter:card" content="product">
     <meta name="twitter:site" content="@linux99">
-    <meta name="twitter:title" content="{{ __('APROJED')}}">
-    <meta name="twitter:description" content="{{ __('APROJED')}}">
+    <meta name="twitter:title" content="APROJED">
+    <meta name="twitter:description" content="APROJED">
     <meta name="twitter:creator" content="@linux99">
     <meta name="twitter:image" content="">
 
     <!-- Open Graph data -->
-    <meta property="og:title" content="{{ __('APROJED')}}" />
+    <meta property="og:title" content="APROJED" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ url('/')}}" />
     <meta property="og:image" content="" />
-    <meta property="og:description" content="{{ __('APROJED')}}" />
-    <meta property="og:site_name" content="{{ __('APROJED')}}" />
+    <meta property="og:description" content="APROJED" />
+    <meta property="og:site_name" content="APROJED" />
     <meta property="fb:app_id" content="">
 
     <!-- Favicon -->
