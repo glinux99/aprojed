@@ -458,21 +458,21 @@ __("Acceuil ")
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="">__('Description d\'une categorie')</label>
+                                <label for="">{{__('Description d\'une categorie')}}</label>
                                 <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId"
-                                    placeholder="__('Description d\'une categorie')" required>
+                                    placeholder="{{__('Description d\'une categorie')}}" required>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="">__('Image Descriptive')</label>
+                                <label for="">{{__('Image Descriptive')}}</label>
                                 <input type="file" class="form-control" name="images" required>
                             </div>
                         </div>
                     </div>
                     </p>
-                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">__("Sauvegarder")</button>
+                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">{{__("Sauvegarder")}}</button>
                 </div>
             </div>
         </div>

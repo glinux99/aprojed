@@ -34,9 +34,9 @@
             `                       <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>__("Designation")</th>
-                                            <th>__("Qte")</th>
-                                            <th>__("Prix total")</th>
+                                            <th>{{__("Designation")}}</th>
+                                            <th>{{__("Qte")}}</th>
+                                            <th>{{__("Prix total")}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,8 +90,8 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>__("Designation")</th>
-                                            <th>__("Montant")</th>
+                                            <th>{{__("Designation")}}</th>
+                                            <th>{{__("Montant")}}</th>
                                         </tr>
                                     </thead>
                                     <tbody>

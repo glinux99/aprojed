@@ -71,18 +71,18 @@
                             </div>
                             <div class="card-body">
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{__("Image de la galerie")}} <small>(600x600)</small></label>
+                                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{__("Image de la galerie")}} <small>(600x600)}} </small></label>
                                     <div class="col-md-8">
                                         <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="true">
                                             <input type="file" name="images[]" id="" class="form-control" multiple>
                                         </div>
                                         <div class="file-preview box sm">
                                         </div>
-                                        <small class="text-muted">__("Ces images sont visibles dans la galerie de la page de détails du produit. Utilisez des images de taille 600x600.")</small>
+                                        <small class="text-muted">{{__("Ces images sont visibles dans la galerie de la page de détails du produit. Utilisez des images de taille 600x600.")}}</small>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{__("Vignette")}} <small>(300x300)</small></label>
+                                    <label class="col-md-3 col-form-label" for="signinSrEmail">{{__("Vignette")}} <small>(300x300)}} </small></label>
                                     <div class="col-md-8">
                                         <div class="input-group" data-toggle="aizuploader" data-type="image" data-multiple="true">
                                             <input type="file" name="vignette" id="" class="form-control">

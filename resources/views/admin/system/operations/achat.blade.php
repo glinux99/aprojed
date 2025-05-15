@@ -42,7 +42,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-11 px-0">
-                                    <button type="button" name="button" id="list_add" class="btn btn-success action-btn float-right">__("Ajouter a la liste")</button>
+                                    <button type="button" name="button" id="list_add" class="btn btn-success action-btn float-right">{{__("Ajouter a la liste")}}</button>
                                 </div>
                             </div>
                         </div>
@@ -74,7 +74,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0 h6">{{__("Charges")}}</h5>
-                                <a class="btn btn-success action-btn float-right" data-toggle="modal" data-target="#new-charge-modal">__("Nouvelle charge")</a>
+                                <a class="btn btn-success action-btn float-right" data-toggle="modal" data-target="#new-charge-modal">{{__("Nouvelle charge")}}</a>
                             </div>
                             <div class="card-body">
                                 <div>
@@ -91,7 +91,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0 h6">{{__("Fournisseur")}}</h5>
-                                <a class="btn btn-success action-btn float-right" data-toggle="modal" data-target="#fournisseurs-modal">__("Nouveau fournisseur")</a>
+                                <a class="btn btn-success action-btn float-right" data-toggle="modal" data-target="#fournisseurs-modal">{{__("Nouveau fournisseur")}}</a>
                             </div>
                             <div class="card-body">
                                 <!-- charges ici -->
@@ -125,7 +125,7 @@
                     <div class="col-8">
                         <div class="btn-toolbar float-right mb-3" role="toolbar" aria-label="Toolbar with button groups">
                             <div class="btn-group mr-2" role="group" aria-label="Third group">
-                                <button type="button" name="button" id="btn-achat-operation" data-target="#operation-achat" data-toggle="modal" class="btn btn-primary action-btn">__("Acheter et payer")</button>
+                                <button type="button" name="button" id="btn-achat-operation" data-target="#operation-achat" data-toggle="modal" class="btn btn-primary action-btn">{{__("Acheter et payer")}}</button>
                             </div>
                         </div>
                     </div>

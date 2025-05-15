@@ -5,11 +5,11 @@
         <div class="aiz-titlebar text-left mt-2 mb-3">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h1 class="h3">__("Configuration de la page d'avant propos")</h1>
+                    <h1 class="h3">{{__("Configuration de la page d'avant propos")}}</h1>
                 </div>
                 <div class="col-md-6 text-md-right">
                     <a href="{{ route('staff.create')}}" class="btn btn-circle btn-info">
-                        <span>__("Voir toutes les pages")</span>
+                        <span>{{__("Voir toutes les pages")}}</span>
                     </a>
                 </div>
             </div>
@@ -20,16 +20,16 @@
                 <div class="nav">
                     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">__("Presentation de l'Entreprise")</button>
+                            <button class="nav-link active" id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">{{__("Presentation de l'Entreprise")}}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">__("Equipe de direction")</button>
+                            <button class="nav-link" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">{{__("Equipe de direction")}}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">__("Culture et valeurs")</button>
+                            <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">{{__("Culture et valeurs")}}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">__("Autres affaires")</button>
+                            <button class="nav-link" id="pills-contact-tab" data-toggle="pill" data-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">{{__("Autres affaires")}}</button>
                         </li>
                     </ul>
                 </div>
@@ -39,7 +39,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="mb-0 h6">__("Presentation "){{ Config('app.name')}}</h5>
+                                        <h5 class="mb-0 h6">{{__("Presentation ")}}{{ Config('app.name')}}</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group row">
@@ -57,7 +57,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="mb-0 h6">__("Information sur l'equipe de direction")</h5>
+                                        <h5 class="mb-0 h6">{{__("Information sur l'equipe de direction")}}</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="card-body">
@@ -74,11 +74,11 @@
                                                             <div class="dropdown-menu dropdown-menu-right">
                                                                 <a href="javascript:void(0)" class="dropdown-item" onclick="detailsInfo(this)" data-id="1317">
                                                                     <i class="las la-eye mr-2"></i>
-                                                                    <span>__("Desactiver vue")</span>
+                                                                    <span>{{__("Desactiver vue")}}</span>
                                                                 </a>
                                                                 <a href="javascript:void(0)" class="dropdown-item confirm-alert" data-href="{{ route('staff.delete', [$user->id])}}" data-target="#delete-modal">
                                                                     <i class="las la-trash mr-2"></i>
-                                                                    <span>__('Supprimer')</span>
+                                                                    <span>{{__('Supprimer')}}</span>
                                                                 </a>
                                                             </div>
                                                         </div>
@@ -101,7 +101,7 @@
                                                 @endforeach
                                                 @else
                                                 <div class="card-body">
-                                                    <p class="text-center">__("Aucune donnee")</p>
+                                                    <p class="text-center">{{__("Aucune donnee")}}</p>
                                                 </div>
                                                 @endif
                                             </div>
@@ -122,7 +122,7 @@
                             <div class="col-lg-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h5 class="mb-0 h6">__("Culture et Valeurs de "){{ Config('app.name')}}</h5>
+                                        <h5 class="mb-0 h6">{{__("Culture et Valeurs de ")}}{{ Config('app.name')}}</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group row">
@@ -140,10 +140,10 @@
                 <div class="col-12">
                     <div class="btn-toolbar float-right mb-3" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group mr-2" role="group" aria-label="Third group">
-                            <button type="submit" name="button" value="unpublish" class="btn btn-primary action-btn">__("Enregistrer")</button>
+                            <button type="submit" name="button" value="unpublish" class="btn btn-primary action-btn">{{__("Enregistrer")}}</button>
                         </div>
                         <div class="btn-group" role="group" aria-label="Second group">
-                            <button type="submit" name="button" value="publish" class="btn btn-success action-btn">__("Enregistrer et publier")</button>
+                            <button type="submit" name="button" value="publish" class="btn btn-success action-btn">{{__("Enregistrer et publier")}}</button>
                         </div>
                     </div>
                 </div>
@@ -159,13 +159,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Voulez-vous vraiment supprimer ce membre?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">__("Supprimer")</a>
+                <p class="mt-1">{{__("Voulez-vous vraiment supprimer ce membre?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>

@@ -8,12 +8,12 @@
                 <a href="/" class="mb-4 d-block d-flex justify-content-center">
                     <img src="{{ asset('assets/img/logo.png')}}" alt="logo" class="m-0 p-0 img-fluid rounded-custom shadow logo-white" style="width: 5rem;">
                 </a>
-                <h3 class="text-center text-primary">__('Creer un compte')</h3>
+                <h3 class="text-center text-primary">{{__('Creer un compte')}}</h3>
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
                     <div class="row">
                         <div class="col-sm-12">
-                            <label for="name" class="mb-1">__('Noms') <span class="text-danger">*</span></label>
+                            <label for="name" class="mb-1">{{__('Noms') }}<span class="text-danger">*</span></label>
                             <div class="mb-3 pinput_container">
                                 <input id="name" type="text" class="form-control m-0 p-0 @error('name') is-invalid @enderror" name="name" autofocus>
                             </div>
@@ -24,7 +24,7 @@
                             @enderror
                         </div>
                         <div class="col-sm-12">
-                            <label for="email" class="mb-1">__('Email') <span class="text-danger">*</span></label>
+                            <label for="email" class="mb-1">{{__('Email')}} <span class="text-danger">*</span></label>
                             <div class="pinput_container mb-3">
                                 <input id="email" type="email" class="form-control  m-0 p-0 @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
                                 @error('email')
@@ -91,17 +91,17 @@
                             </div>
                         </div>
                         <div class="col d-flex justify-content-center">
-                            <button type="submit" class="btn btn-primary my-5 rounded">__('S\'incrire')</button>
+                            <button type="submit" class="btn btn-primary my-5 rounded">{{__('S\'incrire')}}</button>
                         </div>
                     </div>
                     <div class="action-btns">
                         <a href="" class="btn rounded bg-primary shadow-sm mt-4 d-block d-flex align-items-center text-decoration-none justify-content-center">
                             <img src="{{ asset('assets/img/google-icon.svg')}}" alt="google" class="mr-3">
-                            <span>__('S\'inscrire avec Google')</span>
+                            <span>{{__('S\'inscrire avec Google')}}</span>
                         </a>
                     </div>
-                    <p class="text-center text-muted mt-4 mb-0 fw-medium font-monospace mb-3">__("Vous avez déjà un compte?")
-                        <a href="{{ route('login')}}" class="text-decoration-none">__('Se connecter')</a>
+                    <p class="text-center text-muted mt-4 mb-0 fw-medium font-monospace mb-3">{{__("Vous avez déjà un compte?")}}
+                        <a href="{{ route('login')}}" class="text-decoration-none">{{__('Se connecter')}}</a>
                     </p>
                 </form>
             </div>

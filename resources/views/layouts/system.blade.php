@@ -53,25 +53,25 @@
                         <li class="aiz-side-nav-item">
                             <a href="/admin" class="aiz-side-nav-link">
                                 <i class="las la-home aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__('Tableau de board')</span>
+                                <span class="aiz-side-nav-text"> {{ __('Tableau de board') }} >/span>
                             </a>
                         </li>
                         <!-- Product -->
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Produits fini")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Produits fini") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.create.produit.fini')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Nouveau produit fini")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Nouveau produit fini") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.produit.fini')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Liste de nos produits fini")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Liste de nos produits fini") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -82,18 +82,18 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Matiere premiere")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Matiere premiere") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.create.matiere.premiere')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Nouvelle matiere")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Nouvelle matiere") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.matiere.premiere')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Liste de nos produits fini")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Liste de nos produits fini") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -102,18 +102,18 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Matiere consommable")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Matiere consommable") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.create.matiere.consommable')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Nouvelle matiere")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Nouvelle matiere") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.matiere.consommable')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Liste de nos matieres")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Liste de nos matieres") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -121,18 +121,18 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Equipement")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Equipement") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.create.equipement')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Nouvelle Equipement")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Nouvelle Equipement") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.create.produit.fini')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Liste de nos equipements")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Liste de nos equipements") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -142,29 +142,29 @@
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('admin.create.charge')}}" class="aiz-side-nav-link ">
                                 <i class="las la-wrench aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Charges")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Charges") }} >/span>
                             </a>
                         </li>
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Stock")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Stock") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.produit.fini')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Produit Fini")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Produit Fini") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.matiere.premiere')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Matiere Premiere")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Matiere Premiere") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('admin.stock.matiere.consommable')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Matiere Consommable")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Matiere Consommable") }} >/span>
                                     </a>
                                 </li>
 
@@ -174,28 +174,28 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Charges")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Charges") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Taxes")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Taxes") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("paiement loye et impots")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("paiement loye et impots") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Organisation sociale")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Organisation sociale") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Permission des membres")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Permission des membres") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -203,18 +203,18 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-eye aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Observations")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Observations") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link" data-toggle="modal" data-target="#new-stockMpMc-modal">
-                                        <span class="aiz-side-nav-text" data-toggle="tooltip" data-title="MP=Matiere premiere et MC=Matiere Consommable">__("Stock MP & MC")</span>
+                                        <span class="aiz-side-nav-text" data-toggle="tooltip" data-title="MP=Matiere premiere et MC=Matiere Consommable"> {{ __("Stock MP & MC") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link " data-target="#new-stockPF-modal" data-toggle="modal">
-                                        <span class="aiz-side-nav-text">__("Stock produit Fini")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Stock produit Fini") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -223,35 +223,35 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link ">
                                 <i class="las la-wrench aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Contrat de Monopole")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Contrat de Monopole") }} >/span>
                             </a>
                         </li>
                         <!-- Staffs -->
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Gestion du personnel")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Gestion du personnel") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('staff')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Liste des agents")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Liste des agents") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Etat de payement")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Etat de payement") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Fiche de paie")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Fiche de paie") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="#" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Permission des membres")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Permission des membres") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -260,23 +260,23 @@
                         <li class="aiz-side-nav-item">
                             <a href="#" class="aiz-side-nav-link">
                                 <i class="las la-user-tie aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Autres")</span>
+                                <span class="aiz-side-nav-text"> {{ __("Autres") }} >/span>
                                 <span class="aiz-side-nav-arrow"></span>
                             </a>
                             <ul class="aiz-side-nav-list level-2">
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('clients')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Clients")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Clients") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('fournisseurs')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Fournisseurs")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Fournisseurs") }} >/span>
                                     </a>
                                 </li>
                                 <li class="aiz-side-nav-item">
                                     <a href="{{route('partenaires')}}" class="aiz-side-nav-link ">
-                                        <span class="aiz-side-nav-text">__("Partenaires")</span>
+                                        <span class="aiz-side-nav-text"> {{ __("Partenaires") }} >/span>
                                     </a>
                                 </li>
                             </ul>
@@ -311,12 +311,12 @@
                                 <div class="d-flex align-items-center">
                                     <a class="btn btn-soft-danger btn-sm d-flex align-items-center" href="#">
                                         <i class="las la-hdd fs-20"></i>
-                                        <span class="fw-500 ml-1 mr-0 d-none d-md-block">__("Maintenace")</span>
+                                        <span class="fw-500 ml-1 mr-0 d-none d-md-block"> {{ __("Maintenace") }} >/span>
                                     </a>
                                     <div class="align-items-stretch d-flex dropdown " id="lang-change">
                                         <a class=" dropdown-toggle no-arrow ml-2 btn btn-soft-danger btn-sm d-flex align-items-center" data-toggle="dropdown" href="javascript:void(0);" role="button" aria-haspopup="false" aria-expanded="false">
                                             <i class="las la-plus fs-20"></i>
-                                            <span class="fw-500 ml-1 mr-0 d-none d-md-block">__("Nouvelle Operation")</span>
+                                            <span class="fw-500 ml-1 mr-0 d-none d-md-block"> {{ __("Nouvelle Operation") }} >/span>
                                         </a>
                                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-xs">
 
@@ -355,7 +355,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-lg py-0">
                                     <div class="p-3 bg-light border-bottom">
-                                        <h6 class="mb-0">__("Notifications")</h6>
+                                        <h6 class="mb-0"> {{ __("Notifications") }} >/h6>
                                     </div>
                                     <div class="px-3 c-scrollbar-light overflow-auto " style="max-height:300px;">
                                         <ul class="list-group list-group-flush">
@@ -395,13 +395,13 @@
                                     <li>
                                         <a href="javascript:void(0)" data-flag="en" class="dropdown-item  active ">
                                             <img src="{{ asset('assets/img/flags/en.png')}}" class="mr-2">
-                                            <span class="language">__("Anglais")</span>
+                                            <span class="language"> {{ __("Anglais") }} >/span>
                                         </a>
                                     </li>
                                     <li>
                                         <a href="javascript:void(0)" data-flag="bd" class="dropdown-item ">
                                             <img src="{{ asset('assets/img/flags/fr.png')}}" class="mr-2">
-                                            <span class="language">__("Francais")</span>
+                                            <span class="language"> {{ __("Francais") }} >/span>
                                         </a>
                                     </li>
                                 </ul>
@@ -423,7 +423,7 @@
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-md">
                                     <a href="{{('profile')}}" class="dropdown-item">
                                         <i class="las la-user-circle"></i>
-                                        <span>__("Profile")</span>
+                                        <span> {{ __("Profile") }} >/span>
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">
@@ -876,7 +876,7 @@
                                 </a>
                             </div>
                             <div class="row">
-                              <div class="col-md-6">  __("Nombre de produits:")<br> <span id="infoprod"></span><br></div>
+                              <div class="col-md-6">  __("Nombre de produits:") }} >br> <span id="infoprod"></span><br></div>
                               <div class="col-md-6">  __("Monopole:") <br><span id="infomono"></span><br></div>
                             </div>
                         </div>
@@ -939,7 +939,7 @@
                                 </a>
                             </div>
                             <div class="row">
-                              <div class="col-md-6">  __("Qte de produits:")<br> <span id="infoprod"></span><br></div>
+                              <div class="col-md-6">  __("Qte de produits:") }} >br> <span id="infoprod"></span><br></div>
                               <div class="col-md-6">  __("Monopole:") <br><span id="infomono"></span><br></div>
                             </div>
                         </div>

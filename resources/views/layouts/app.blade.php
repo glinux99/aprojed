@@ -224,7 +224,7 @@
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-md">
                                     <a href="{{('profile')}}" class="dropdown-item">
                                         <i class="las la-user-circle"></i>
-                                        <span>__("Profile")</span>
+                                        <span>{{__("Profile")}}</span>
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                                     document.getElementById('logout-form').submit();">

@@ -128,7 +128,7 @@
                                 {{__("A propos")}}
                                 </a></li>
                                 {{-- <li>
-                                    <a href="#">__("Missions")</a>
+                                    <a href="#"> {{ __("Missions")}} </a>
                                 </li> --}}
                                 <li>
                                     <a href="{{ route('news.all')}}">

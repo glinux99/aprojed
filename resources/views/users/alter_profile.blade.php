@@ -79,7 +79,7 @@
                     <div class="col-12">
                         <div class="btn-toolbar float-right mb-3" role="toolbar" aria-label="Toolbar with button groups">
                             <div class="btn-group" role="group" aria-label="Second group">
-                                <button type="submit" name="button" value="publish" class="btn btn-success action-btn">__("Enregistrer")</button>
+                                <button type="submit" name="button" value="publish" class="btn btn-success action-btn">{{__("Enregistrer")}}</button>
                             </div>
                         </div>
                     </div>

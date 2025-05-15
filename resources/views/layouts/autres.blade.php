@@ -6,7 +6,7 @@
         <div class="aiz-titlebar text-left mt-2 mb-3">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h1 class="h3">@yield('titre')</h1>
+                    <h1 class="h3">@yield('titre')}} </h1>
                 </div>
                 <div class="col-md-6 text-md-right">
                     @yield('button-add')
@@ -18,7 +18,7 @@
         <div class="card">
             <div class="card-header row gutters-5">
                 <div class="col text-center text-md-left">
-                    <h5 class="mb-md-0 h6">@yield('titre-actuel') __(" actuels")</h5>
+                    <h5 class="mb-md-0 h6">@yield('titre-actuel') __(" actuels")}} </h5>
                 </div>
             </div>
             <div class="card-body">
@@ -38,7 +38,7 @@
                                         <input type="text" name="" id="id2" hidden value="{{ $user->membre_id}}">
                                         <button type="submit" class="dropdown-item confirm-alert">
                                             <i class="las la-info-circle mr-2"></i>
-                                            <span>__("Details infos")</span>
+                                            <span>{{__("Details infos")}}</span>
                                         </button>
                                     </form>
                                     <form action="@yield('ajax-modif')" method="post" id="modif">
@@ -46,16 +46,16 @@
                                         <input type="text" name="" id="id" value="{{ $user->membre_id}}" hidden>
                                         <button type="submit" class="dropdown-item confirm-alert">
                                             <i class="las la-edit mr-2"></i>
-                                            <span>__('Modifier')</span>
+                                            <span>{{__('Modifier')}}</span>
                                         </button>
                                     </form>
                                     <a href="javascript:void(0)" class="dropdown-item" onclick="copyUrl(this)" data-url="link">
                                         <i class="las la-clipboard mr-2"></i>
-                                        <span>__('Copier le lien')</span>
+                                        <span>{{__('Copier le lien')}}</span>
                                     </a>
                                     <a href="javascript:void(0)" class="dropdown-item confirm-alert" data-href="@yield('delete-link'){{$user->membre_id}}" data-target="#delete-modal">
                                         <i class="las la-trash mr-2"></i>
-                                        <span>__('Supprimer ce membre')</span>
+                                        <span>{{__('Supprimer ce membre')}}</span>
                                     </a>
                                 </div>
                             </div>
@@ -78,7 +78,7 @@
                     @endforeach
                     @else
                     <div class="card-body">
-                        <p class="text-center">__("Aucune donnee")</p>
+                        <p class="text-center">{{__("Aucune donnee")}}</p>
                     </div>
                     @endif
                 </div>
@@ -114,7 +114,7 @@
     <div class="modal-dialog modal-lg modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">@yield('titre-modal')</h4>
+                <h4 class="modal-title h6">@yield('titre-modal')}} </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <form action="@yield('url-update')" method="post" enctype="multipart/form-data">
@@ -125,13 +125,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Nom')</label>
+                                <label for="">{{__('Nom')}}</label>
                                 <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="__('Nom de l\'agent')">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Adresse E-mail')</label>
+                                <label for="">{{__('Adresse E-mail')}}</label>
                                 <input type="text" class="form-control" name="email" id="email" autocomplete="new-password" aria-describedby="helpId" placeholder="__('adresse email de l\'agent')">
                             </div>
                         </div>
@@ -139,13 +139,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Numero Tel /Whatsapp')</label>
+                                <label for="">{{__('Numero Tel /Whatsapp')}}</label>
                                 <input type="text" class="form-control" name="numero" id="numero" aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Adresse physique')</label>
+                                <label for="">{{__('Adresse physique')}}</label>
                                 <input type="text" class="form-control" name="adresse" id="adresse" aria-describedby="helpId">
                             </div>
                         </div>
@@ -153,13 +153,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Images')</label>
+                                <label for="">{{__('Images')}}</label>
                                 <input type="file" class="form-control" name="images[]" multiple>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Autres documents')</label>
+                                <label for="">{{__('Autres documents')}}</label>
                                 <input type="file" class="form-control" name="documents[]" id="" aria-describedby="helpId">
                             </div>
                         </div>
@@ -167,20 +167,20 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('site web')</label>
+                                <label for="">{{__('site web')}}</label>
                                 <input type="text" class="form-control" name="site" id="site" aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Lien facebook/Twitter')</label>
+                                <label for="">{{__('Lien facebook/Twitter')}}</label>
                                 <input type="text" class="form-control" name="liens" id="liens" aria-describedby="helpId">
                             </div>
                         </div>
                     </div>
                     </p>
-                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">__("Enregistrer")</button>
+                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">{{__("Enregistrer")}}</button>
                 </div>
             </form>
         </div>
@@ -190,13 +190,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Voulez-vous vraiment supprimer ce membre?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">__("Supprimer")</a>
+                <p class="mt-1">{{__("Voulez-vous vraiment supprimer ce membre?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>
@@ -205,7 +205,7 @@
     <div class="modal-dialog modal-lg modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">@yield('titre-modal')</h4>
+                <h4 class="modal-title h6">@yield('titre-modal')}} </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <form action="@yield('url')" method="post" enctype="multipart/form-data">
@@ -215,13 +215,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Nom')</label>
+                                <label for="">{{__('Nom')}}</label>
                                 <input type="text" class="form-control" name="name" id="" aria-describedby="helpId" placeholder="__('Nom de l\'agent')">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Adresse E-mail')</label>
+                                <label for="">{{__('Adresse E-mail')}}</label>
                                 <input type="text" class="form-control" name="email" id="" autocomplete="new-password" aria-describedby="helpId" placeholder="__('adresse email de l\'agent')">
                             </div>
                         </div>
@@ -229,13 +229,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Numero Tel /Whatsapp')</label>
+                                <label for="">{{__('Numero Tel /Whatsapp')}}</label>
                                 <input type="text" class="form-control" name="numero" id="" aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Adresse physique')</label>
+                                <label for="">{{__('Adresse physique')}}</label>
                                 <input type="text" class="form-control" name="adresse" id="" aria-describedby="helpId">
                             </div>
                         </div>
@@ -243,13 +243,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Images')</label>
+                                <label for="">{{__('Images')}}</label>
                                 <input type="file" class="form-control" name="images[]" multiple>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Autres documents')</label>
+                                <label for="">{{__('Autres documents')}}</label>
                                 <input type="file" class="form-control" name="documents[]" id="" aria-describedby="helpId">
                             </div>
                         </div>
@@ -257,20 +257,20 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('site web')</label>
+                                <label for="">{{__('site web')}}</label>
                                 <input type="text" class="form-control" name="site" id="" aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="">__('Lien facebook/Twitter')</label>
+                                <label for="">{{__('Lien facebook/Twitter')}}</label>
                                 <input type="text" class="form-control" name="liens" id="" aria-describedby="helpId">
                             </div>
                         </div>
                     </div>
                     </p>
-                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">__("Enregistrer")</button>
+                    <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                    <button type="submit" class="btn btn-primary mt-2 comfirm-link">{{__("Enregistrer")}}</button>
                 </div>
             </form>
         </div>
@@ -280,13 +280,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Voulez-vous vraiment supprimer?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">__("Supprimer")</a>
+                <p class="mt-1">{{__("Voulez-vous vraiment supprimer?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>
