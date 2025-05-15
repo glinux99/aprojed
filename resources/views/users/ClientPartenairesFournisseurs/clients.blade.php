@@ -1,20 +1,20 @@
 @section('titre-modal')
-__("Ajouter un Client")
+{{__("Ajouter un Client")}}
 @endsection
 
 
 
 @extends('layouts.autres')
 @section('titre')
-__("Configuration")
+{{__("Configuration")}}
 @endsection
 @section('button-add')
 <a href="" class="btn btn-circle btn-info" data-target="#fournisseurs-modal" data-toggle="modal">
-    <span>__("Ajouter un client")</span>
+    <span>{{__("Ajouter un client")}}</span>
 </a>
 @endsection
 @section('titre-actuel')
-__("Client")
+{{__("Client")}}
 @endsection
 @section('url')
 {{ route('clients.store')}}
@@ -29,5 +29,5 @@ delete-client/
 {{ route('clients.edit')}}
 @endsection
 @section('titre-modal')
-__("Ajouter un Client")
-@endsection
+{{__("Ajouter un Client")
+}}@endsection

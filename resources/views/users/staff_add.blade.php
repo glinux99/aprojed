@@ -8,11 +8,11 @@
             <div class="aiz-titlebar text-left mt-2 mb-3">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <h1 class="h3">__("Configuration d'un nouvel agent")</h1>
+                        <h1 class="h3">{{__("Configuration d'un nouvel agent")}}</h1>
                     </div>
                     <div class="col-md-6 text-md-right">
                         <a href="{{ route('staff')}}" class="btn btn-circle btn-info">
-                            <span>__("Tous les agents")</span>
+                            <span>{{__("Tous les agents")}}</span>
                         </a>
                     </div>
                 </div>
@@ -23,38 +23,38 @@
                     <div class="card">
                         <div class="card-header row gutters-5">
                             <div class="col text-center text-md-left">
-                                <h5 class="mb-md-0 h6">__("Information sur l'agent")</h5>
+                                <h5 class="mb-md-0 h6">{{__("Information sur l'agent")}}</h5>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Nom')</label>
+                                        <label for="">{{__('Nom')}}</label>
                                         <input type="text" class="form-control" name="name" id=""
-                                            aria-describedby="helpId" placeholder="__('Nom de l\'agent')">
+                                            aria-describedby="helpId" placeholder="{{__('Nom de l\'agent')}}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Adresse E-mail')</label>
+                                        <label for="">{{__('Adresse E-mail')}}</label>
                                         <input type="text" class="form-control" name="email" id=""
                                             autocomplete="new-password" aria-describedby="helpId"
-                                            placeholder="__('adresse email de l\'agent')">
+                                            placeholder="{{__('adresse email de l\'agent')}}">
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Mot de passe')</label>
+                                        <label for="">{{__('Mot de passe')}}</label>
                                         <input type="text" class="form-control" name="password" id=""
                                             aria-describedby="helpId">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Numero Tel')</label>
+                                        <label for="">{{__('Numero Tel')}}</label>
                                         <input type="numero" class="form-control" name="numero" id=""
                                             aria-describedby="helpId">
                                     </div>
@@ -63,14 +63,14 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Image')</label>
+                                        <label for="">{{__('Image')}}</label>
                                         <input type="file" class="form-control" name="images" id=""
                                             aria-describedby="helpId">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="">__('Dossiers')</label>
+                                        <label for="">{{__('Dossiers')}}</label>
                                         <input type="file" class="form-control" name="docs" id=""
                                             aria-describedby="helpId" disabled>
                                     </div>
@@ -79,7 +79,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>__("A propos de l'agent")</label>
+                                        <label>{{__("A propos de l'agent")}}</label>
                                         <div class="col-md-12">
                                             <textarea class="aiz-text-editor" name="description"></textarea>
                                         </div>
@@ -93,36 +93,36 @@
                     <div class="card">
                         <div class="card-header row gutters-5">
                             <div class="col text-center text-md-left">
-                                <h5 class="mb-md-0 h6">__("Information supplementaire")</h5>
+                                <h5 class="mb-md-0 h6">{{__("Information supplementaire")}}</h5>
                             </div>
                         </div>
                         <div class="card-body row">
                             <div class="col-md-12 col-lg-12 col-6">
                                 <div class="form-group">
                                     <label class="form-check-label" for="admin">
-                                        __("Descritpion du poste dans l'entreprise")
+                                       {{ __("Descritpion du poste dans l'entreprise")}}
                                     </label>
                                     <input type="text" name="poste" id="" class="form-control"
-                                        placeholder="Description du poste">
+                                        placeholder="{{__('Description du poste')}}">
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="role" id="admin" value="admin"
                                         onclick="checked('admin');">
                                     <label class="form-check-label" for="admin">
-                                        __("Admin")
+                                       {{ __("Admin")}}
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="role" id="agent" value="caissier"
                                         checked>
                                     <label class="form-check-label" for="agent">
-                                        __("Agent")
+                                   {{     __("Agent")}}
                                     </label>
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-12 col-6">
                                 <div class="form-group" id="permissions">
-                                    <label for="inputrole" class="control-label">__("Permissions de l'agent")</label>
+                                    <label for="inputrole" class="control-label">{{__("Permissions de l'agent")}}</label>
                                     <div class="">
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
             <div class="btn-toolbar float-right mb-3" role="toolbar" aria-label="Toolbar with button groups">
                 <div class="btn-group" role="group" aria-label="Second group">
                     <button type="submit" name="button" value="Enregistrer"
-                        class="btn btn-success action-btn">__("Enregistrer")</button>
+                        class="btn btn-success action-btn">{{__("Enregistrer")}}</button>
                 </div>
             </div>
         </div>
@@ -146,13 +146,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Voulez-vous vraiment supprimer ce membre?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">__("Supprimer")</a>
+                <p class="mt-1">{{__("Voulez-vous vraiment supprimer ce membre?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>
@@ -201,9 +201,9 @@
         $temp.val(url).select();
         try {
             document.execCommand("copy");
-            AIZ.plugins.notify('success', "__('Lien a ete copie en cache')");
+            AIZ.plugins.notify('success', "__('Lien a été copié en cache')");
         } catch (err) {
-            AIZ.plugins.notify('danger', "__('Oooh!, desole, le lien ne peut etre copie')");
+            AIZ.plugins.notify('danger', "__('Oooh!, desolé, le lien ne peut être copié')");
         }
         $temp.remove();
     }

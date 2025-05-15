@@ -1,6 +1,6 @@
 @extends('layouts.stock')
 @section('title1')
-__("Produit fini")
+{{__("Produit fini")}}
 @stop
 @section('modal-1')
 {{ route('admin.create.produit.fini')}}

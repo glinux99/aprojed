@@ -6,11 +6,11 @@
         <div class="aiz-titlebar text-left mt-2 mb-3">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <h1 class="h3">__("Staff Configuration")</h1>
+                    <h1 class="h3">{{__("Staff Configuration")}}</h1>
                 </div>
                 <div class="col-md-6 text-md-right">
                     <a href="{{ route('staff.create')}}" class="btn btn-circle btn-info">
-                        <span>__("Ajouter un Agent")</span>
+                        <span>{{__("Ajouter un Agent")}}</span>
                     </a>
                 </div>
             </div>
@@ -19,7 +19,7 @@
         <div class="card">
             <div class="card-header row gutters-5">
                 <div class="col text-center text-md-left">
-                    <h5 class="mb-md-0 h6">__("Agent actuel")</h5>
+                    <h5 class="mb-md-0 h6">{{__("Agent actuel")}}</h5>
                 </div>
             </div>
             <div class="card-body">
@@ -36,15 +36,15 @@
                                 <div class="dropdown-menu dropdown-menu-right">
                                     <a href="javascript:void(0)" class="dropdown-item" onclick="detailsInfo(this)" data-id="1317">
                                         <i class="las la-info-circle mr-2"></i>
-                                        <span>__("Details infos")</span>
+                                        <span>{{__("Details infos")}}</span>
                                     </a>
                                     <a href="javascript:void(0)" class="dropdown-item" onclick="copyUrl(this)" data-url="link">
                                         <i class="las la-clipboard mr-2"></i>
-                                        <span>__('Copier le lien')</span>
+                                        <span>{{__('Copier le lien')}}</span>
                                     </a>
                                     <a href="javascript:void(0)" class="dropdown-item confirm-alert" data-href="{{ route('staff.delete', [$user->id])}}" data-target="#delete-modal">
                                         <i class="las la-trash mr-2"></i>
-                                        <span>__('Supprimer ce membre')</span>
+                                        <span>{{__('Supprimer ce membre')}}</span>
                                     </a>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                     @endforeach
                     @else
                     <div class="card-body">
-                        <p class="text-center">__("Aucune donnee")</p>
+                        <p class="text-center">{{__("Aucune donnee")}}</p>
                     </div>
                     @endif
                 </div>
@@ -85,13 +85,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Voulez-vous vraiment supprimer ce membre?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">__("Supprimer")</a>
+                <p class="mt-1">{{__("Voulez-vous vraiment supprimer ce membre?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" class="btn btn-primary mt-2 comfirm-link" id="supp" data-id="">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>

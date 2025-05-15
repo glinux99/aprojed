@@ -1,14 +1,14 @@
 @extends('layouts.autres')
 @section('titre')
-__("Configuration")
+{{__("Configuration")}}
 @endsection
 @section('button-add')
 <a href="" class="btn btn-circle btn-info" data-target="#fournisseurs-modal" data-toggle="modal">
-    <span>__("Ajouter un fournisseur")</span>
+    <span>{{__("Ajouter un fournisseur")}}</span>
 </a>
 @endsection
 @section('titre-actuel')
-__("Fournisseur")
+{{__("Fournisseur")}}
 @endsection
 @section('url')
 {{ route('fournisseurs.store')}}
@@ -23,5 +23,5 @@ delete-fournisseur/
 {{ route('fournisseurs.edit')}}
 @endsection
 @section('titre-modal')
-__("Ajouter un Fournisseur")
+{{__("Ajouter un Fournisseur")}}
 @endsection

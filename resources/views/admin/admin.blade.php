@@ -10,7 +10,7 @@
                             <div class="px-3 pt-3">
                                 <div class="opacity-50">
                                     <span class="fs-12 d-block">Total</span>
-                                    __("Membre et Partenaires")
+                                    {{__("Membre et Partenaires")}}
                                 </div>
                                 <div class="h3 fw-700 mb-3">
                                     {{ $data['membre']}}
@@ -28,10 +28,10 @@
                             <div class="px-3 pt-3">
                                 <div class="opacity-50">
                                     <span class="fs-12 d-block">Total</span>
-                                    __("Articles")
+                                    {{__("Articles")}}
                                 </div>
                                 <div class="h3 fw-700 mb-3">
-                                    {{$data['ventes']}}
+                                    {{ $data['ventes'] }}
                                 </div>
                             </div>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
@@ -46,7 +46,7 @@
                             <div class="px-3 pt-3">
                                 <div class="opacity-50">
                                     <span class="fs-12 d-block">Total</span>
-                                    __("Articles")
+                                    {{ __("Articles") }}
                                 </div>
                                 <div class="h3 fw-700 mb-3">{{ $data['produit']}}</div>
                             </div>
@@ -62,7 +62,7 @@
                             <div class="px-3 pt-3">
                                 <div class="opacity-50">
                                     <span class="fs-12 d-block">Total</span>
-                                    __("Categorie d'Articles")
+                                    {{ __("Categorie d'Articles") }}
                                 </div>
                                 <div class="h3 fw-700 mb-3">{{$data['categorie']}}</div>
                             </div>
@@ -81,7 +81,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="mb-0 fs-14">__("Articles")</h6>
+                                <h6 class="mb-0 fs-14">{{ __("Articles") }}</h6>
                             </div>
                             <div class="card-body">
                                 <canvas id="pie-1" class="w-100" height="305"></canvas>
@@ -91,7 +91,7 @@
                     <div class="col-6">
                         <div class="card">
                             <div class="card-header">
-                                <h6 class="mb-0 fs-14">__("Categories")</h6>
+                                <h6 class="mb-0 fs-14">{{ __("Categories") }}</h6>
                             </div>
                             <div class="card-body">
                                 <canvas id="pie-2" class="w-100" height="305"></canvas>
@@ -107,7 +107,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0 fs-14">__("Categorie d'articles publies")</h6>
+                        <h6 class="mb-0 fs-14">{{ __("Categorie d'articles publies") }}</h6>
                     </div>
                     <div class="card-body">
                         <canvas id="graph-1" class="w-100" height="500"></canvas>
@@ -117,7 +117,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h6 class="mb-0 fs-14">__("Categorie d'articles non publie")</h6>
+                        <h6 class="mb-0 fs-14">{{ __("Categorie d'articles non publie") }}</h6>
                     </div>
                     <div class="card-body">
                         <canvas id="graph-2" class="w-100" height="500"></canvas>

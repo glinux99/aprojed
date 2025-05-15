@@ -6,12 +6,12 @@
             <div class="aiz-titlebar text-left mt-2 mb-3">
                 <div class="row align-items-center">
                     <div class="col-md-6">
-                        <h1 class="h3">__('Profile')</h1>
+                        <h1 class="h3">{{__('Profile')}}</h1>
                     </div>
                     <div class="col-md-6 text-md-right">
 
                         <a href="{{route('user.profile')}}" class="btn btn-circle btn-info">
-                            <span>__('Modifier')</span>
+                            <span>{{__('Modifier')}}</span>
                         </a>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
             <div class="card">
                 <div class="card-header row gutters-5">
                     <div class="col text-center text-md-left">
-                        <h5 class="mb-md-0 h6">__("Mon profile Actuel")</h5>
+                        <h5 class="mb-md-0 h6">{{__("Mon profile Actuel")}}</h5>
                     </div>
                 </div>
                 <div class="col-md-12">
