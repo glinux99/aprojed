@@ -60,7 +60,7 @@
                         <li class="aiz-side-nav-item">
                             <a href="/admin" class="aiz-side-nav-link">
                                 <i class="las la-home aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__('Tableau de board')</span>
+                                <span class="aiz-side-nav-text">{{__('Tableau de board')}}</span>
                             </a>
                         </li>
 
