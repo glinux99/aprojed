@@ -18,8 +18,7 @@ class CreateActualitesTable extends Migration
             $table->string('title');
             $table->string('categorie')->nullable();
             $table->text('description');
-            $table->bigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->unsigned();
+            $table->foreignId('users_id')->nullable()->unsigned();
 
             $table->timestamps();
         });

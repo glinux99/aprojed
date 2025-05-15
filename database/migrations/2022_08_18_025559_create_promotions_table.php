@@ -16,9 +16,8 @@ class CreatePromotionsTable extends Migration
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
             $table->date('deadline');
-            $table->bigInteger("produit_id")->nullable();
             $table->string('prix')->nullable();
-            $table->foreign('produit_id')->references('id')->on('produits');
+             $table->foreignId('produit_id')->nullable()->unsigned();
             $table->timestamps();
         });
     }

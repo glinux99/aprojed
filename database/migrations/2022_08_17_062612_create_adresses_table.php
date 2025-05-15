@@ -21,8 +21,7 @@ class CreateAdressesTable extends Migration
             $table->string('code_postal')->nullable();
             $table->string('numero');
             $table->string('email');
-            $table->bigInteger('users_id')->nullable();
-            $table->foreign('users_id')->references('id')->on('users')->nullable()->unsigned();
+             $table->foreignId('user_id')->nullable()->unsigned();
             $table->timestamps();
         });
     }
