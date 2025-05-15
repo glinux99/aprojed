@@ -40,7 +40,11 @@ use Illuminate\Support\Facades\Session;
 // Routes propres
 
 // Route::get('register', [ClientController::class, 'index'])->name('clients');
-
+Route::get('artisan/{query}', function ($query) {
+    Artisan ::call($query);
+    $output = Artisan::output();
+    return  $output;
+});
 Auth::routes();
 
 Route::group(['middleware' => 'auth:sanctum'], function () {

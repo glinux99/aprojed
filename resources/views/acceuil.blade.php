@@ -210,7 +210,7 @@ __("Acceuil ")
                 <div class="services-block col-md-3 col-sm-6 col-xs-12">
                     <div class="inner-box">
                         <div class="image">
-                            <img src="{{ asset('assets/ui/images/mainSlider/slide14.jpg')}}" altt="" />
+                            <img src="{{ asset('assets/ui/images/aprojed/566A2198.jpg')}}" altt="" />
                         </div>
                         <div class="lower-content">
                             <div class="icon-box">
@@ -240,7 +240,7 @@ __("Acceuil ")
                 <div class="services-block col-md-3 col-sm-6 col-xs-12">
                     <div class="inner-box">
                         <div class="image">
-                            <img src="{{ asset('assets/ui/images/mainSlider/slide16.jpg')}}" altt="" />
+                            <img src="{{ asset('assets/ui/images/aprojed/566A9559.jpg')}}" altt="" />
                         </div>
                         <div class="lower-content">
                             <div class="icon-box">
@@ -271,7 +271,7 @@ __("Acceuil ")
                 <div class="services-block col-md-3 col-sm-6 col-xs-12">
                     <div class="inner-box">
                         <div class="image">
-                            <img src="{{ asset('assets/ui/images/mainSlider/slide15.jpg')}}" altt="" />
+                            <img src="{{ asset('assets/ui/images/aprojed/566A9335.jpg')}}" altt="" />
                         </div>
                         <div class="lower-content">
                             <div class="icon-box">
@@ -284,7 +284,7 @@ __("Acceuil ")
                         <div class="overlay-box">
                             <div class="overlay-inner">
                                 <div class="text">
-                                    {{__("Inciter la population à utiliser l'énergie rénouvelable")}}
+                                    {{__("Inciter la population de se developper toutes seules en leurs offrant des opportunités")}}
                                 </div>
                                 <a href="/" class="know-more">{{__("Participer")}}
                                     <span class="icon flaticon-right-arrow-1"></span></a>
