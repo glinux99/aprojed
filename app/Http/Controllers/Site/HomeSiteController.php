@@ -39,7 +39,7 @@ class HomeSiteController extends Controller
     public function index()
     {
         $promotions = Produit::join('images', 'images.produit_id', 'produits.id')
-            ->join('promotions', 'promotions.produit_id', 'produits.id')->groupby('promotions.produit_id')->distinct()->get();
+            ->join('promotions', 'promotions.produit_id', 'produits.id')->distinct()->get();
         try {
             $deadline = str_replace("-", '/', Promotion::orderBy('deadline', 'DESC')->first('deadline')->deadline);
         } catch (Exception $exc) {
