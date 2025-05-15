@@ -41,7 +41,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
         <div class="modal-content">
             <div class="modal-header bord-btm">
-                <h4 class="modal-title h6">__("Ajouter une nouvelle taxe")</h4>
+                <h4 class="modal-title h6">{{__("Ajouter une nouvelle taxe")}}</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
             </div>
 
@@ -52,10 +52,10 @@
                     <div class="form-group">
                         <div class=" row">
                             <label class="col-sm-3 control-label" for="name">
-                                __("Nom de la taxe")
+                              {{  __("Nom de la taxe")}}
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" placeholder="__('Nom de la taxe')" id="name" name="name" class="form-control" required>
+                                <input type="text" placeholder="{{__('Nom de la taxe')}}" id="name" name="name" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -63,10 +63,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-styled btn-base-3" data-dismiss="modal">
-                        __("Fermer")
+                     {{   __("Fermer")}}
                     </button>
                     <button type="submit" class="btn btn-primary btn-styled btn-base-1">
-                        __("Enregistrer")
+                      {{  __("Enregistrer")}}
                     </button>
                 </div>
             </form>
@@ -80,13 +80,13 @@
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title h6">__("Confirmation de suppression")</h4>
+                <h4 class="modal-title h6">{{__("Confirmation de suppression")}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body text-center">
-                <p class="mt-1">__("Etes-vous sur de supprimer ceci?")</p>
-                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">__("Annuler")</button>
-                <a href="" id="delete-link" class="btn btn-primary mt-2">__("Supprimer")</a>
+                <p class="mt-1">{{__("Etes-vous sur de supprimer ceci?")}}</p>
+                <button type="button" class="btn btn-link mt-2" data-dismiss="modal">{{__("Annuler")}}</button>
+                <a href="" id="delete-link" class="btn btn-primary mt-2">{{__("Supprimer")}}</a>
             </div>
         </div>
     </div>
@@ -97,7 +97,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
         <div class="modal-content">
             <div class="modal-header bord-btm">
-                <h4 class="modal-title h6">__("Editer une taxe")</h4>
+                <h4 class="modal-title h6">{{__("Editer une taxe")}}</h4>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
             </div>
 
@@ -107,10 +107,10 @@
                     <div class="form-group">
                         <div class=" row">
                             <label class="col-sm-3 control-label" for="name">
-                                __("Nom de la taxe")
+                             {{   __("Nom de la taxe")}}
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" placeholder="__('Nom de la taxe')" id="name" name="name" class="form-control" required>
+                                <input type="text" placeholder="{{__('Nom de la taxe')}}" id="name" name="name" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -118,10 +118,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-styled btn-base-3" data-dismiss="modal">
-                        __("Fermer")
+                      {{  __("Fermer")}}
                     </button>
                     <button type="submit" class="btn btn-primary btn-styled btn-base-1">
-                        __("Enregistrer")
+                      {{  __("Enregistrer")}}
                     </button>
                 </div>
             </form>

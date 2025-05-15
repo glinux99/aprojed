@@ -51,7 +51,7 @@
                 <div class="aiz-side-nav-wrap">
                     <div class="px-20px mb-3">
                         <input class="form-control bg-soft-secondary border-0 form-control-sm text-white" type="text"
-                            name="" placeholder="__('Rechercher dans le menu')" id="menu-search"
+                            name="" placeholder="{{__('Rechercher dans le menu')}}" id="menu-search"
                             onkeyup="menuSearch()">
                     </div>
                     <ul class="aiz-side-nav-list" id="search-menu">
@@ -68,19 +68,19 @@
                         <li class="aiz-side-nav-item">
                             <a href="{{route('news.config')}}" class="aiz-side-nav-link ">
                                 <i class="las la-wrench aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Articles")</span>
+                                <span class="aiz-side-nav-text">{{__("Articles")}}</span>
                             </a>
                         </li>
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('staff')}}" class="aiz-side-nav-link ">
                                 <i class="las la-wrench aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Equipe")</span>
+                                <span class="aiz-side-nav-text">{{__("Equipe")}}</span>
                             </a>
                         </li>
                         <li class="aiz-side-nav-item">
                             <a href="{{ route('admin.entreprise.config')}}" class="aiz-side-nav-link ">
                                 <i class="las la-wrench aiz-side-nav-icon"></i>
-                                <span class="aiz-side-nav-text">__("Entreprise")</span>
+                                <span class="aiz-side-nav-text">{{__("Entreprise")}}</span>
                             </a>
                         </li>
                     </ul><!-- .aiz-side-nav -->
@@ -116,8 +116,8 @@
                                     <a class="btn btn-soft-danger btn-sm d-flex align-items-center"
                                         href="{{ route('staff.create')}}">
                                         <i class="las la-hdd fs-20"></i>
-                                        <span class="fw-500 ml-1 mr-0 d-none d-md-block">__("
-                                            Creer un membre")</span>
+                                        <span class="fw-500 ml-1 mr-0 d-none d-md-block">{{__("
+                                            Creer un membre")}}</span>
                                     </a>
                                 </div>
                             </div>
@@ -140,7 +140,7 @@
                                 <div
                                     class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-lg py-0">
                                     <div class="p-3 bg-light border-bottom">
-                                        <h6 class="mb-0">__("Notifications")</h6>
+                                        <h6 class="mb-0">{{__("Notifications")}}</h6>
                                     </div>
                                     <div class="px-3 c-scrollbar-light overflow-auto " style="max-height:300px;">
                                         <ul class="list-group list-group-flush">
@@ -161,7 +161,7 @@
                                     </div>
                                     <div class="text-center border-top">
                                         <a href="#" class="text-reset d-block py-2">
-                                            __("Voir toutes les notifications")
+                                           {{ __("Voir toutes les notifications")}}
                                         </a>
                                     </div>
                                 </div>
@@ -174,24 +174,35 @@
                                 <a class="dropdown-toggle no-arrow" data-toggle="dropdown" href="javascript:void(0);"
                                     role="button" aria-haspopup="false" aria-expanded="false">
                                     <span class="btn btn-icon">
-                                        <img src="{{ asset('assets/img/flags/en.png')}}" height="11">
+                                       @if(Config("app.locale")=='fr')
+                                      <span class="flag-img"><img
+                                        src="{{asset('assets/img/flags/fr.png')}}" alt="" /></span>  {{__("Français")}}
+                                      @else
+                                      @if(Config("app.locale")=='en')
+                                       <span class="flag-img"><img
+                                        src="{{asset('assets/img/flags/en.png')}}" alt="" /></span> {{__("Anglais")}}
+                                        @else
+                                      <span class="flag-img"><img
+                                        src="{{asset('assets/img/flags/cd.png')}}" alt="" /></span>   {{__("Swahili")}}
+                                      @endif
+                                      @endif
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-menu-xs">
+                                <li><a class="dropdown-item  active " href="{{ route('locale.change', 'fr')}}">
+                              <span class="flag-img"><img class="language"
+                                        src="{{asset('assets/img/flags/fr.png')}}" alt="" /></span>  {{__("Français")}}
+                                </a></li>
+                                <li><a class="dropdown-item  active " href="{{ route('locale.change', 'en')}}">
+                                <span class="flag-img"><img class="language"
+                                        src="{{asset('assets/img/flags/en.png')}}" alt="" /></span>{{__("Anglais")}}
+                                </a></li>
+                                 <li><a class="dropdown-item  active " href="{{ route('locale.change', 'sw')}}">
+                              <span class="flag-img"><img class="language"
+                                        src="{{asset('assets/img/flags/cd.png')}}" alt="" /></span>  {{__("Swahili")}}
+                                </a></li>
 
-                                    <li>
-                                        <a href="javascript:void(0)" data-flag="en" class="dropdown-item  active ">
-                                            <img src="{{ asset('assets/img/flags/en.png')}}" class="mr-2">
-                                            <span class="language">__("Anglais")</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)" data-flag="bd" class="dropdown-item ">
-                                            <img src="{{ asset('assets/img/flags/fr.png')}}" class="mr-2">
-                                            <span class="language">__("Francais")</span>
-                                        </a>
-                                    </li>
-                                </ul>
+                            </ul>
                             </div>
                         </div>
                         <div class="aiz-topbar-item ml-2">
