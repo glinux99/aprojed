@@ -15,7 +15,7 @@ __("Blog")
         </div>
     </section>
     <!--Company Section-->
-    <section class="company-section">
+    <section class="company-section ">
         <div class="auto-container">
             <div class="row clearfix">
 
@@ -47,7 +47,7 @@ Le Siège social de APROJED est établit sur l’Avenue Julien Paluku,  n°9, Qu
                 <div class="image-column col-md-4 col-sm-12 col-xs-12 d-none d-lg-block">
                     <div class="inner-column">
                         <div class="image">
-                            <img src="assets/ui/images/mainSlider/slide13.jpg" alt="" />
+                            <img src="assets/ui/images/mainSlider/slide5.jpg" alt="" />
                         </div>
                         <div class="carousel-box">
                             <div class="single-item-carousel owl-carousel owl-box">
@@ -61,11 +61,10 @@ Le Siège social de APROJED est établit sur l’Avenue Julien Paluku,  n°9, Qu
                                             Apprenos à ouvrir nos coeur et aidons les autres tout en protégeant notre
                                             mère nature ")}}</div>
                                         <div class="author-box">
-                                            <div class="author-inner">
-                                                <div class="image"><img src="assets/ui/images/resource/author-6.jpg"
+                                            <div class="">
+                                                <div class="image"><img src="{{ asset('assets/ui/images/logo_bgw.png')}}"
                                                         alt="" />
                                                 </div>
-                                                <h3>Aprojed</h3>
                                             </div>
                                         </div>
                                     </div>

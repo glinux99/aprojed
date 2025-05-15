@@ -151,7 +151,7 @@ Route::get('/links', function () {
 Route::get('/migration', function () {
     Artisan::call('migrate:refresh --seed');
 });
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController ::class, 'index'])->name('home');
 // Route::get('/{lang?}', function ($lang = null) {
 
 //     if (isset($lang) && in_array($lang, config('app.available_locales'))) {
