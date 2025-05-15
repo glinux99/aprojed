@@ -15,8 +15,6 @@ class CreateChariotsTable extends Migration
     {
         Schema::create('chariots', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('users_id');
-            $table->bigInteger('produit_id');
             $table->string('images')->nullable();
             $table->string('qte');
              $table->foreignId('users_id')->nullable()->unsigned();
