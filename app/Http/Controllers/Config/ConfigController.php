@@ -45,12 +45,12 @@ class ConfigController extends Controller
                         'public'
                     );
                     $imageSave->images = $path;
-                    $imageSave->config_id = $config->id;
+                    $imageSave->config_site_id = $config->id;
                     $imageSave->save();
                 }
             } else {
                 $imageSave = new Images;
-                $imageSave->config_id = $config->id;
+                $imageSave->config_site_id = $config->id;
                 $imageSave->save();
             }
         } else {
@@ -68,7 +68,7 @@ class ConfigController extends Controller
                         'public'
                     );
                     $imageSave->images = $path;
-                    $imageSave->config_id = $config->id;
+                    $imageSave->config_site_id = $config->id;
                     $imageSave->save();
                 }
                 ConfigController::delete($config->id);
@@ -199,10 +199,10 @@ class ConfigController extends Controller
     }
     public function delete($id)
     {
-        $images = Images::where('config_id', $id)->get();
+        $images = Images::where('config_site_id', $id)->get();
         foreach ($images as $image) {
             Storage::disk('public')->delete($image->images);
         }
-        Images::where('config_id', $id)->delete();
+        Images::where('config_site_id', $id)->delete();
     }
 }

@@ -21,7 +21,7 @@ class CreateCommandesTable extends Migration
             $table->string('commande_id')->nullable();
             $table->string('total')->nullable();
             $table->string('status')->nullable();
-            $table->foreignId('users_id')->nullable()->unsigned();
+            $table->foreignId('user_id')->nullable()->unsigned();
             $table->foreignId('produit_id')->nullable()->unsigned();
             $table->foreignId('adresse_id')->nullable()->unsigned();
 

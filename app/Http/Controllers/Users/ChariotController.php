@@ -22,7 +22,7 @@ class ChariotController extends Controller
     {
         $chartInfo = Chariot::join('produits', 'produits.id', 'chariots.produit_id')
             ->select('chariots.*', 'produits.*', 'chariots.id AS chariot_id', 'chariots.qte AS chariot_qte')
-            ->where('chariots.users_id', Auth::user()->id)->get();
+            ->where('chariots.user_id', Auth::user()->id)->get();
         return view('site.cart_all', ['chartInfo' => $chartInfo]);
     }
     /**
@@ -32,7 +32,7 @@ class ChariotController extends Controller
      */
     public function create()
     {
-        $adresse = Adresse::where('users_id', Auth::user()->id)->get();
+        $adresse = Adresse::where('user_id', Auth::user()->id)->get();
         return view('site.cart_info', ['adresses' => $adresse]);
     }
 
@@ -44,15 +44,15 @@ class ChariotController extends Controller
      */
     public function store(Request $request)
     {
-        $chariot = Chariot::create($request->only(['qte', 'produit_id', 'users_id']));
+        $chariot = Chariot::create($request->only(['qte', 'produit_id', 'user_id']));
         $imageproduit = Produit::join('images', 'produits.id', 'produit_id')
             ->where('produit_id', $request->produit_id)->first();
         $chariot->images = $imageproduit->images;
         $chariot->qte = $request->qte;
         $chariot->save();
-        $count = Chariot::where('users_id', Auth::user()->id)->count() ?? 0;
+        $count = Chariot::where('user_id', Auth::user()->id)->count() ?? 0;
         Session()->put('cart-count', $count);
-        if (Chariot::where('users_id', Auth::user()->id)->count() == 1) $reload = true;
+        if (Chariot::where('user_id', Auth::user()->id)->count() == 1) $reload = true;
         else $reload = false;
         return response()->json([
             'count' => $count,
@@ -104,7 +104,7 @@ class ChariotController extends Controller
     public function destroy($id)
     {
         Chariot::find($id)->delete();
-        $count = Chariot::where('users_id', Auth::user()->id)->count() ?? 0;
+        $count = Chariot::where('user_id', Auth::user()->id)->count() ?? 0;
         Session()->put('cart-count', $count);
         return redirect()->route('produit.cart.all');
     }

@@ -39,8 +39,8 @@ class AdresseController extends Controller
      */
     public function store(Request $request)
     {
-        $adresse = Adresse::create($request->except(['_token', 'users_id']));
-        $adresse->users_id = Auth::user()->id;
+        $adresse = Adresse::create($request->except(['_token', 'user_id']));
+        $adresse->user_id = Auth::user()->id;
         $adresse->save();
         return redirect()->route('produit.cart.info');
     }

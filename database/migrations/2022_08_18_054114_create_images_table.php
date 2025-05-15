@@ -21,16 +21,12 @@ class CreateImagesTable extends Migration
             $table->string('video')->nullable();
             $table->string('pub_images')->nullable();
             $table->string('center_images')->nullable();
-            $table->bigInteger('actualite_id')->nullable();
-            $table->bigInteger('users_id')->nullable();
-            $table->bigInteger('produit_id')->nullable();
-            $table->bigInteger('categorie_id')->nullable();
-            $table->bigInteger('config_id')->nullable();
-            $table->foreign('users_id')->references('id')->on('users')->nullable()->unsigned();
-            $table->foreign('produit_id')->references('id')->on('produits')->nullable()->unsigned();
-            $table->foreign('categorie_id')->references('id')->on('categories')->nullable()->unsigned();
-            $table->foreign('actualite_id')->references('id')->on('actualites')->nullable()->unsigned();
-            $table->foreign('config_id')->references('id')->on('config_sites')->nullable()->unsigned();
+             $table->foreignId('user_id')->nullable()->unsigned();
+              $table->foreignId('produit_id')->nullable()->unsigned();
+               $table->foreignId('categorie_id')->nullable()->unsigned();
+                $table->foreignId('actualite_id')->nullable()->unsigned();
+                 $table->foreignId('config_site_id')->nullable()->unsigned();
+
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $users = User::where('type', 'clients')->join('images', 'users.id', 'users_id')
+        $users = User::where('type', 'clients')->join('images', 'users.id', 'user_id')
             ->select('users.*', 'users.id AS membre_id', 'images.*')->paginate(10);
         return view('users.ClientPartenairesFournisseurs.clients', ['users' => $users]);
     }
@@ -57,12 +57,12 @@ class ClientController extends Controller
                     'public'
                 );
                 $imageSave->images = $path;
-                $imageSave->users_id = $mbr->id;
+                $imageSave->user_id = $mbr->id;
                 $imageSave->save();
             }
         } else {
             $imageSave = new Images;
-            $imageSave->users_id = $mbr->id;
+            $imageSave->user_id = $mbr->id;
             $imageSave->save();
         }
         if ($request->documents) {
@@ -104,7 +104,7 @@ class ClientController extends Controller
      */
     public function edit(Request $request)
     {
-        $data = User::where('users.id', $request->id)->join('images', 'images.users_id', 'users.id')->first();
+        $data = User::where('users.id', $request->id)->join('images', 'images.user_id', 'users.id')->first();
         return response()->json(
             $data
         );
@@ -134,7 +134,7 @@ class ClientController extends Controller
                     'public'
                 );
                 $imageSave->images = $path;
-                $imageSave->users_id = $mbr->id;
+                $imageSave->user_id = $mbr->id;
                 $imageSave->save();
                 ClientController::delete($mbr->id);
             }
@@ -173,10 +173,10 @@ class ClientController extends Controller
     }
     public function delete($id)
     {
-        $images = Images::where('users_id', $id)->get();
+        $images = Images::where('user_id', $id)->get();
         foreach ($images as $image) {
             Storage::disk('public')->delete($image->images);
         }
-        Images::where('users_id', $id)->delete();
+        Images::where('user_id', $id)->delete();
     }
 }

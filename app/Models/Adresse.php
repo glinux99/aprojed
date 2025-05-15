@@ -15,6 +15,6 @@ class Adresse extends Model
         'code_postal',
         'numero',
         'email',
-        'users_id'
+        'user_id'
     ];
 }

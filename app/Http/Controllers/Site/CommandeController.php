@@ -20,7 +20,7 @@ class CommandeController extends Controller
      */
     private function commandeClient($status)
     {
-        $commande = Commande::join('users', 'users.id', 'commandes.users_id')
+        $commande = Commande::join('users', 'users.id', 'commandes.user_id')
             ->join('produits', 'produits.id', 'commandes.produit_id')
             ->select('commandes.*', 'produits.*', 'users.*', 'users.name AS username', 'produits.name AS produit_name', 'commandes.id AS commande_id')
             ->where('status', $status)
@@ -49,7 +49,7 @@ class CommandeController extends Controller
      */
     public function create()
     {
-        $commande = Commande::where('users_id', Auth::user()->id)
+        $commande = Commande::where('user_id', Auth::user()->id)
             ->join('produits', 'produits.id', 'produit_id')
             ->select('produits.*', 'commandes.*', 'commandes.qte AS commande_qte')
             ->where('status', '0')
@@ -65,7 +65,7 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        $chariots = Chariot::where('users_id', Auth::user()->id)->get();
+        $chariots = Chariot::where('user_id', Auth::user()->id)->get();
         $commande_send = "african-brand-cmd-" . Str::random(8);
         foreach ($chariots as $chariot) {
             if ($request->adresse_id == "locale") {
@@ -80,7 +80,7 @@ class CommandeController extends Controller
             }
             // dd($remise);
             $prix = (float)$remise * (float)$chariot->qte;
-            $commande->users_id = Auth::user()->id;
+            $commande->user_id = Auth::user()->id;
             $commande->qte = $chariot->qte;
             $commande->produit_id = $chariot->produit_id;
             $commande->images = $chariot->images;
@@ -125,7 +125,7 @@ class CommandeController extends Controller
      */
     public function show(Request $request)
     {
-        $commandes = Commande::join('users', 'users.id', 'commandes.users_id')
+        $commandes = Commande::join('users', 'users.id', 'commandes.user_id')
             ->join('produits', 'produits.id', 'commandes.produit_id')
             ->select('commandes.*', 'produits.*', 'users.*', 'users.name AS username', 'produits.name AS produit_name', 'commandes.id AS commandeId', 'commandes.qte AS commande_qte', 'produits.qte AS produit_qte')
             ->where('commandes.id', $request->id)
@@ -134,7 +134,7 @@ class CommandeController extends Controller
     }
     public function buy()
     {
-        $commande = Commande::where('users_id', Auth::user()->id)
+        $commande = Commande::where('user_id', Auth::user()->id)
             ->join('produits', 'produits.id', 'produit_id')
             ->select('produits.*', 'commandes.*', 'commandes.qte AS commande_qte')
             ->where('status', '1')

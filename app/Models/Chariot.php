@@ -9,7 +9,7 @@ class Chariot extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'users_id',
+        'user_id',
         'produit_id',
         'images',
         'qte'

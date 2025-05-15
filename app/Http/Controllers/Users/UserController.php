@@ -57,12 +57,12 @@ class UserController extends Controller
                     'public'
                 );
                 $imageSave->images = $path;
-                $imageSave->users_id = $user->id;
+                $imageSave->user_id = $user->id;
                 $imageSave->save();
             }
         } else {
             $imageSave = new Images;
-            $imageSave->users_id = $user->id;
+            $imageSave->user_id = $user->id;
             $imageSave->save();
         }
         return redirect()->route('staff');
@@ -107,7 +107,7 @@ class UserController extends Controller
         if ($request->file('images') != '') {
             try {
                 $id = Auth::user()->id;
-                $image = Images::where('users_id', $id)->first();
+                $image = Images::where('user_id', $id)->first();
                 Storage::disk('public')->delete($image->images);
                 $image->delete();
             } catch (Exception $exc) {
@@ -123,7 +123,7 @@ class UserController extends Controller
                 'public'
             );
             $imageSave->images = $path;
-            $imageSave->users_id = $user->id;
+            $imageSave->user_id = $user->id;
             $imageSave->save();
             Session::put('picprofile', 'storage/' . $path);
         }
@@ -142,11 +142,11 @@ class UserController extends Controller
     }
     public function delete($id)
     {
-        $images = Images::where('users_id', $id)->get();
+        $images = Images::where('user_id', $id)->get();
         foreach ($images as $image) {
             Storage::disk('public')->delete($image->images);
         }
-        Images::where('users_id', $id)->delete();
+        Images::where('user_id', $id)->delete();
     }
     /**
      * Remove the specified resource from storage.

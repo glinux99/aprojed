@@ -17,7 +17,7 @@ class CreateChariotsTable extends Migration
             $table->id();
             $table->string('images')->nullable();
             $table->string('qte');
-             $table->foreignId('users_id')->nullable()->unsigned();
+             $table->foreignId('user_id')->nullable()->unsigned();
               $table->foreignId('produit_id')->nullable()->unsigned();
             $table->timestamps();
         });
