@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +29,14 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::resources([
+        'articles'=>ArticleController::class,
+        'categories'=>CategoryController::class,
+        'users'=>RegisteredUserController::class,
+        'roles'=>RoleController ::class,
+        'permissions'=>PermissionController::class,
+        'settings'=>SettingController::class,
+    ]);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

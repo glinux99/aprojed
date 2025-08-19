@@ -23,6 +23,7 @@ const verificationLinkSent = computed(
 
 <template>
     <GuestLayout>
+
         <Head title="Email Verification" />
 
         <div class="mb-4 text-sm text-gray-600">

@@ -39,7 +39,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy;2025 <a href="#">
+                        &copy;2025 <a href="/login">
                             Aprojed</a> All Right Reserved.
                     </div>
                     <div class="col-md-6 text-center text-md-end">

@@ -5,7 +5,13 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-
+import SummernoteEditor from 'vue3-summernote-editor';
+// resources/js/app.js
+// AJOUTER JQUERY ICI
+// import 'summernote/dist/summernote-lite.css';
+// ... le reste de votre fichier app.js
+import jQuery from 'jQuery'
+window.jQuery = jQuery
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -19,6 +25,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .component('SummernoteEditor', SummernoteEditor)
             .mount(el);
     },
     progress: {
