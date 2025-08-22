@@ -21,7 +21,7 @@
 @endphp
 
 <!-- Activities Start -->
-<div class="container-xxl py-5">
+<div class="container-xxl bg-light py-5">
     <div class="container">
         <div class="row g-5">
             <!-- Activities list -->
@@ -29,7 +29,7 @@
                 <div class="row g-4">
                     @foreach($activities as $index => $activity)
                         <div class="col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
-                            <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
+                            <div class="causes-item d-flex flex-column bg-white border-top border-5 shadow-lg border-primary rounded-top overflow-hidden h-100">
                                 <div class="text-center p-4 pt-0">
                                       <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
                                         <small>{{ $activity['category']['name'] }}</small>
@@ -99,8 +99,8 @@
                     <h3 class="mb-4">Catégories</h3>
                     <ul class="list-group list-group-flush">
                         @foreach($categories as $category)
-                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="#" class="text-dark">{{ $category->name }}</a>
+                            <li class="border-bottom border-5 py-2 bg-white border-primary rounded-bottom overflow-hidden d-flex justify-content-between align-items-center px-0 ">
+                                <a href="#" class="text-dark ">{{ $category->name }}</a>
                                 <span class="badge bg-primary rounded-pill">{{ $category->articles_count }}</span>
                             </li>
                         @endforeach
