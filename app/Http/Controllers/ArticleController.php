@@ -208,11 +208,13 @@ class ArticleController extends Controller
             Storage::disk('public')->delete($article->cover_photo_path);
         }
 
-        // Delete associated documents and their files from storage
+       if($article->documents){
+         // Delete associated documents and their files from storage
         foreach ($article->documents as $document) {
             Storage::disk('public')->delete($document->path);
         }
         $article->documents()->delete();
+       }
 
         $article->delete();
         return Redirect::route('articles.index')->with('success', 'Article supprimé avec succès.');
