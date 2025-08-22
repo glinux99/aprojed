@@ -4,62 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class SettingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // On utilise firstOrCreate pour s'assurer qu'il y a toujours une ligne de paramètres.
+        $settings = Setting::firstOrCreate([]);
+        return Inertia::render('Settings', [
+            'settings' => $settings
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function update(Request $request)
     {
-        //
-    }
+        $validatedData = $request->validate([
+            'phone_number' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:255',
+            'facebook_url' => 'nullable|url|max:255',
+            'instagram_url' => 'nullable|url|max:255',
+            'twitter_url' => 'nullable|url|max:255',
+            'home_cover_photo' => 'nullable|image|max:2048', // 2MB Max
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $settings = Setting::firstOrCreate([]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Setting $setting)
-    {
-        //
-    }
+        $settings->update($request->except('home_cover_photo'));
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Setting $setting)
-    {
-        //
-    }
+        if ($request->hasFile('home_cover_photo')) {
+            if ($settings->home_cover_photo_path) {
+                Storage::disk('public')->delete($settings->home_cover_photo_path);
+            }
+            $settings->home_cover_photo_path = $request->file('home_cover_photo')->store('settings_covers', 'public');
+            $settings->save();
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Setting $setting)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Setting $setting)
-    {
-        //
+        return Redirect::route('settings.index')->with('success', 'Paramètres mis à jour avec succès.');
     }
 }

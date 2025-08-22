@@ -122,74 +122,37 @@
                 <div class="d-inline-block rounded-pill bg-secondary text-primary py-1 px-3 mb-3">Notre Équipe</div>
                 <h1 class="display-6 mb-5">Rencontrez ceux qui œuvrent sur le terrain</h1>
             </div>
-            <div class="row g-4">
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="team-item position-relative rounded overflow-hidden">
-                        <div class="overflow-hidden">
-                            <img class="img-fluid" src="{{ asset('assets/img/p01.jpg') }}" alt="Membre de l'équipe">
-                        </div>
-                        <div class="team-text bg-light text-center p-4">
-                            <h5>Guillain PUNZU</h5>
-                            <p class="text-primary">Directeur exécutif</p>
-                            <div class="team-social text-center">
-                                <a class="btn btn-square" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-instagram"></i></a>
+            <div class="row g-4 justify-content-center">
+                @if(isset($teamMembers) && $teamMembers->count() > 0)
+                    @foreach($teamMembers as $index => $member)
+                        <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
+                            <div class="team-item position-relative rounded overflow-hidden h-100">
+                                <div class="overflow-hidden">
+                                    @if($member->profile_photo_path)
+                                        <img class="img-fluid" style="height: 300px; width: 100%; object-fit: cover;" src="{{ asset('storage/' . $member->profile_photo_path) }}" alt="Photo de {{ $member->name }}">
+                                    @else
+                                        <div class="img-fluid d-flex align-items-center justify-content-center bg-light" style="height: 300px; width: 100%;">
+                                            <i class="fa fa-user fa-3x text-muted"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="team-text bg-light text-center p-4">
+                                    <h5>{{ $member->name }}</h5>
+                                    <p class="text-primary">{{ $member->role }}</p>
+                                    <div class="team-social text-center">
+                                        <a class="btn btn-square" href="{{ $siteSettings->facebook_url ?? '#' }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                        <a class="btn btn-square" href="{{ $siteSettings->twitter_url ?? '#' }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                                        <a class="btn btn-square" href="{{ $siteSettings->instagram_url ?? '#' }}" target="_blank"><i class="fab fa-instagram"></i></a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="team-item position-relative rounded overflow-hidden">
-                        <div class="overflow-hidden">
-                            <img class="img-fluid" src="{{ asset('assets/img/p02.jpg') }}" alt="Membre de l'équipe">
-                        </div>
-                        <div class="team-text bg-light text-center p-4">
-                            <h5>Yannick RUTSUBA</h5>
-                            <p class="text-primary">Communication/As log</p>
-                            <div class="team-social text-center">
-                                <a class="btn btn-square" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="team-item position-relative rounded overflow-hidden">
-                        <div class="overflow-hidden">
-                            <img class="img-fluid" src="{{ asset('assets/img/p03.jpg') }}" alt="Membre de l'équipe">
-                        </div>
-                        <div class="team-text bg-light text-center p-4">
-                            <h5>Joseph BOSHWENDA</h5>
-                            <p class="text-primary">Admin/As programme</p>
-                            <div class="team-social text-center">
-                                <a class="btn btn-square" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-                    <div class="team-item position-relative rounded overflow-hidden">
-                        <div class="overflow-hidden">
-                            <img class="img-fluid" src="{{ asset('assets/img/p04.jpg') }}" alt="Membre de l'équipe">
-                        </div>
-                        <div class="team-text bg-light text-center p-4">
-                            <h5>Joël KULU</h5>
-                            <p class="text-primary">Réceptionniste </p>
-                            <div class="team-social text-center">
-                                <a class="btn btn-square" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-square" href=""><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @else
+                    <p class="text-center">Aucun membre de l'équipe à afficher pour le moment.</p>
+                @endif
             </div>
         </div>
     </div>
     <!-- Team End -->
 @endsection
-

@@ -35,10 +35,10 @@ const navigation = [
 
 const adminNavigation = [
   { name: 'Utilisateurs', href: route('users.index'), icon: UsersIcon, current: route().current('users.index') },
-  { name: 'Documents', href: route('users.index'), icon: UsersIcon, current: route().current('users.index') },
-  { name: 'Rôles', href: route('roles.index'), icon: KeyIcon, current: route().current('roles.index') },
-  { name: 'Permissions', href: route('permissions.index'), icon: ShieldCheckIcon, current: route().current('permissions.index') },
-  { name: 'Configuration Site', href: route('settings.edit', 1), icon: AdjustmentsHorizontalIcon, current: route().current('settings.edit') },
+  { name: 'Documents', href: route('documents.index'), icon: FolderIcon, current: route().current('documents.index') },
+//   { name: 'Rôles', href: route('roles.index'), icon: KeyIcon, current: route().current('roles.index') },
+//   { name: 'Permissions', href: route('permissions.index'), icon: ShieldCheckIcon, current: route().current('permissions.index') },
+  { name: 'Configuration Site', href: route('settings.index'), icon: AdjustmentsHorizontalIcon, current: route().current('settings.edit') },
 ];
 </script>
 
@@ -112,7 +112,7 @@ const adminNavigation = [
       <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
         <div class="flex h-16 shrink-0 items-center">
           <Link href="/">
-              <img src="/assets/img/logo sur fond BLANC.jpg" alt="logo" class="h-8 w-auto">
+              <img src="/assets/img/aprojedwhitelg.png" alt="logo" class="h-12 w-auto">
           </Link>
         </div>
         <nav class="flex flex-1 flex-col">

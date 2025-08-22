@@ -6,17 +6,17 @@
                     <h1 class="fw-bold text-primary mb-4">APRO<span class="text-white">JED</span></h1>
                     <p>APROJED R.D.Congo est une organisation non gouvernementale dédiée à la mise en œuvre de projets de développement durable en République Démocratique du Congo.</p>
                     <div class="d-flex pt-2">
-                        <a class="btn btn-square me-1" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-square me-1" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-square me-1" href=""><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-square me-0" href=""><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-square me-1" href="{{ $siteSettings->twitter_url ?? 'Goma'}}"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-square me-1" href="{{ $siteSettings->facebook_url ?? 'Goma'}}"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-square me-1" href="{{ $siteSettings->youtube_url ?? 'Goma'}}"><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-square me-0" href="{{ $siteSettings->linkedin_url ?? 'Goma'}}"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h5 class="text-light mb-4">Adresse</h5>
-                    <p><i class="fa fa-map-marker-alt me-3"></i>97, De l'Unité, Nord-Kivu</p>
-                    <p><i class="fa fa-phone-alt me-3"></i>+243 970 912 428</p>
-                    <p><i class="fa fa-envelope me-3"></i>info@aprojed.com</p>
+                    <p><i class="fa fa-map-marker-alt me-3"></i>{{ $siteSettings->address ?? 'Goma'}}</p>
+                    <p><i class="fa fa-phone-alt me-3"></i>{{ $siteSettings->phone_number ?? '+243970912428'}}</p>
+                    <p><i class="fa fa-envelope me-3"></i>{{ $siteSettings->email ?? 'info@aprojed.com'}}</p>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h5 class="text-light mb-4">Lien rapide</h5>

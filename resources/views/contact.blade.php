@@ -28,21 +28,21 @@
                     <div class="bg-light p-4 text-center">
                         <i class="fa fa-map-marker-alt fa-2x text-primary mb-3"></i>
                         <h5 class="text-primary">Adresse</h5>
-                        <p class="mb-0">office, Karisimbi, Ville de Goma</p>
+                        <p class="mb-0">{{ $siteSettings->address ?? 'Non configurée' }}</p>
                     </div>
                 </div>
                 <div class="col-md-4 wow fadeInUp" data-wow-delay="0.3s">
                     <div class="bg-light p-4 text-center">
                         <i class="fa fa-envelope fa-2x text-primary mb-3"></i>
                         <h5 class="text-primary">Email</h5>
-                        <p class="mb-0">info@aprojed.com</p>
+                        <p class="mb-0">{{ $siteSettings->email ?? 'Non configuré' }}</p>
                     </div>
                 </div>
                 <div class="col-md-4 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="bg-light p-4 text-center">
                         <i class="fa fa-phone-alt fa-2x text-primary mb-3"></i>
                         <h5 class="text-primary">Téléphone</h5>
-                        <p class="mb-0">+243 970 000 000</p>
+                        <p class="mb-0">{{ $siteSettings->phone_number ?? 'Non configuré' }}</p>
                     </div>
                 </div>
             </div>

@@ -18,43 +18,6 @@
 @php
     use Illuminate\Support\Str;
 
-    $activities = [
-        [
-            'title' => 'Distribution de kits scolaires à Goma',
-            'description' => 'Dans le cadre de notre programme d\'éducation pour tous, nous avons distribué des kits scolaires complets à plus de 500 enfants dans les écoles primaires de Goma pour assurer un meilleur avenir.',
-            'image' => 'assets/img/courses-1.jpg', // Using existing images for demo
-            'author' => 'Guillain PUNZU',
-            'date' => '15 Octobre 2023',
-            'category' => 'Éducation'
-        ],
-        [
-            'title' => 'Forage d\'un nouveau puits d\'eau potable',
-            'description' => 'La communauté de Sake a désormais accès à une source d\'eau potable saine grâce au nouveau puits foré par nos équipes. Ce projet va réduire les maladies hydriques et améliorer la santé.',
-            'image' => 'assets/img/courses-2.jpg', // Using existing images for demo
-            'author' => 'Joseph BOSHWENDA',
-            'date' => '02 Novembre 2023',
-            'category' => 'Santé et Hygiène'
-        ],
-        [
-            'title' => 'Formation en agriculture durable pour les femmes',
-            'description' => 'Un atelier de formation sur les techniques d\'agriculture durable a été organisé pour les femmes agricultrices de la région de Masisi, renforçant leur autonomie économique et sécurité alimentaire.',
-            'image' => 'assets/img/courses-3.jpg', // Using existing images for demo
-            'author' => 'Yannick RUTSUBA',
-            'date' => '28 Novembre 2023',
-            'category' => 'Développement Économique'
-        ],
-        [
-            'title' => 'Campagne de reboisement dans le parc des Virunga',
-            'description' => 'En partenariat avec les communautés locales, nous avons lancé une vaste campagne de reboisement pour restaurer l\'écosystème et lutter contre la déforestation dans cette zone protégée.',
-            'image' => 'assets/img/about-1.jpg', // Using existing images for demo
-            'author' => 'L\'équipe APROJED',
-            'date' => '05 Décembre 2023',
-            'category' => 'Environnement'
-        ],
-    ];
-
-    $categories = ['Éducation', 'Santé et Hygiène', 'Développement Économique', 'Environnement', 'Protection de l\'enfance'];
-    $recent_activities = array_slice($activities, 0, 3);
 @endphp
 
 <!-- Activities Start -->
@@ -68,20 +31,19 @@
                         <div class="col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
                             <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
                                 <div class="text-center p-4 pt-0">
-                                    <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
-                                        <small>{{ $activity['category'] }}</small>
-                                    </div>
-                                    <h5 class="mb-3">{{ $activity['title'] }}</h5>
-                                    <p>{{ Str::limit($activity['description'], 120) }}</p>
-                                    <div class="d-flex justify-content-center text-muted">
-                                        <small class="me-3"><i class="fa fa-user text-primary me-2"></i>{{ $activity['author'] }}</small>
-                                        <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity['date'] }}</small>
-                                    </div>
-                                </div>
-                                <div class="position-relative mt-auto">
-                                    <img class="img-fluid" src="{{ asset($activity['image']) }}" alt="Image de l'activité : {{ $activity['title'] }}">
+                                      <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
+                                        <small>{{ $activity['category']['name'] }}</small>
+                                    </div></div>
+                                <div class="position-relative mt-auto" style="min-height: 250px;">
+                                    @if($activity->cover_photo_path)
+                                        <img class="img-fluid w-100 h-100" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}" style="object-fit: cover;">
+                                    @else
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <i class="fa fa-image fa-3x text-muted"></i>
+                                        </div>
+                                    @endif
                                     <div class="causes-overlay">
-                                        <a class="btn btn-outline-primary" href="">
+                                        <a class="btn btn-outline-primary" href="{{ route('activities.show', $activity) }}">
                                             Lire Plus
                                             <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
                                                 <i class="fa fa-arrow-right"></i>
@@ -89,6 +51,33 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="text-center p-4 pt-2">
+
+                                    <h5 class="mb-3">{{ $activity->title }}</h5>
+                                    <p>{{ Str::limit(strip_tags($activity->content), 120) }}</p>
+
+                                    @if($activity->documents)
+                                        <div class="mt-2 mb-3 text-start">
+                                            <h6 class="text-muted small text-uppercase">Documents joints</h6>
+                                            <ul class="list-unstyled mb-0">
+                                                @foreach($activity->documents->take(2) as $document)
+                                                <li>
+                                                    <a href="{{ asset('storage/' . $document->path) }}" class="text-sm text-decoration-none" download>
+                                                        <i class="fa fa-paperclip text-primary me-1"></i>
+                                                        {{ Str::limit($document->original_name, 25) }}
+                                                    </a>
+                                                </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    @endif
+
+                                    <div class="d-flex justify-content-center text-muted">
+                                        <small class="me-3"><i class="fa fa-user text-primary me-2"></i>{{ $activity->user->name }}</small>
+                                        <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d M Y') }}</small>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     @endforeach
@@ -97,19 +86,7 @@
                 <!-- Pagination Start -->
                 <div class="row mt-5 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="col-12">
-                        <nav aria-label="Page navigation">
-                          <ul class="pagination justify-content-center">
-                            <li class="page-item disabled">
-                              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Précédent</a>
-                            </li>
-                            <li class="page-item active" aria-current="page"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                              <a class="page-link" href="#">Suivant</a>
-                            </li>
-                          </ul>
-                        </nav>
+                        {{ $activities->links() }}
                     </div>
                 </div>
                 <!-- Pagination End -->
@@ -123,22 +100,28 @@
                     <ul class="list-group list-group-flush">
                         @foreach($categories as $category)
                             <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <a href="" class="text-dark">{{ $category }}</a>
-                                <span class="badge bg-primary rounded-pill">14</span> <!-- Dummy count -->
+                                <a href="#" class="text-dark">{{ $category->name }}</a>
+                                <span class="badge bg-primary rounded-pill">{{ $category->articles_count }}</span>
                             </li>
                         @endforeach
                     </ul>
                 </div>
 
                 <!-- Recent Activities -->
-                <div class="wow fadeInUp" data-wow-delay="0.3s">
+                <div class="wow fadeInUp mt-5" data-wow-delay="0.3s">
                     <h3 class="mb-4">Activités Récentes</h3>
-                    @foreach($recent_activities as $activity)
+                    @foreach($activities->take(5) as $activity)
                         <div class="d-flex mb-3">
-                            <img src="{{ asset($activity['image']) }}" class="img-fluid flex-shrink-0" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
+                            @if($activity->cover_photo_path)
+                                <img src="{{ asset('storage/' . $activity->cover_photo_path) }}" class="img-fluid flex-shrink-0" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;" alt="{{ $activity->title }}">
+                            @else
+                                <div class="bg-light d-flex justify-content-center align-items-center flex-shrink-0" style="width: 80px; height: 80px; border-radius: 5px;">
+                                    <i class="fa fa-image fa-2x text-muted"></i>
+                                </div>
+                            @endif
                             <div class="ms-3">
-                                <h6 class="mb-1"><a href="" class="text-dark">{{ Str::limit($activity['title'], 40) }}</a></h6>
-                                <small class="text-muted"><i class="fa fa-calendar-alt text-primary me-1"></i>{{ $activity['date'] }}</small>
+                                <h6 class="mb-1"><a href="{{ route('activities.show', $activity) }}" class="text-dark">{{ Str::limit($activity->title, 40) }}</a></h6>
+                                <small class="text-muted"><i class="fa fa-calendar-alt text-primary me-1"></i>{{ $activity->created_at->translatedFormat('d M Y') }}</small>
                             </div>
                         </div>
                     @endforeach

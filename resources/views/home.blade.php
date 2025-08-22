@@ -4,8 +4,12 @@
     <div class="container-fluid p-0 mb-5">
         <div id="header-carousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img class="w-100" src="{{ asset('assets/img/carousel-1.jpg') }}" alt="Image du carrousel">
+                <div class="carousel-item active" style="max-height: 90vh; overflow: hidden;">
+                    @if(isset($siteSettings) && $siteSettings->home_cover_photo_path)
+                        <img class="w-100" style="object-fit: cover; object-position: center;" src="{{ asset('storage/' . $siteSettings->home_cover_photo_path) }}" alt="Image de couverture">
+                    @else
+                        <img class="w-100" src="{{ asset('assets/img/carousel-1.jpg') }}" alt="Image du carrousel">
+                    @endif
                     <div class="carousel-caption">
                         <div class="container">
                             <div class="row justify-content-center">
@@ -100,110 +104,48 @@
     <!-- Causes Start -->
     <div class="container-xxl bg-light my-5 py-5">
         <div class="container py-5">
+            @php
+                use Illuminate\Support\Str;
+            @endphp
             <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
-                <div class="d-inline-block rounded-pill bg-secondary text-primary py-1 px-3 mb-3">Nos Causes Principales</div>
-                <h1 class="display-6 mb-5">Chaque Communauté Mérite une Chance de Prospérer</h1>
+                <div class="d-inline-block rounded-pill bg-secondary text-primary py-1 px-3 mb-3">Nos Activités</div>
+                <h1 class="display-6 mb-5">Découvrez nos dernières actions sur le terrain</h1>
             </div>
             <div class="row g-4 justify-content-center">
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
-                        <div class="text-center p-4 pt-0">
-                            <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
-                                <small>Éducation</small>
-                            </div>
-                            <h5 class="mb-3">Éducation pour tous en R.D. Congo</h5>
-                            <p>L'accès à une éducation de qualité est la clé de l'avenir. Nous construisons des écoles et fournissons le matériel nécessaire pour offrir aux enfants un meilleur départ dans la vie.</p>
-                            <div class="causes-progress bg-light p-3 pt-2">
-                                <div class="d-flex justify-content-between">
-                                    {{-- <p class="text-dark">10,000 <small class="text-body">Atteind</small></p>
-                                    <p class="text-dark">9,542 <small class="text-body">Reste</small></p> --}}
+                @if(isset($recentActivities) && $recentActivities->count() > 0)
+                    @foreach($recentActivities as $index => $activity)
+                        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
+                            <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
+                                <div class="text-center p-4 pt-0">
+                                    <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
+                                        <small>{{ $activity->category->name }}</small>
+                                    </div>
+                                    <h5 class="mb-3">{{ $activity->title }}</h5>
+                                    <p>{{ Str::limit(strip_tags($activity->content), 100) }}</p>
                                 </div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
-                                        <span>90%</span>
+                                <div class="position-relative mt-auto">
+                                    @if($activity->cover_photo_path)
+                                        <img class="img-fluid" style="height: 250px; width: 100%; object-fit: cover;" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}">
+                                    @else
+                                        <div class="img-fluid d-flex align-items-center justify-content-center bg-light" style="height: 250px; width: 100%;">
+                                            <i class="fa fa-image fa-3x text-muted"></i>
+                                        </div>
+                                    @endif
+                                    <div class="causes-overlay">
+                                        <a class="btn btn-outline-primary" href="{{ route('activities.show', $activity) }}">
+                                            Lire Plus
+                                            <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
+                                                <i class="fa fa-arrow-right"></i>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="position-relative mt-auto">
-                            <img class="img-fluid" src="{{ asset('assets/img/courses-1.jpg') }}" alt="Image de la cause">
-                            <div class="causes-overlay">
-                                <a class="btn btn-outline-primary" href="">
-                                    Lire Plus
-                                    <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
-                                        <i class="fa fa-arrow-right"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
-                        <div class="text-center p-4 pt-0">
-                            <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
-                                <small>Sécurité alimentaire</small>
-                            </div>
-                            <h5 class="mb-3">Garantir l'accès à une bonne alimentations</h5>
-                            <p>L'eau, c'est la vie. Nos projets de forage et de purification de l'eau permettent de lutter contre les maladies et d'améliorer la santé des communautés.</p>
-                            <div class="causes-progress bg-light p-3 pt-2">
-                                <div class="d-flex justify-content-between">
-                                    {{-- <p class="text-dark">10,000 <small class="text-body">Atteind</small></p>
-                                    <p class="text-dark">9,542 <small class="text-body">Reste</small></p> --}}
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100">
-                                        <span>80%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="position-relative mt-auto">
-                            <img class="img-fluid" src="{{ asset('assets/img/courses-2.jpg') }}" alt="Image de la cause">
-                            <div class="causes-overlay">
-                                <a class="btn btn-outline-primary" href="">
-                                    Lire Plus
-                                    <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
-                                        <i class="fa fa-arrow-right"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="causes-item d-flex flex-column bg-white border-top border-5 border-primary rounded-top overflow-hidden h-100">
-                        <div class="text-center p-4 pt-0">
-                            <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
-                                <small>Développement Économique</small>
-                            </div>
-                            <h5 class="mb-3">Soutenir l'entrepreneuriat local</h5>
-                            <p>Nous soutenons les initiatives locales et l'agriculture durable pour renforcer l'autonomie économique et la sécurité alimentaire des familles.</p>
-                            <div class="causes-progress bg-light p-3 pt-2">
-                                <div class="d-flex justify-content-between">
-                                    {{-- <p class="text-dark">10,000 <small class="text-body">Atteind</small></p>
-                                    <p class="text-dark">9,542 <small class="text-body">Reste</small></p> --}}
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-                                        <span>40%</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="position-relative mt-auto">
-                            <img class="img-fluid" src="{{ asset('assets/img/courses-3.jpg') }}" alt="Image de la cause">
-                            <div class="causes-overlay">
-                                <a class="btn btn-outline-primary" href="">
-                                    Lire Plus
-                                    <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
-                                        <i class="fa fa-arrow-right"></i>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @else
+                    <p class="text-center">Aucune activité récente à afficher pour le moment.</p>
+                @endif
             </div>
         </div>
     </div>
@@ -274,42 +216,21 @@
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <div class="h-100 bg-white p-5">
-                        <form>
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control bg-light border-0" id="name" placeholder="Votre Nom">
-                                        <label for="name">Votre Nom</label>
-                                    </div>
+                            <div class="flex justify-center">
+                                <div>
+                                    <label for="">Actions et projets pour le developpement ASBL</label>
                                 </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control bg-light border-0" id="email" placeholder="Votre Email">
-                                        <label for="email">Votre Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="btn-group d-flex justify-content-around">
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" checked>
-                                        <label class="btn btn-light py-3" for="btnradio1">$10</label>
+                                <div class="flex ">
 
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2">
-                                        <label class="btn btn-light py-3" for="btnradio2">$20</label>
-
-                                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3">
-                                        <label class="btn btn-light py-3" for="btnradio3">$30</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <button class="btn btn-primary px-5" style="height: 60px;">
-                                        Faire un Don
+                                    <a  class="btn btn-primary px-5" style="height: 60px;">
+                                      <img src="https://tmb.cd/wp-content/uploads/2021/12/logo-carre-small.png" class="img-fluid" style="height: 50px; object-fit: cover;" alt="">  00017 28007 75095790001 20
                                         <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
                                             <i class="fa fa-arrow-right"></i>
                                         </div>
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
-                        </form>
+
                     </div>
                 </div>
             </div>

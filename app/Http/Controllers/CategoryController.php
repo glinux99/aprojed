@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
 
 class CategoryController extends Controller
 {
@@ -12,7 +14,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Category', [
+            'categories' => Category::latest()->paginate(10)
+        ]);
     }
 
     /**
@@ -28,7 +32,14 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories',
+            'description' => 'nullable|string',
+        ]);
+
+        Category::create($validated);
+
+        return Redirect::route('categories.index')->with('success', 'Catégorie créée avec succès.');
     }
 
     /**
@@ -52,7 +63,14 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable|string',
+        ]);
+
+        $category->update($validated);
+
+        return Redirect::route('categories.index')->with('success', 'Catégorie modifiée avec succès.');
     }
 
     /**
@@ -60,6 +78,11 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        if ($category->articles()->exists()) {
+            return Redirect::route('categories.index')->with('error', 'Cette catégorie ne peut pas être supprimée car elle est utilisée par des articles.');
+        }
+
+        $category->delete();
+        return Redirect::route('categories.index')->with('success', 'Catégorie supprimée avec succès.');
     }
 }

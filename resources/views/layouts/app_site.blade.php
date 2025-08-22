@@ -39,15 +39,15 @@
     <div class="container-fluid fixed-top px-0 wow fadeIn" data-wow-delay="0.1s">
         <div class="top-bar text-white-50 row gx-0 align-items-center d-none d-lg-flex">
             <div class="col-lg-6 px-5 text-start">
-                <small><i class="fa fa-map-marker-alt me-2"></i>office, Karisimbi, Ville de Goma</small>
-                <small class="ms-4"><i class="fa fa-envelope me-2"></i>info@aprojed.com</small>
+                <small><i class="fa fa-map-marker-alt me-2"></i>{{ $siteSettings->address}}</small>
+                <small class="ms-4"><i class="fa fa-envelope me-2"></i>{{ $siteSettings->email}}</small>
             </div>
             <div class="col-lg-6 px-5 text-end">
                 <small>Suivez-nous sur:</small>
-                <a class="text-white-50 ms-3" href=""><i class="fab fa-facebook-f"></i></a>
-                <a class="text-white-50 ms-3" href=""><i class="fab fa-twitter"></i></a>
-                <a class="text-white-50 ms-3" href=""><i class="fab fa-linkedin-in"></i></a>
-                <a class="text-white-50 ms-3" href=""><i class="fab fa-instagram"></i></a>
+                <a class="text-white-50 ms-3" href="{{ $siteSettings->facebook_url}}"><i class="fab fa-facebook-f"></i></a>
+                <a class="text-white-50 ms-3" href="{{ $siteSettings->twitter_url}}"><i class="fab fa-twitter"></i></a>
+                <a class="text-white-50 ms-3" href="{{ $siteSettings->linkedin_url}}"><i class="fab fa-linkedin-in"></i></a>
+                <a class="text-white-50 ms-3" href="{{ $siteSettings->instagram_url}}"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
 
