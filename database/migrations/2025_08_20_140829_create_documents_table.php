@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('path')->unique()->nullable();
             $table->string('original_name')->nullable();
             $table->string('description')->nullable();
+          $table->foreignId('article_id')->nullable()->constrained()->onDelete('cascade');
             $table->nullableMorphs('documentable');
             $table->timestamps();
         });
