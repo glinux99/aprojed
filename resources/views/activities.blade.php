@@ -72,7 +72,7 @@
                                         </div>
                                     @endif
 
-                                    <div class="d-flex justify-content-center text-muted">
+                                    <div class="d-flex justify-content-between text-muted">
                                         <small class="me-3"><i class="fa fa-user text-primary me-2"></i>{{ $activity->user->name }}</small>
                                         <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d M Y') }}</small>
                                     </div>
