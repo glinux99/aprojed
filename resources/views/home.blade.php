@@ -206,8 +206,8 @@
 
 
     <!-- Donate Start -->
-    <div class="container-fluid donate my-5 py-5" data-parallax="scroll" data-image-src="{{ asset('assets/img/carousel-2.jpg') }}">
-        <div class="container py-5">
+    <div class="container-fluid donate my-5 py-5" data-parallax="scroll" data-image-src="{{ asset('assets/img/carousel-2.jpg') }}" style="background:rgba(0, 29, 35, .8)!important">
+        <div class="container py-5" >
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <div class="d-inline-block rounded-pill bg-secondary text-primary py-1 px-3 mb-3">Faites un Don</div>
@@ -217,7 +217,7 @@
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
                     <div class="h-100 bg-white p-2 py-4 rounded">
                             <div class="d-flex flex-column justify-center align-items-center">
-                                <div class="py-2">
+                                <div class="py-2 text-center">
                                     <label for="">Actions et projets pour le developpement ASBL</label>
                                 </div>
                                 <div class="flex ">
