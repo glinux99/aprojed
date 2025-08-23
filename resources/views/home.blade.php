@@ -15,7 +15,7 @@
                             <div class="row justify-content-center">
                                 <div class="col-lg-7 pt-5">
                                     <h1 class="display-5 text-white mb-3 animated slideInDown">ACTIONS ET PROJETS POUR UN DÉVELOPPEMENT DURABLE</h1>
-                                    <p class="fs-5 text-white-50 mb-5 animated slideInDown">Ensemble, construisons un avenir meilleur pour la R.D. Congo. APROJED s'engage dans des projets concrets pour un développement qui respecte l'environnement et valorise les communautés locales.</p>
+                                    <p class="fs-5 text-white-50 mb-5 animated slideInDown">APROJED s'engage dans des projets concrets pour un développement qui respecte l'environnement et valorise les communautés locales.</p>
                                     <a class="btn btn-primary py-2 px-3 animated slideInDown" href="/about">
                                         En Savoir Plus
                                         <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
@@ -215,14 +215,14 @@
                     <p class="text-white-50 mb-0">Votre soutien est essentiel pour la continuité de nos actions. Chaque don, petit ou grand, contribue directement à l'amélioration des conditions de vie en R.D. Congo.</p>
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="h-100 bg-white p-5">
-                            <div class="flex justify-center">
-                                <div>
+                    <div class="h-100 bg-white p-2 py-4">
+                            <div class="d-flex flex-column justify-center align-items-center">
+                                <div class="py-2">
                                     <label for="">Actions et projets pour le developpement ASBL</label>
                                 </div>
                                 <div class="flex ">
 
-                                    <a  class="btn btn-primary px-5" style="height: 60px;">
+                                    <a  class="btn btn-primary px-2" style="height: 60px;">
                                       <img src="https://tmb.cd/wp-content/uploads/2021/12/logo-carre-small.png" class="img-fluid" style="height: 50px; object-fit: cover;" alt="">  00017 28007 75095790001 20
                                         <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
                                             <i class="fa fa-arrow-right"></i>
