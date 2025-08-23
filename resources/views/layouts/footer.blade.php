@@ -1,5 +1,18 @@
  <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-white-50 footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+  <div class="container py-4">
+    <hr>
+            <div class="text-center">
+                <h5 class="text-lightd mb-4">Nos Partenaires</h5>
+                <div class="d-flex justify-content-center align-items-center flex-wrap bg-white p-3 rounded">
+                    @if(isset($partners) && $partners->count() > 0)
+                        @foreach($partners as $partner)
+                            <a href="{{ $partner->url ?? '#' }}" target="_blank" rel="noopener noreferrer" class="mx-3 my-2" title="{{ $partner->name }}"><img src="{{ asset('storage/' . $partner->logo_path) }}" alt="{{ $partner->name }}" style="height: 80px; max-width: 170px; object-fit: contain;"></a>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+ <div class="container-fluid bg-dark text-white-50 footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
@@ -35,6 +48,7 @@
                 </div>
             </div>
         </div>
+
         <div class="container-fluid copyright">
             <div class="container">
                 <div class="row">

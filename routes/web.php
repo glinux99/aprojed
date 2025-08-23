@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -44,6 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/partners', [PartnerController::class, 'store'])->name('partners.store');
+    Route::post('/partners/{partner}', [PartnerController::class, 'update'])->name('partners.update');
+    Route::delete('/partners/{partner}', [PartnerController::class, 'destroy'])->name('partners.destroy');
 });
 
 require __DIR__.'/auth.php';

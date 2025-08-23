@@ -128,6 +128,7 @@
                         <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
                             <div class="team-item position-relative rounded overflow-hidden h-100">
                                 <div class="overflow-hidden">
+
                                     @if($member->profile_photo_path)
                                         <img class="img-fluid" style="height: 300px; width: 100%; object-fit: cover;" src="{{ asset('storage/' . $member->profile_photo_path) }}" alt="Photo de {{ $member->name }}">
                                     @else

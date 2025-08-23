@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Partner;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -13,9 +14,12 @@ class SettingController extends Controller
     public function index()
     {
         // On utilise firstOrCreate pour s'assurer qu'il y a toujours une ligne de paramètres.
+        $partners = Partner::all();
+
         $settings = Setting::firstOrCreate([]);
         return Inertia::render('Settings', [
-            'settings' => $settings
+            'settings' => $settings,
+            'partners'=>$partners
         ]);
     }
 
