@@ -16,7 +16,7 @@
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
-                    <h1 class="fw-bold text-primary mb-4">APRO<span class="text-white">JED</span></h1>
+                    <h1 class="fw-bold  mb-4" style="color: rgb(11, 190, 11)">APRO<span class="text-white">JED</span></h1>
                     <p>APROJED R.D.Congo est une organisation non gouvernementale dédiée à la mise en œuvre de projets de développement durable en République Démocratique du Congo.</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-square me-1" href="{{ $siteSettings->twitter_url ?? 'Goma'}}"><i class="fab fa-twitter"></i></a>
