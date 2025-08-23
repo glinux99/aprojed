@@ -215,7 +215,7 @@
                     <p class="text-white-50 mb-0">Votre soutien est essentiel pour la continuité de nos actions. Chaque don, petit ou grand, contribue directement à l'amélioration des conditions de vie en R.D. Congo.</p>
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="h-100 bg-white p-2 py-4">
+                    <div class="h-100 bg-white p-2 py-4 rounded">
                             <div class="d-flex flex-column justify-center align-items-center">
                                 <div class="py-2">
                                     <label for="">Actions et projets pour le developpement ASBL</label>
