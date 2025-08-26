@@ -9,6 +9,7 @@ import Modal from '@/Components/Modal.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
+import { CloudArrowDownIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     documents: Object,
@@ -96,7 +97,7 @@ watch(searchTerm, (value) => {
 
 <template>
     <AppLayout title="Documents">
-        <div class="sm:flex sm:items-center">
+ <div class="sm:flex sm:items-center mx-2">
             <div class="sm:flex-auto">
                 <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Documents</h1>
                 <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">La liste de tous les documents.</p>
@@ -107,12 +108,12 @@ watch(searchTerm, (value) => {
         </div>
 
         <!-- Search Input -->
-        <div class="mt-6">
+ <div class="mt-6 mx-2">
             <TextInput v-model="searchTerm" type="text" placeholder="Rechercher un document..." class="block w-full" />
         </div>
 
         <!-- Documents Table -->
-        <div class="mt-8 flow-root">
+ <div class="mt-8 flow-root mx-2">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
@@ -131,7 +132,10 @@ watch(searchTerm, (value) => {
                             <tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                                 <tr v-for="document in documents.data" :key="document.id">
                                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-white sm:pl-6">
-                                        <a :href="`/storage/${document.path}`" target="_blank" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">{{ document.original_name }}</a>
+ <a :href="`/storage/${document.path}`" :download="document.original_name" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center">
+ <CloudArrowDownIcon class="size-5 mr-2" />
+ {{ document.original_name }}
+ </a>
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-gray-300">
                                         {{ document.description ? (document.description.substring(0, 50) + (document.description.length > 50 ? '...' : '')) : 'N/A' }}

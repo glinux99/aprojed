@@ -13,8 +13,8 @@ const sidebarOpen = ref(false);
         <div class="lg:pl-72">
             <AppBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
             <!-- Page Content -->
-            <main class="py-12">
-                <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <main class="py-12 mx-2">
+                <div class="mx-auto  max-w-7xl sm:px-6 lg:px-8">
                     <slot />
                 </div>
             </main>
