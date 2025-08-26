@@ -43,7 +43,7 @@ class DocumentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'document_file' => 'required|file|mimes:pdf,doc,docx,zip,rar,jpg,png|max:10240',
+            'document_file' => 'required|file',
             'article_id' => 'nullable|exists:articles,id',
         ]);
 

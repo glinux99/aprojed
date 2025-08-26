@@ -32,7 +32,7 @@ class SettingController extends Controller
             'facebook_url' => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
             'twitter_url' => 'nullable|url|max:255',
-            'home_cover_photo' => 'nullable|image|max:2048', // 2MB Max
+            'home_cover_photo' => 'nullable|image', // 2MB Max
         ]);
 
         $settings = Setting::firstOrCreate([]);
