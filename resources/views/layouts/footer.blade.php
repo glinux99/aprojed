@@ -9,20 +9,20 @@
                             <a href="{{ $partner->url ?? '#' }}" target="_blank" rel="noopener noreferrer" class="mx-3 my-2" title="{{ $partner->name }}"><img src="{{ asset('storage/' . $partner->logo_path) }}" alt="{{ $partner->name }}" style="height: 80px; max-width: 170px; object-fit: contain;"></a>
                         @endforeach
                     @endif
-                </div>
+                </div>WWW
             </div>
         </div>
  <div class="container-fluid bg-dark text-white-50 footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
                 <div class="col-lg-3 col-md-6">
-                    <h1 class="fw-bold  mb-4" style="color: rgb(11, 190, 11)">APRO<span class="text-white">JED</span></h1>
+                    <h1 class="fw-bold  mb-4" style="color: rgb(2, 26, 2)">APRO<span class="text-white">JED</span></h1>
                     <p>APROJED R.D.Congo est une organisation non gouvernementale dédiée à la mise en œuvre de projets de développement durable en République Démocratique du Congo.</p>
                     <div class="d-flex pt-2">
                         <a class="btn btn-square me-1" href="{{ $siteSettings->twitter_url ?? 'Goma'}}"><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-square me-1" href="{{ $siteSettings->facebook_url ?? 'Goma'}}"><i class="fab fa-facebook-f"></i></a>
                         <a class="btn btn-square me-1" href="{{ $siteSettings->youtube_url ?? 'Goma'}}"><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-square me-0" href="{{ $siteSettings->linkedin_url ?? 'Goma'}}"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-square me-0" hreWWWf="{{ $siteSettings->linkedin_url ?? 'Goma'}}"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">

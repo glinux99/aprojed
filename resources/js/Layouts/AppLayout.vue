@@ -11,7 +11,7 @@ const sidebarOpen = ref(false);
         <SideBar :sidebar-open="sidebarOpen" @close="sidebarOpen = false" />
 
         <div class="lg:pl-72">
-            <AppBar/>
+            <AppBar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
             <!-- Page Content -->
             <main class="py-12">
                 <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
