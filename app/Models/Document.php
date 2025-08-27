@@ -13,9 +13,18 @@ class Document extends Model
     protected $fillable = [
         'path',
         'original_name',
+        'description',
+        'documentable_id',
+        'documentable_type',
+
     ];
 
-    public function article(): BelongsTo
+    public function documentable()
+    {
+        return $this->morphTo();
+    }
+
+    public function article(): BelongsTo // This relationship is likely redundant if using morphTo
     {
         return $this->belongsTo(Article::class);
     }

@@ -85,7 +85,7 @@ class ArticleController extends Controller
 
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
-                $path = $file->store('article_documents', 'public');
+                $path = $file->store('documents', 'public');
                 $article->documents()->create([
                     'path' => $path,
                     'original_name' => $file->getClientOriginalName(),
@@ -162,9 +162,7 @@ class ArticleController extends Controller
         }
 
         if (!empty($validatedData['documents_to_delete'])) {
-            $documentsToDelete = Document::whereIn('id', $validatedData['documents_to_delete'])
-                                         ->where('article_id', $article->id)
-                                         ->get();
+            $documentsToDelete = $article->documents()->whereIn('id', $validatedData['documents_to_delete'])->get();
             foreach ($documentsToDelete as $doc) {
                 Storage::disk('public')->delete($doc->path);
                 $doc->delete();
@@ -173,7 +171,7 @@ class ArticleController extends Controller
 
         if ($request->hasFile('documents')) {
             foreach ($request->file('documents') as $file) {
-                $path = $file->store('article_documents', 'public');
+                $path = $file->store('documents', 'public');
                 $article->documents()->create([
                     'path' => $path,
                     'original_name' => $file->getClientOriginalName(),

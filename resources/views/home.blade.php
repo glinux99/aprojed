@@ -127,7 +127,7 @@
                                     @if($activity->cover_photo_path)
                                         <img class="img-fluid" style="height: 250px; width: 100%; object-fit: cover;" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}">
                                     @else
-                                        <div class="img-fluid d-flex align-items-center justify-content-center bg-light" style="height: 250px; width: 100%;">
+                                        <div class="img-fluid d-flex align-items-center justify-content-center bg-secondary" style="height: 250px; width: 100%;">
                                             <i class="fa fa-image fa-3x text-muted"></i>
                                         </div>
                                     @endif
@@ -165,7 +165,7 @@
                         <img class="img-fluid mb-4" src="{{ asset('assets/img/icon-1.png') }}" alt="Icône du service">
                         <h4 class="mb-3">Éducation et Formation</h4>
                         <p class="mb-4">Nous croyons en l'éducation comme pilier du développement. Nos programmes visent à améliorer l'accès et la qualité de l'enseignement pour les enfants et les adultes.</p>
-                        <a class="btn btn-outline-primary px-3" href="">
+                        <a class="btn btn-outline-primary px-3" href="/about">
                             En Savoir Plus
                             <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
                                 <i class="fa fa-arrow-right"></i>
@@ -178,7 +178,7 @@
                         <img class="img-fluid mb-4" src="{{ asset('assets/img/icon-2.png') }}" alt="Icône du service">
                         <h4 class="mb-3">Santé et Hygiène</h4>
                         <p class="mb-4">Un accès aux soins de base et à l'eau potable est un droit fondamental. Nous mettons en place des infrastructures pour améliorer la santé et le bien-être des populations.</p>
-                        <a class="btn btn-outline-primary px-3" href="">
+                        <a class="btn btn-outline-primary px-3" href="/about">
                             En Savoir Plus
                             <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
                                 <i class="fa fa-arrow-right"></i>
@@ -191,7 +191,7 @@
                         <img class="img-fluid mb-4" src="{{ asset('assets/img/icon-3.png') }}" alt="Icône du service">
                         <h4 class="mb-3">Agriculture et Environnement</h4>
                         <p class="mb-4">Nous promouvons des pratiques agricoles durables et des projets de reboisement pour préserver l'environnement et assurer la sécurité alimentaire.</p>
-                        <a class="btn btn-outline-primary px-3" href="">
+                        <a class="btn btn-outline-primary px-3" href="/about">
                             En Savoir Plus
                             <div class="d-inline-flex btn-sm-square bg-primary text-white rounded-circle ms-2">
                                 <i class="fa fa-arrow-right"></i>

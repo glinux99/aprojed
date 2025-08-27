@@ -22,12 +22,18 @@
     <div class="container-xxl py-5">
         <div class="container">
             <div class="row g-5">
-                <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
-                    <!-- Activity Image -->
-                    @if($activity->cover_photo_path)
-                        <img class="img-fluid rounded mb-4" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="{{ $activity->title }}">
-                    @endif
 
+                <div class="col-lg-8 wow fadeInUp " data-wow-delay="0.1s">
+                     <div class="position-relative mt-auto " >
+                    <!-- Activity Image -->
+
+                     @if($activity->cover_photo_path)
+                                        <img class="img-fluid rounded mb-4" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}" style="object-fit: cover;">
+                                    @else
+                                        <div style="min-height: 400px;" class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <i class="fa fa-image fa-3x text-muted"></i>
+                                        </div>
+                                    @endif
                     <!-- Activity Content -->
                     <div class="mb-4">
                         <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
@@ -44,11 +50,12 @@
                     </div>
 
                     <!-- Documents -->
-                    @if($activity->documents)
+                    @if($activity->documents())
                         <div class="mt-5 p-4 bg-light rounded">
                             <h3 class="mb-4">Documents joints</h3>
                             <ul class="list-group list-group-flush">
-                                @foreach($activity->documents as $document)
+                                @foreach($activity->documents()->get() as $document)
+
                                     <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
                                         <div>
                                             <i class="fa fa-paperclip text-primary me-2"></i>
@@ -63,6 +70,7 @@
                             </ul>
                         </div>
                     @endif
+                    </div>
                 </div>
 
                 <!-- Sidebar -->

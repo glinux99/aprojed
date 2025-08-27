@@ -29,7 +29,7 @@
                 <div class="row g-4">
                     @foreach($activities as $index => $activity)
                         <div class="col-md-6 wow fadeInUp" data-wow-delay="{{ 0.1 + ($index * 0.2) }}s">
-                            <div class="causes-item d-flex flex-column bg-white border-top border-5 shadow-lg border-primary rounded-top overflow-hidden h-100">
+                            <div class="causes-item d-flex flex-column bg-white border-top border-bottom border-5 shadow-lg border-primary rounded-top rounded-bottom overflow-hidden h-100">
                                 <div class="text-center p-4 pt-0">
                                       <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
                                         <small>{{ $activity['category']['name'] }}</small>
@@ -55,12 +55,11 @@
 
                                     <h5 class="mb-3">{{ $activity->title }}</h5>
                                     <p>{{ Str::limit(strip_tags($activity->content), 120) }}</p>
-
-                                    @if($activity->documents)
+                                    @if($activity->documents())
                                         <div class="mt-2 mb-3 text-start">
                                             <h6 class="text-muted small text-uppercase">Documents joints</h6>
                                             <ul class="list-unstyled mb-0">
-                                                @foreach($activity->documents->take(2) as $document)
+                                                @foreach($activity->documents()->get() as $document)
                                                 <li>
                                                     <a href="{{ asset('storage/' . $document->path) }}" class="text-sm text-decoration-none" download>
                                                         <i class="fa fa-paperclip text-primary me-1"></i>

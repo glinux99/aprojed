@@ -63,7 +63,7 @@
                             <h4 class="text-primary">Notre Vision</h4>
                             <p class="text-dark mb-2">Nous aspirons à une République Démocratique du Congo où chaque communauté est autonome, résiliente et prospère. Une nation où le développement économique se conjugue avec la justice sociale et la préservation de l'environnement pour les générations futures.</p>
                         </div>
-                        <a class="btn btn-primary py-2 px-3 me-3" href="">
+                        <a class="btn btn-primary py-2 px-3 me-3" href="#" data-bs-toggle="modal" data-bs-target="#donateModal">
                             Faire un don
                             <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
                                 <i class="fa fa-arrow-right"></i>
@@ -156,4 +156,26 @@
         </div>
     </div>
     <!-- Team End -->
+
+    <!-- Donate Modal Start -->
+    <div class="modal fade" id="donateModal" tabindex="-1" aria-labelledby="donateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="donateModalLabel">Faire un Don</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center p-4">
+                        <img src="https://tmb.cd/wp-content/uploads/2021/12/logo-carre-small.png" class="img-fluid mb-4" style="height: 70px; object-fit: contain;" alt="Logo TMB">
+                        <h5 class="mb-3">Actions et projets pour le developpement ASBL</h5>
+                        <p class="mb-2">Pour soutenir nos actions, vous pouvez effectuer un virement sur le compte suivant :</p>
+                        <p class="h4 text-primary my-3 font-monospace">00017 28007 75095790001 20</p>
+                        <p class="text-muted">Pour toute question, n'hésitez pas à nous contacter au :<br><strong>{{ $siteSettings->phone_number ?? 'Numéro non disponible' }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Donate Modal End -->
 @endsection

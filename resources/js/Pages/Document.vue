@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useForm, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -93,6 +93,7 @@ watch(searchTerm, (value) => {
         preserveScroll: true,
     });
 });
+onMounted(()=>console.log(props.documents));
 </script>
 
 <template>
@@ -189,7 +190,7 @@ watch(searchTerm, (value) => {
                     <InputLabel for="article_id" value="Lier à un article (optionnel)" />
                     <select id="article_id" v-model="form.article_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300">
                         <option value="">Aucun article</option>
-                        <option v-for="article in articles" :key="article.id" :value="article.id">{{ article.title }}</option>
+                        <option v-for="article in articles" :key="article.id" :value="article.id">{{ article.title }} </option>
                     </select>
                     <InputError :message="form.errors.article_id" class="mt-2" />
                 </div>
