@@ -28,7 +28,7 @@ Route::get('/', [SiteController::class,'index'])->name('home');
 Route::get('/about', [SiteController::class,'about'])->name('about');
 Route::get('/contact', [SiteController::class,'contact'])->name('contact');
 Route::get('/activities', [SiteController::class,'activities'])->name('activities');
-Route::get('/activities/{article}', [SiteController::class, 'showActivity'])->name('activities.show');
+Route::get('/activities/{article:slug}', [SiteController::class, 'showActivity'])->name('activities.show');
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

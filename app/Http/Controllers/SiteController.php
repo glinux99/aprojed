@@ -53,9 +53,15 @@ class SiteController extends Controller
         if (!$article->publicate) {
             abort(404);
         }
-         $siteSettings= Setting::first();
-          $partners = Partner::all();
+        $siteSettings= Setting::first();
+        $partners = Partner::all();
         $article->load('user', 'category', 'documents');
-        return view("activity-detail", ['activity' => $article,'siteSettings'=>$siteSettings, "partners"=>$partners]);
+        $recentActivities = Article::where('publicate', 1)
+                                   ->where('id', '!=', $article->id)
+                                   ->latest()
+                                   ->take(5)
+                                   ->get();
+
+        return view("activity-detail", ['activity' => $article, 'siteSettings' => $siteSettings, "partners" => $partners, 'recentActivities' => $recentActivities]);
     }
 }

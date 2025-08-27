@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Article extends Model
 {
+    use HasFactory, Sluggable;
     //
     protected $fillable = [
         'id',
         'title',
+        'slug',
         'content',
         'cover_photo_path',
         'source',
@@ -39,5 +43,13 @@ class Article extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+    public function sluggable(): array
+    {
+        return [
+            'slug'=>[
+                'source'=>'title', 'id'
+            ]
+            ];
     }
 }

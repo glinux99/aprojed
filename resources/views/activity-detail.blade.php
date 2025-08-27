@@ -103,7 +103,7 @@
                     <!-- Recent Activities -->
                     <div class="wow fadeInUp mt-5" data-wow-delay="0.3s">
                         <h3 class="mb-4">Autres Activités</h3>
-                        @foreach(App\Models\Article::where('publicate', 1)->where('id', '!=', $activity->id)->latest()->take(5)->get() as $recentActivity)
+                        @foreach($recentActivities as $recentActivity)
                             <div class="d-flex mb-3">
                                 @if($recentActivity->cover_photo_path)
                                     <img src="{{ asset('storage/' . $recentActivity->cover_photo_path) }}" class="img-fluid flex-shrink-0" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;" alt="{{ $recentActivity->title }}">

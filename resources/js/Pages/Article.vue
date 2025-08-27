@@ -9,6 +9,7 @@ defineProps({
 });
 const form = useForm({
     title: '',
+    slug: '',
     category_id: '',
     cover_photo: null,
     content: '',
@@ -25,8 +26,9 @@ const stripHtml = (html) => {
 }
 
     const publicateArticle = (article) => {
-        form.title =article.title;
-        form.category_id= article.category_id;
+        form.title = article.title;
+        form.slug = article.slug; // Add slug to the form data
+        form.category_id = article.category_id;
         form.publicate = 1;
         form.content = article.content;
         console.log(article.id);
