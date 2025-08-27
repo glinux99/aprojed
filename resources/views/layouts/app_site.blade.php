@@ -39,7 +39,12 @@
     <div class="container-fluid fixed-top px-0 wow fadeIn" data-wow-delay="0.1s">
         <div class="top-bar text-white-50 row gx-0 align-items-center d-none d-lg-flex">
             <div class="col-lg-6 px-5 text-start">
-                <small><i class="fa fa-map-marker-alt me-2"></i>{{ $siteSettings->address ?? "Goma, RDC, Congo"}}</small>
+                @php
+                    $address = $siteSettings->address ?? 'Goma, RDC, Congo';
+                @endphp
+                <small><i class="fa fa-map-marker-alt me-2"></i>
+                <span @if(strlen($address) > 45) style="font-size: 0.85em; vertical-align: middle;" @endif>{{ $address }}</span>
+                </small>
                 <small class="ms-4"><i class="fa fa-envelope me-2"></i>{{ $siteSettings->email?? "info@aprojed.com"}}</small>
             </div>
             <div class="col-lg-6 px-5 text-end">

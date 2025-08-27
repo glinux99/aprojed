@@ -40,20 +40,11 @@
                             <small>{{ $activity->category->name }}</small>
                         </div>
                         <h1 class="display-6 mb-3">{{ $activity->title }}</h1>
-                        <div class="d-flex align-items-center text-muted mb-4">
-                            <small class="d-flex align-items-center me-3">
-                                @if(isset($activity->user) && $activity->user->profile_photo_path)
-                                    <img src="{{ asset('storage/' . $activity->user->profile_photo_path) }}" class="rounded-circle me-2" alt="{{ $activity->user->name }}" style="width: 30px; height: 30px; object-fit: cover;">
-                                @else
-                                    <i class="fa fa-user text-primary me-2"></i>
-                                @endif
-                                <span>{{ $activity->user->name ?? 'Auteur inconnu' }}</span>
-                            </small>
-                            <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d F Y') }}</small>
-                        </div>
+
                         <div class="article-content">
                             {!! $activity->content !!}
                         </div>
+
                     </div>
 
                     <!-- Documents -->
@@ -78,6 +69,17 @@
                         </div>
                     @endif
                     </div>
+                     <div class="d-flex align-items-center justify-content-between text-muted my-4">
+                            <small class="d-flex align-items-center me-3">
+                                @if(isset($activity->user) && $activity->user->profile_photo_path)
+                                    <img src="{{ asset('storage/' . $activity->user->profile_photo_path) }}" class="rounded-circle me-2" alt="{{ $activity->user->name }}" style="width: 30px; height: 30px; object-fit: cover;">
+                                @else
+                                    <i class="fa fa-user text-primary me-2"></i>
+                                @endif
+                                <span>{{ $activity->user->name ?? 'Auteur inconnu' }}</span>
+                            </small>
+                            <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d F Y') }}</small>
+                        </div>
                 </div>
 
                 <!-- Sidebar -->
