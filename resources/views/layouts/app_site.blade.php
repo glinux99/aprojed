@@ -69,7 +69,7 @@
                     <a href="/contact" class="nav-item nav-link {{ Request::is('contact') ? 'active' : '' }}">Contact</a>
                 </div>
                 <div class="d-none d-lg-flex ms-2">
-                    <a class="btn btn-outline-primary py-2 px-3" href="" style="color: #ff6f0f">
+                    <a class="btn btn-outline-primary py-2 px-3" href="#" data-bs-toggle="modal" data-bs-target="#donateModal" style="color: #ff6f0f">
                         Faire un don
                         <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
                             <i class="fa fa-arrow-right"></i>
@@ -86,7 +86,27 @@
 
    @include('layouts.footer')
 
-
+       <!-- Donate Modal Start -->
+    <div class="modal fade" id="donateModal" tabindex="-1" aria-labelledby="donateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="donateModalLabel">Faire un Don</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center p-4">
+                        <img src="https://tmb.cd/wp-content/uploads/2021/12/logo-carre-small.png" class="img-fluid mb-4" style="height: 70px; object-fit: contain;" alt="Logo TMB">
+                        <h5 class="mb-3">Actions et projets pour le developpement ASBL</h5>
+                        <p class="mb-2">Pour soutenir nos actions, vous pouvez effectuer un virement sur le compte suivant :</p>
+                        <p class="h4 text-primary my-3 font-monospace">00017 28007 75095790001 20</p>
+                        <p class="text-muted">Pour toute question, n'hésitez pas à nous contacter au :<br><strong>{{ $siteSettings->phone_number ?? 'Numéro non disponible' }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Donate Modal End -->
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 

@@ -40,8 +40,15 @@
                             <small>{{ $activity->category->name }}</small>
                         </div>
                         <h1 class="display-6 mb-3">{{ $activity->title }}</h1>
-                        <div class="d-flex text-muted mb-4">
-                            <small class="me-3"><i class="fa fa-user text-primary me-2"></i>{{ $activity->user->name }}</small>
+                        <div class="d-flex align-items-center text-muted mb-4">
+                            <small class="d-flex align-items-center me-3">
+                                @if(isset($activity->user) && $activity->user->profile_photo_path)
+                                    <img src="{{ asset('storage/' . $activity->user->profile_photo_path) }}" class="rounded-circle me-2" alt="{{ $activity->user->name }}" style="width: 30px; height: 30px; object-fit: cover;">
+                                @else
+                                    <i class="fa fa-user text-primary me-2"></i>
+                                @endif
+                                <span>{{ $activity->user->name ?? 'Auteur inconnu' }}</span>
+                            </small>
                             <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d F Y') }}</small>
                         </div>
                         <div class="article-content">
@@ -50,7 +57,7 @@
                     </div>
 
                     <!-- Documents -->
-                    @if($activity->documents())
+                    @if($activity->documents()->count()>0)
                         <div class="mt-5 p-4 bg-light rounded">
                             <h3 class="mb-4">Documents joints</h3>
                             <ul class="list-group list-group-flush">

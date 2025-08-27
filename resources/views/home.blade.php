@@ -222,7 +222,7 @@
                                 </div>
                                 <div class="flex ">
 
-                                    <a  class="btn btn-primary px-2" style="height: 60px;">
+                                    <a  class="btn btn-primary px-2" href="#" data-bs-toggle="modal" data-bs-target="#donateModal" style="height: 60px;">
                                       <img src="https://tmb.cd/wp-content/uploads/2021/12/logo-carre-small.png" class="img-fluid" style="height: 50px; object-fit: cover;" alt="">  00017 28007 75095790001 20
                                         <div class="d-inline-flex btn-sm-square bg-white text-primary rounded-circle ms-2">
                                             <i class="fa fa-arrow-right"></i>

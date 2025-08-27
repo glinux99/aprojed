@@ -55,7 +55,7 @@
 
                                     <h5 class="mb-3">{{ $activity->title }}</h5>
                                     <p>{{ Str::limit(strip_tags($activity->content), 120) }}</p>
-                                    @if($activity->documents())
+                                    @if($activity->documents()->count()>0)
                                         <div class="mt-2 mb-3 text-start">
                                             <h6 class="text-muted small text-uppercase">Documents joints</h6>
                                             <ul class="list-unstyled mb-0">
@@ -71,8 +71,16 @@
                                         </div>
                                     @endif
 
-                                    <div class="d-flex justify-content-between text-muted">
-                                        <small class="me-3"><i class="fa fa-user text-primary me-2"></i>{{ $activity->user->name }}</small>
+                                    <div class="d-flex justify-content-between align-items-center text-muted">
+                                        <small class="d-flex align-items-center me-3">
+                                            @if(isset($activity->user) && $activity->user->profile_photo_path)
+                                                <img src="{{ asset('storage/' . $activity->user->profile_photo_path) }}" class="rounded-circle me-2" alt="{{ $activity->user->name }}" style="width: 25px; height: 25px; object-fit: cover;">
+                                            @else
+                                                {{-- Affiche une icône si l'utilisateur ou sa photo n'existe pas --}}
+                                                <i class="fa fa-user text-primary me-2"></i>
+                                            @endif
+                                            <span>{{ $activity->user->name ?? 'Auteur inconnu' }}</span>
+                                        </small>
                                         <small><i class="fa fa-calendar-alt text-primary me-2"></i>{{ $activity->created_at->translatedFormat('d M Y') }}</small>
                                     </div>
                                 </div>
