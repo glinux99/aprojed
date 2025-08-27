@@ -89,7 +89,7 @@
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.5s">
                     <div class="position-relative rounded overflow-hidden h-100">
                         <iframe class="position-relative w-100 h-100"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.959915182038!2d-74.0060!3d40.7128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda23d%3A0xb626a5b614459d9!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1603794290143!5m2!1sen!2sbd"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15951.57908556754!2d29.22108085!3d-1.6791168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dd05584823a23d%3A0x7d83d18334a1791f!2sGoma%2C%20R%C3%A9publique%20d%C3%A9mocratique%20du%20Congo!5e0!3m2!1sfr!2sfr"
                         frameborder="0" style="min-height: 450px; border:0;" allowfullscreen="" aria-hidden="false"
                         tabindex="0"></iframe>
                     </div>
