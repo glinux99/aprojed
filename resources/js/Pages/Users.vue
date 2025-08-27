@@ -45,13 +45,19 @@ const confirmUserDeletion = (user) => {
     userToDelete.value = user;
     showDeleteModal.value = true;
 };
-
+//ddd
 const deleteUser = () => {
     if (userToDelete.value) {
         form.delete(route('users.destroy', userToDelete.value.id), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
-            onError: () => closeModal(),
+            onSuccess: () => {
+                closeModal();
+                alert('Utilisateur supprimé avec succès.');
+            },
+            onError: () => {
+                closeModal();
+                alert("Une erreur est survenue lors de la suppression de l'utilisateur.");
+            },
         });
     }
 };
@@ -81,16 +87,25 @@ const openEditUserModal = (user) => {
 };
 
 const submitUser = () => {
-    if (editingUser.value) {
-        form.put(route('users.update', editingUser.value.id), {
-            preserveScroll: true,
-            onSuccess: () => closeModal(),
-        });
+    const isEditing = !!editingUser.value;
+    const successMessage = isEditing ? 'Utilisateur modifié avec succès.' : 'Utilisateur ajouté avec succès.';
+    const errorMessage = isEditing ? "Une erreur est survenue lors de la modification de l'utilisateur." : "Une erreur est survenue lors de l'ajout de l'utilisateur.";
+
+    const options = {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeModal();
+            alert(successMessage);
+        },
+        onError: () => {
+            alert(errorMessage);
+        },
+    };
+
+    if (isEditing) {
+        form.put(route('users.update', editingUser.value.id), options);
     } else {
-        form.post(route('users.store'), {
-            preserveScroll: true,
-            onSuccess: () => closeModal(),
-        });
+        form.post(route('users.store'), options);
     }
 };
 
