@@ -1,4 +1,12 @@
 @extends('layouts.app_site')
+
+@section('title', 'APROJED | ' . $activity->title)
+@section('description', Str::limit(strip_tags($activity->content), 155))
+@section('og_type', 'article')
+@if($activity->cover_photo_path)
+@section('og_image', asset('storage/' . $activity->cover_photo_path))
+@endif
+
 @section('content')
     @php
         use Illuminate\Support\Str;

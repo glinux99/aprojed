@@ -1,4 +1,8 @@
 @extends('layouts.app_site')
+
+@section('title', 'Contactez-nous | APROJED')
+@section('description', "Contactez APROJED pour toute demande d'information, proposition de partenariat ou pour soutenir nos actions. Retrouvez notre adresse, email et numéro de téléphone.")
+
 @section('content')
     <!-- Page Header Start -->
     <div class="container-fluid page-header mb-5 wow fadeIn" data-wow-delay="0.1s">

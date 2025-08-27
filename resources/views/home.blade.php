@@ -1,4 +1,8 @@
 @extends('layouts.app_site')
+
+@section('title', 'APROJED - Accueil | Actions et Projets pour un Développement Durable')
+@section('description', "APROJED s'engage dans des projets concrets pour un développement qui respecte l'environnement et valorise les communautés locales en R.D. Congo. Découvrez nos actions.")
+
 @section('content')
   <!-- Carousel Start -->
     <div class="container-fluid p-0 mb-5">

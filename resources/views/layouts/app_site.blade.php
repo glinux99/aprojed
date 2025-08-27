@@ -1,16 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
-    <title>Aprojed - ACTIONS ET PROJETS POUR UN DEVELOPPEMENT DURABLE</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="keywords">
-    <meta content="ACTIONS ET PROJETS POUR UN DEVELOPPEMENT DURABLE" name="description">
+
+    @php
+        // Default Meta
+        $defaultTitle = 'APROJED - Actions et Projets pour un Développement Durable';
+        $defaultDescription = $siteSettings->seo_description ?? "APROJED s'engage dans des projets concrets pour un développement qui respecte l'environnement et valorise les communautés locales en R.D. Congo.";
+        $defaultKeywords = $siteSettings->seo_keywords ?? 'développement durable, RDC, Congo, projets humanitaires, éducation, santé, environnement, APROJED';
+        $defaultImage = asset($siteSettings->logo_path ?? 'assets/img/logo_social.png'); // A default social sharing image
+    @endphp
+
+    <!-- SEO Meta Tags -->
+    <title>@yield('title', $defaultTitle)</title>
+    <meta name="description" content="@yield('description', $defaultDescription)">
+    <meta name="keywords" content="@yield('keywords', $defaultKeywords)">
+    <meta name="author" content="APROJED R.D.Congo">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('title', $defaultTitle)">
+    <meta property="og:description" content="@yield('description', $defaultDescription)">
+    <meta property="og:image" content="@yield('og_image', $defaultImage)">
+    <meta property="og:site_name" content="APROJED R.D.Congo">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="@yield('title', $defaultTitle)">
+    <meta property="twitter:description" content="@yield('description', $defaultDescription)">
+    <meta property="twitter:image" content="@yield('og_image', $defaultImage)">
 
     <!-- Favicon -->
-    <link href="{{ asset('assets/img/favicon.ico') }}" rel="icon">
-
+    <link rel="icon" href="{{ asset('assets/img/favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/img/favicon.ico') }}">
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

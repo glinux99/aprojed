@@ -1,4 +1,8 @@
 @extends('layouts.app_site')
+
+@section('title', 'Nos Activités | APROJED')
+@section('description', "Explorez les dernières activités et projets menés par APROJED sur le terrain en R.D. Congo. Suivez nos actions en matière d'éducation, de santé, et d'environnement.")
+
 @section('content')
     <!-- Page Header Start -->
     <div class="container-fluid page-header mb-5 wow fadeIn" data-wow-delay="0.1s">
