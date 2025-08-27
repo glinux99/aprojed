@@ -34,11 +34,11 @@
                                       <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
                                         <small>{{ $activity['category']['name'] }}</small>
                                     </div></div>
-                                <div class="position-relative mt-auto" style="min-height: 250px;">
+                                <div class="position-relative mt-auto">
                                     @if($activity->cover_photo_path)
-                                        <img class="img-fluid w-100 h-100" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}" style="object-fit: cover;">
+                                        <img class="img-fluid" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}" style="height: 250px; width: 100%; object-fit: cover; object-position: center;">
                                     @else
-                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 250px; width: 100%;">
                                             <i class="fa fa-image fa-3x text-muted"></i>
                                         </div>
                                     @endif
@@ -120,7 +120,7 @@
                     @foreach($activities->take(5) as $activity)
                         <div class="d-flex mb-3">
                             @if($activity->cover_photo_path)
-                                <img src="{{ asset('storage/' . $activity->cover_photo_path) }}" class="img-fluid flex-shrink-0" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;" alt="{{ $activity->title }}">
+                                <img src="{{ asset('storage/' . $activity->cover_photo_path) }}" class="img-fluid flex-shrink-0" style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px; object-position: center;" alt="{{ $activity->title }}">
                             @else
                                 <div class="bg-light d-flex justify-content-center align-items-center flex-shrink-0" style="width: 80px; height: 80px; border-radius: 5px;">
                                     <i class="fa fa-image fa-2x text-muted"></i>
