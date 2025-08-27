@@ -34,7 +34,7 @@
                                       <div class="d-inline-block bg-primary text-white rounded-bottom fs-5 pb-1 px-3 mb-4">
                                         <small>{{ $activity['category']['name'] }}</small>
                                     </div></div>
-                                <div class="position-relative mt-auto">
+                                <div class="position-relative">
                                     @if($activity->cover_photo_path)
                                         <img class="img-fluid" src="{{ asset('storage/' . $activity->cover_photo_path) }}" alt="Image de l'activité : {{ $activity->title }}" style="height: 250px; width: 100%; object-fit: cover; object-position: center;">
                                     @else
@@ -51,7 +51,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="text-center p-4 pt-2">
+                                <div class="text-center p-4 pt-2  h-100 d-flex flex-column align-items-between justify-content-between">
 
                                     <h5 class="mb-3">{{ $activity->title }}</h5>
                                     <p>{{ Str::limit(strip_tags($activity->content), 120) }}</p>
