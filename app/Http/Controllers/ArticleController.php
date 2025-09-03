@@ -68,9 +68,9 @@ class ArticleController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'cover_photo' => 'nullable|image|max:2048', // 2MB Max
+            'cover_photo' => 'nullable|image', // 2MB Max
             'documents' => 'nullable|array',
-            'documents.*' => 'file|mimes:pdf,doc,docx,zip,rar|max:10240', // 10MB Max per file
+            'documents.*' => 'file', // 10MB Max per file
             'tags' => 'nullable|string|max:255',
             'source' => 'nullable|string|max:255',
             'publicate'=> 'nullable'

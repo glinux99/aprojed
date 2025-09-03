@@ -8,7 +8,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import Modal from '@/Components/Modal.vue';
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 
 const props = defineProps({
   settings: Object,
@@ -58,9 +58,6 @@ const submit = () => {
     router.post(route('settings.update', props.settings.id), {
         _method: 'put',
         ...form.data(),
-        onError: (errors) => {
-            console.log(errors);
-        },
         onSuccess: () => form.reset('home_cover_photo'),
     });
 };
@@ -76,12 +73,24 @@ const submitPartner = () => {
     });
 };
 
+const instance = getCurrentInstance();
 const deletePartner = (partnerId) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce partenaire ?')) {
-        router.delete(route('partners.destroy', partnerId), {
-            preserveScroll: true,
-        });
-    }
+    instance.proxy.$swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "Le partenaire sera supprimé définitivement!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('partners.destroy', partnerId), {
+                preserveScroll: true,
+            });
+        }
+    });
 };
 </script>
 

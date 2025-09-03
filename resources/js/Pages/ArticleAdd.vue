@@ -31,16 +31,12 @@ const props = defineProps({
 const submit = () => {
        form.publicate = 1;
     form.content = props.contents;
-    form.post(route('articles.store'), {
-        onFinish: () => form.reset(),
-    });
+    form.post(route('articles.store'));
 };
 const submitSave = () => {
     form.content = props.contents;
     form.publicate = 0;
-    form.post(route('articles.store'), {
-        onFinish: () => form.reset(),
-    });
+    form.post(route('articles.store'));
 };
 const articleAdd=(contents)=>{
     var params = contents.length> 0 ?  contents : 'glinx99';

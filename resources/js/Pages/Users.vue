@@ -1,7 +1,7 @@
 
 
 <script setup>
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, getCurrentInstance } from 'vue';
 import { useForm, Link, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -41,25 +41,24 @@ const closeModal = () => {
     showUserModal.value = false;
 };
 
+const instance = getCurrentInstance();
 const confirmUserDeletion = (user) => {
-    userToDelete.value = user;
-    showDeleteModal.value = true;
-};
-//ddd
-const deleteUser = () => {
-    if (userToDelete.value) {
-        form.delete(route('users.destroy', userToDelete.value.id), {
-            preserveScroll: true,
-            onSuccess: () => {
-                closeModal();
-                alert('Utilisateur supprimé avec succès.');
-            },
-            onError: () => {
-                closeModal();
-                alert("Une erreur est survenue lors de la suppression de l'utilisateur.");
-            },
-        });
-    }
+    instance.proxy.$swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "L'utilisateur sera supprimé définitivement!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('users.destroy', user.id), {
+                preserveScroll: true,
+            });
+        }
+    });
 };
 
 const openAddUserModal = () => {
@@ -88,18 +87,9 @@ const openEditUserModal = (user) => {
 
 const submitUser = () => {
     const isEditing = !!editingUser.value;
-    const successMessage = isEditing ? 'Utilisateur modifié avec succès.' : 'Utilisateur ajouté avec succès.';
-    const errorMessage = isEditing ? "Une erreur est survenue lors de la modification de l'utilisateur." : "Une erreur est survenue lors de l'ajout de l'utilisateur.";
-
     const options = {
         preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            alert(successMessage);
-        },
-        onError: () => {
-            alert(errorMessage);
-        },
+        onSuccess: () => closeModal(),
     };
 
     if (isEditing) {
@@ -138,33 +128,6 @@ const getInitials = (name) => {
                 <PrimaryButton @click="openAddUserModal">Ajouter un utilisateur</PrimaryButton>
             </div>
         </div>
-        <!-- Delete User Confirmation Modal -->
-        <Modal :show="showDeleteModal" @close="closeModal">
-            <div class="p-6">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-white">
-                    Êtes-vous sûr de vouloir supprimer cet utilisateur ?
-                </h2>
-
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Une fois l'utilisateur supprimé, toutes ses ressources et données seront définitivement effacées.
-                </p>
-
-                <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="closeModal">
-                        Annuler
-                    </SecondaryButton>
-
-                    <DangerButton
-                        class="ms-3"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        @click="deleteUser"
-                    >
-                        Supprimer l'utilisateur
-                    </DangerButton>
-                </div>
-            </div>
-        </Modal>
 
         <!-- Search Input -->
         <div class="mt-6">

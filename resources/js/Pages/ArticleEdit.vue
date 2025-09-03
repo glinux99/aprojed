@@ -34,11 +34,7 @@ const removeExistingDocument = (docId, index) => {
 };
 
 const submit = () => {
-    form.post(route('articles.update', props.article.id), {
-        onError: (errors) => {
-            console.log(errors);
-        },
-    });
+    form.post(route('articles.update', props.article.id));
 
 };
 const articleAdd=(contents)=>{

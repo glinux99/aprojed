@@ -58,7 +58,7 @@
                                 <div class="text-center p-4 pt-2  h-100 d-flex flex-column align-items-between justify-content-between">
 
                                     <h5 class="mb-3">{{ $activity->title }}</h5>
-                                    <p>{{ Str::limit(strip_tags($activity->content), 120) }}</p>
+                                    <p>{!! Str::limit(($activity->content), 120) !!}</p>
                                     @if($activity->documents()->count()>0)
                                         <div class="mt-2 mb-3 text-start">
                                             <h6 class="text-muted small text-uppercase">Documents joints</h6>

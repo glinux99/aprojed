@@ -1,8 +1,9 @@
 <script setup>
-import { Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { getCurrentInstance } from 'vue';
 
 defineProps({
     articles: Object,
@@ -25,13 +26,32 @@ const stripHtml = (html) => {
     return doc.body.textContent || "";
 }
 
+const instance = getCurrentInstance();
+const deleteArticle = (articleId) => {
+    instance.proxy.$swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "L'article sera supprimé définitivement!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(route('articles.destroy', articleId), {
+                preserveScroll: true,
+            });
+        }
+    });
+};
+
     const publicateArticle = (article) => {
         form.title = article.title;
         form.slug = article.slug; // Add slug to the form data
         form.category_id = article.category_id;
         form.publicate = 1;
         form.content = article.content;
-        console.log(article.id);
         form.put(route('articles.update', article.id));
 };
 
@@ -112,7 +132,7 @@ const truncate = (text, length) => {
                     <div class="flex gap-x-4 items-center justify-between">
                         <SecondaryButton @click="publicateArticle(article)" v-if="article.publicate==0">Publier</SecondaryButton>
                         <Link :href="route('articles.edit', article.id)" class="text-sm font-medium text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">Modifier</Link>
-                        <Link :href="route('articles.destroy', article.id)" method="delete" as="button" class="text-sm font-medium text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" preserve-scroll>Supprimer</Link>
+                        <button @click="deleteArticle(article.id)" type="button" class="text-sm font-medium text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Supprimer</button>
                     </div>
                 </div>
             </div>

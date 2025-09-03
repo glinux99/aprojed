@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import { useForm, Link } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -56,12 +56,24 @@ const submitCategory = () => {
     }
 };
 
+const instance = getCurrentInstance();
 const deleteCategory = (id) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
-        useForm({}).delete(route('categories.destroy', id), {
-            preserveScroll: true,
-        });
-    }
+    instance.proxy.$swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "Vous ne pourrez pas revenir en arrière!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            useForm({}).delete(route('categories.destroy', id), {
+                preserveScroll: true,
+            });
+        }
+    });
 };
 </script>
 

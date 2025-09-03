@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, getCurrentInstance } from 'vue';
 import { useForm, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -78,12 +78,24 @@ const getDocumentableName = (document) => {
     return `Utilisateur: ${document.documentable.name}`;
 };
 
+const instance = getCurrentInstance();
 const deleteDocument = (id) => {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) {
-        useForm({}).delete(route('documents.destroy', id), {
-            preserveScroll: true,
-        });
-    }
+    instance.proxy.$swal.fire({
+        title: 'Êtes-vous sûr?',
+        text: "Le document sera supprimé définitivement!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer!',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            useForm({}).delete(route('documents.destroy', id), {
+                preserveScroll: true,
+            });
+        }
+    });
 };
 
 watch(searchTerm, (value) => {
