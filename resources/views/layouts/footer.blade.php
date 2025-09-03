@@ -28,8 +28,8 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="text-light mb-4">Adresse</h5>
                     <p><i class="fa fa-map-marker-alt me-3"></i>{{ $siteSettings->address ?? 'Goma'}}</p>
-                    <p><i class="fa fa-phone-alt me-3" style="font-size: 0.85em; vertical-align: middle;"></i>{{ $siteSettings->phone_number ?? '+243970912428'}}</p>
-                    <p><i class="fa fa-envelope me-3" style="font-size: 0.85em; vertical-align: middle;"></i>{{ $siteSettings->email ?? 'info@aprojed.com'}}</p>
+                    <p  style="font-size: 0.85em; vertical-align: middle;"><i class="fa fa-phone-alt me-3" ></i>{{ $siteSettings->phone_number ?? '+243970912428'}}</p>
+                    <p  style="font-size: 0.85em; vertical-align: middle;"><i class="fa fa-envelope me-3"></i>{{ $siteSettings->email ?? 'info@aprojed.com'}}</p>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h5 class="text-light mb-4">Lien rapide</h5>
