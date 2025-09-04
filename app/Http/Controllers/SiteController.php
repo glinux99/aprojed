@@ -20,7 +20,35 @@ class SiteController extends Controller
     }
      public function about(){
         // On récupère tous les utilisateurs qui ne sont pas de simples 'utilisateurs' pour les afficher comme membres de l'équipe.
-        $teamMembers = User::where('role', '!=', 'user')->where('role', '!=', 'admin')->orderBy('name')->get();
+        $roleOrder = [
+            'Directeur exécutif',
+            'Admin/As programme',
+            'Logisticien comptable',
+            'Superviseur protection de l’enfant',
+            'Communication/As log',
+            'Superviseur santé et Genre',
+            'Réceptionniste',
+            'EDUCATION APROJED',
+            'Directeur des écoles',
+            'Gestionnaire comptable',
+            'CRSclaire Aprojed',
+            'CENTRE D’APPRENTISSAGE PROFETIONNEL (CAP)',
+            'Superviseur psycho-social',
+            'GRH CAP Aprojed',
+            'Superviseur formateur CAP',
+            'Formateur log CAP',
+            'ANTENNE APROJED',
+            'Chef d’antenne BUVIRA',
+            'Chef d’antenne MUGUNGA',
+            'Chef d’antenne KAYNA',
+            'editor',
+            'user',
+            'admin',
+        ];
+
+        $teamMembers = User::whereNotIn('role', ['user', 'admin'])
+                            ->orderByRaw("FIELD(role, '" . implode("','", $roleOrder) . "')")
+                            ->get();
          $siteSettings= Setting::first();
           $partners = Partner::all();
         return view("about", ['teamMembers' => $teamMembers,'siteSettings'=>$siteSettings, "partners"=>$partners]);
