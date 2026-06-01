@@ -1,217 +1,3 @@
-<template>
-    <AppLayout>
-        <Head title="Projets - Ultra Pro" />
-
-        <div class="min-h-screen bg-slate-50/50 pb-12">
-            <!-- HEADER HERO -->
-            <div class="bg-slate-900 pt-8 pb-24 px-4 lg:px-8 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-amber-900/50 to-orange-900/50 mix-blend-multiply"></div>
-                <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-amber-500 rounded-full blur-[100px] opacity-30 pointer-events-none"></div>
-                <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-orange-500 rounded-full blur-[100px] opacity-20 pointer-events-none"></div>
-                <div class="max-w-screen-2xl mx-auto relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <div class="flex items-center gap-2 mb-3">
-                            <Badge value="Module Projets" severity="warning" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] tracking-widest" />
-                        </div>
-                        <h1 class="text-4xl lg:text-5xl font-black text-white tracking-tight">Projets</h1>
-                        <p class="text-slate-400 mt-2 text-lg max-w-2xl font-light">Gérez vos projets et leur ordre d'affichage (glisser‑déposer).</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CONTENU PRINCIPAL -->
-            <div class="max-w-screen-2xl mx-auto px-4 lg:px-8 -mt-14 relative z-20">
-                <div class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
-                    <!-- Barre d'outils -->
-                    <div class="p-4 lg:p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center gap-2 w-full sm:w-80">
-                            <InputText v-model="search" placeholder="Rechercher un projet..." class="w-full rounded-xl bg-white border-slate-200" @keyup.enter="performSearch" />
-                            <Button icon="pi pi-search" class="p-button-rounded p-button-text" @click="performSearch" v-tooltip.bottom="'Rechercher'" />
-                        </div>
-                        <Button icon="pi pi-plus" label="Nouveau projet" class="bg-amber-500 hover:bg-amber-600 border-none shadow-lg shadow-amber-500/30 text-white font-bold w-full sm:w-auto" @click="openNewProject" />
-                    </div>
-
-                    <!-- Tableau avec réorganisation -->
-                    <DataTable :value="projectsList" v-model:selection="selectedProjects" dataKey="id"
-                        :paginator="true" :rows="10" :filters="filters"
-                        responsiveLayout="scroll" class="p-datatable-lg custom-table" stripedRows
-                        @row-reorder="onRowReorder" reorderableRows>
-
-                        <template #empty>
-                            <div class="flex flex-col items-center justify-center p-12 text-center">
-                                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                                    <i class="pi pi-briefcase text-3xl text-slate-400"></i>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-800">Aucun projet</h3>
-                                <p class="text-slate-500 max-w-sm mb-4">Vous n'avez pas encore enregistré de projet.</p>
-                                <Button label="Créer un projet" class="p-button-outlined" @click="openNewProject" />
-                            </div>
-                        </template>
-
-                        <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
-                        <Column field="order" header="Ordre" sortable style="min-width: 5rem">
-                            <template #body="{ data }">
-                                <Badge :value="data.order" severity="secondary" class="bg-slate-100 text-slate-700 font-bold" />
-                            </template>
-                        </Column>
-                        <Column field="image" header="Image" style="min-width: 6rem">
-                          <template #body="{ data }">
-                                <div class="flex items-center">
-                                    <img
-                                        v-if="data.image"
-                                        :src="`/media/${data.image}`"
-                                        alt="Aperçu du média"
-                                        class="h-10 w-10 object-cover rounded-lg border border-slate-200"
-                                        @error="(e) => e.target.src = '/media/placeholder.png'"
-                                    />
-
-                                    <span v-else class="text-slate-400 text-xs italic">
-                                        Aucune image
-                                    </span>
-                                </div>
-                            </template>
-                        </Column>
-                        <Column field="title" header="Titre" sortable style="min-width: 14rem">
-                            <template #body="{ data }">
-                                <span class="font-bold text-slate-800">{{ data.title }}</span>
-                            </template>
-                            <template #rowtogglericon="slotProps"></template>
-                        </Column>
-                        <Column field="category" header="Catégorie" sortable style="min-width: 10rem">
-                            <template #body="{ data }">
-                                <Tag :value="getCategoryLabel(data.category)" severity="info" />
-                            </template>
-                        </Column>
-                        <Column field="status" header="Statut" sortable style="min-width: 8rem">
-                            <template #body="{ data }">
-                                <Tag :severity="statusSeverity(data.status)" :value="statusLabel(data.status)" />
-                            </template>
-                        </Column>
-                        <Column field="start_date" header="Début" sortable style="min-width: 8rem">
-                            <template #body="{ data }">
-                                <span class="text-sm">{{ formatDate(data.start_date) }}</span>
-                            </template>
-                        </Column>
-                        <Column field="end_date" header="Fin" sortable style="min-width: 8rem">
-                            <template #body="{ data }">
-                                <span class="text-sm">{{ formatDate(data.end_date) }}</span>
-                            </template>
-                        </Column>
-                        <Column :exportable="false" style="min-width: 10rem; text-align: right;">
-                            <template #body="{ data }">
-                                <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info mr-2" @click="editProject(data)" v-tooltip.top="'Modifier'" />
-                                <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="confirmDeleteProject(data)" v-tooltip.top="'Supprimer'" />
-                            </template>
-                        </Column>
-                    </DataTable>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODALE PROJET -->
-        <Dialog v-model:visible="projectDialog" :style="{ width: '700px' }" header="Projet" :modal="true" class="custom-dialog">
-            <template #header>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
-                        <i class="pi pi-briefcase"></i>
-                    </div>
-                    <span class="font-bold text-xl text-slate-800">{{ isEditing ? 'Modifier le projet' : 'Nouveau projet' }}</span>
-                </div>
-            </template>
-
-            <div class="space-y-5 pt-2">
-                <!-- Titre -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Titre <span class="text-red-500">*</span></label>
-                    <InputText v-model="form.title" autofocus :class="{ 'p-invalid': submitted && !form.title }" class="w-full rounded-xl" placeholder="Ex: Application Mobile" />
-                    <small v-if="submitted && !form.title" class="p-error">Le titre est requis.</small>
-                </div>
-
-                <!-- Slug (auto-généré) -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Slug (identifiant unique)</label>
-                    <InputText v-model="form.slug" class="w-full rounded-xl font-mono text-sm" placeholder="ex: application-mobile" />
-                    <small class="text-slate-400">Laissez vide pour auto-génération à partir du titre.</small>
-                </div>
-
-                <!-- Catégorie (depuis BDD) -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Catégorie <span class="text-red-500">*</span></label>
-                    <Select v-model="form.category_id" :options="categoriesList" optionLabel="name" optionValue="id" placeholder="Choisir une catégorie" class="w-full rounded-xl" :class="{ 'p-invalid': submitted && !form.category_id }" />
-                    <small v-if="submitted && !form.category_id" class="p-error">La catégorie est requise.</small>
-                </div>
-
-                <!-- Description -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Description</label>
-                    <Textarea v-model="form.description" rows="4" class="w-full rounded-xl" placeholder="Description du projet..." />
-                </div>
-
-                <!-- Dates -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Date de début</label>
-                        <Calendar v-model="form.start_date" showIcon dateFormat="dd/mm/yy" class="w-full rounded-xl" />
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label class="text-sm font-bold text-slate-700">Date de fin</label>
-                        <Calendar v-model="form.end_date" showIcon dateFormat="dd/mm/yy" class="w-full rounded-xl" />
-                    </div>
-                </div>
-
-                <!-- Statut -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Statut</label>
-                    <Select v-model="form.status" :options="statuses" optionLabel="label" optionValue="value" placeholder="Statut" class="w-full rounded-xl" />
-                </div>
-
-                <!-- Image (upload manuel) -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Image</label>
-                    <div class="flex flex-col gap-3">
-                        <div class="flex items-center gap-4">
-                            <input type="file" accept="image/*" @change="onImageSelected" ref="fileInput" class="hidden" />
-                            <Button type="button" label="Choisir une image" icon="pi pi-upload" class="p-button-outlined" @click="$refs.fileInput.click()" />
-                            <span v-if="imagePreview" class="text-sm text-slate-600">{{ imageFileName || 'Fichier sélectionné' }}</span>
-                            <Button v-if="form.image || imagePreview" type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeImage" v-tooltip.top="'Supprimer l’image'" />
-                        </div>
-                        <div v-if="imagePreview" class="mt-2">
-                            <img :src="imagePreview" class="h-24 w-auto object-contain border rounded-lg p-1 bg-white" />
-                        </div>
-                        <div v-else-if="form.existing_image_url && !imagePreview" class="mt-2">
-                            <img :src="form.existing_image_url" class="h-24 w-auto object-contain border rounded-lg p-1 bg-white" />
-                            <small class="text-slate-400 text-xs">Image actuelle</small>
-                        </div>
-                        <small class="text-slate-400 text-xs">Formats : JPG, PNG, GIF, WebP (max 2 Mo)</small>
-                    </div>
-                </div>
-
-                <!-- Visible -->
-                <div class="flex items-center justify-between">
-                    <label class="text-sm font-bold text-slate-700">Projet visible</label>
-                    <ToggleButton v-model="form.is_active" onLabel="Oui" offLabel="Non" class="w-20" />
-                </div>
-
-                <!-- Ordre -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Ordre d'affichage</label>
-                    <InputNumber v-model="form.order" class="w-full rounded-xl" :min="0" showButtons />
-                    <small class="text-slate-400 text-xs">L'ordre est prioritairement géré par glisser-déposer dans le tableau.</small>
-                </div>
-            </div>
-
-            <template #footer>
-                <div class="flex gap-2 justify-end border-t border-slate-100 pt-4 mt-4">
-                    <Button label="Annuler" icon="pi pi-times" class="p-button-text p-button-secondary" @click="projectDialog = false" />
-                    <Button label="Enregistrer" icon="pi pi-check" class="bg-amber-500 border-none hover:bg-amber-600" @click="saveProject" :loading="saving" />
-                </div>
-            </template>
-        </Dialog>
-
-        <ConfirmDialog />
-    </AppLayout>
-</template>
-
 <script setup>
 import { ref, reactive, computed, watch } from 'vue';
 import AppLayout from "@/sakai/layout/AppLayout.vue";
@@ -495,7 +281,219 @@ watch(() => page.props.flash?.success, (val) => {
     if (val) toast.add({ severity: 'success', summary: 'Succès', detail: val, life: 3000 });
 });
 </script>
+<template>
+    <AppLayout>
+        <Head title="Projets - Ultra Pro" />
 
+        <div class="min-h-screen bg-slate-50/50 pb-12">
+            <!-- HEADER HERO -->
+            <div class="bg-slate-900 pt-8 pb-24 px-4 lg:px-8 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-900/50 to-orange-900/50 mix-blend-multiply"></div>
+                <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-amber-500 rounded-full blur-[100px] opacity-30 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-72 h-72 bg-orange-500 rounded-full blur-[100px] opacity-20 pointer-events-none"></div>
+                <div class="max-w-screen-2xl mx-auto relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <Badge value="Module Projets" severity="warning" class="bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono text-[10px] tracking-widest" />
+                        </div>
+                        <h1 class="text-4xl lg:text-5xl font-black text-white tracking-tight">Projets</h1>
+                        <p class="text-slate-400 mt-2 text-lg max-w-2xl font-light">Gérez vos projets et leur ordre d'affichage (glisser‑déposer).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTENU PRINCIPAL -->
+            <div class="max-w-screen-2xl mx-auto px-4 lg:px-8 -mt-14 relative z-20">
+                <div class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
+                    <!-- Barre d'outils -->
+                    <div class="p-4 lg:p-6 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-2 w-full sm:w-80">
+                            <InputText v-model="search" placeholder="Rechercher un projet..." class="w-full rounded-xl bg-white border-slate-200" @keyup.enter="performSearch" />
+                            <Button icon="pi pi-search" class="p-button-rounded p-button-text" @click="performSearch" v-tooltip.bottom="'Rechercher'" />
+                        </div>
+                        <Button icon="pi pi-plus" label="Nouveau projet" class="bg-amber-500 hover:bg-amber-600 border-none shadow-lg shadow-amber-500/30 text-white font-bold w-full sm:w-auto" @click="openNewProject" />
+                    </div>
+
+                    <!-- Tableau avec réorganisation -->
+                    <DataTable :value="projectsList" v-model:selection="selectedProjects" dataKey="id"
+                        :paginator="true" :rows="10" :filters="filters"
+                        responsiveLayout="scroll" class="p-datatable-lg custom-table" stripedRows
+                        @row-reorder="onRowReorder" reorderableRows>
+
+                        <template #empty>
+                            <div class="flex flex-col items-center justify-center p-12 text-center">
+                                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                                    <i class="pi pi-briefcase text-3xl text-slate-400"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-slate-800">Aucun projet</h3>
+                                <p class="text-slate-500 max-w-sm mb-4">Vous n'avez pas encore enregistré de projet.</p>
+                                <Button label="Créer un projet" class="p-button-outlined" @click="openNewProject" />
+                            </div>
+                        </template>
+
+                        <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
+                        <Column field="order" header="Ordre" sortable style="min-width: 5rem">
+                            <template #body="{ data }">
+                                <Badge :value="data.order" severity="secondary" class="bg-slate-100 text-slate-700 font-bold" />
+                            </template>
+                        </Column>
+                        <Column field="image" header="Image" style="min-width: 6rem">
+                          <template #body="{ data }">
+                                <div class="flex items-center">
+                                    <img
+                                        v-if="data.image"
+                                        :src="`/media/${data.image}`"
+                                        alt="Aperçu du média"
+                                        class="h-10 w-10 object-cover rounded-lg border border-slate-200"
+                                        @error="(e) => e.target.src = '/media/placeholder.png'"
+                                    />
+
+                                    <span v-else class="text-slate-400 text-xs italic">
+                                        Aucune image
+                                    </span>
+                                </div>
+                            </template>
+                        </Column>
+                        <Column field="title" header="Titre" sortable style="min-width: 14rem">
+                            <template #body="{ data }">
+                                <span class="font-bold text-slate-800">{{ data.title }}</span>
+                            </template>
+                            <template #rowtogglericon="slotProps"></template>
+                        </Column>
+                        <Column field="category" header="Catégorie" sortable style="min-width: 10rem">
+                            <template #body="{ data }">
+                                <Tag :value="getCategoryLabel(data.category)" severity="info" />
+                            </template>
+                        </Column>
+                        <Column field="status" header="Statut" sortable style="min-width: 8rem">
+                            <template #body="{ data }">
+                                <Tag :severity="statusSeverity(data.status)" :value="statusLabel(data.status)" />
+                            </template>
+                        </Column>
+                        <Column field="start_date" header="Début" sortable style="min-width: 8rem">
+                            <template #body="{ data }">
+                                <span class="text-sm">{{ formatDate(data.start_date) }}</span>
+                            </template>
+                        </Column>
+                        <Column field="end_date" header="Fin" sortable style="min-width: 8rem">
+                            <template #body="{ data }">
+                                <span class="text-sm">{{ formatDate(data.end_date) }}</span>
+                            </template>
+                        </Column>
+                        <Column :exportable="false" style="min-width: 10rem; text-align: right;">
+                            <template #body="{ data }">
+                                <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info mr-2" @click="editProject(data)" v-tooltip.top="'Modifier'" />
+                                <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="confirmDeleteProject(data)" v-tooltip.top="'Supprimer'" />
+                            </template>
+                        </Column>
+                    </DataTable>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODALE PROJET -->
+        <Dialog v-model:visible="projectDialog" :style="{ width: '700px' }" header="Projet" :modal="true" class="custom-dialog">
+            <template #header>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                        <i class="pi pi-briefcase"></i>
+                    </div>
+                    <span class="font-bold text-xl text-slate-800">{{ isEditing ? 'Modifier le projet' : 'Nouveau projet' }}</span>
+                </div>
+            </template>
+
+            <div class="space-y-5 pt-2">
+                <!-- Titre -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Titre <span class="text-red-500">*</span></label>
+                    <InputText v-model="form.title" autofocus :class="{ 'p-invalid': submitted && !form.title }" class="w-full rounded-xl" placeholder="Ex: Application Mobile" />
+                    <small v-if="submitted && !form.title" class="p-error">Le titre est requis.</small>
+                </div>
+
+                <!-- Slug (auto-généré) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Slug (identifiant unique)</label>
+                    <InputText v-model="form.slug" class="w-full rounded-xl font-mono text-sm" placeholder="ex: application-mobile" />
+                    <small class="text-slate-400">Laissez vide pour auto-génération à partir du titre.</small>
+                </div>
+
+                <!-- Catégorie (depuis BDD) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Catégorie <span class="text-red-500">*</span></label>
+                    <Select v-model="form.category_id" :options="categoriesList" optionLabel="name" optionValue="id" placeholder="Choisir une catégorie" class="w-full rounded-xl" :class="{ 'p-invalid': submitted && !form.category_id }" />
+                    <small v-if="submitted && !form.category_id" class="p-error">La catégorie est requise.</small>
+                </div>
+
+                <!-- Description -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Description</label>
+                    <Textarea v-model="form.description" rows="4" class="w-full rounded-xl" placeholder="Description du projet..." />
+                </div>
+
+                <!-- Dates -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-bold text-slate-700">Date de début</label>
+                        <Calendar v-model="form.start_date" showIcon dateFormat="dd/mm/yy" class="w-full rounded-xl" />
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-bold text-slate-700">Date de fin</label>
+                        <Calendar v-model="form.end_date" showIcon dateFormat="dd/mm/yy" class="w-full rounded-xl" />
+                    </div>
+                </div>
+
+                <!-- Statut -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Statut</label>
+                    <Select v-model="form.status" :options="statuses" optionLabel="label" optionValue="value" placeholder="Statut" class="w-full rounded-xl" />
+                </div>
+
+                <!-- Image (upload manuel) -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Image</label>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex items-center gap-4">
+                            <input type="file" accept="image/*" @change="onImageSelected" ref="fileInput" class="hidden" />
+                            <Button type="button" label="Choisir une image" icon="pi pi-upload" class="p-button-outlined" @click="$refs.fileInput.click()" />
+                            <span v-if="imagePreview" class="text-sm text-slate-600">{{ imageFileName || 'Fichier sélectionné' }}</span>
+                            <Button v-if="form.image || imagePreview" type="button" icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeImage" v-tooltip.top="'Supprimer l’image'" />
+                        </div>
+                        <div v-if="imagePreview" class="mt-2">
+                            <img :src="imagePreview" class="h-24 w-auto object-contain border rounded-lg p-1 bg-white" />
+                        </div>
+                        <div v-else-if="form.existing_image_url && !imagePreview" class="mt-2">
+                            <img :src="form.existing_image_url" class="h-24 w-auto object-contain border rounded-lg p-1 bg-white" />
+                            <small class="text-slate-400 text-xs">Image actuelle</small>
+                        </div>
+                        <small class="text-slate-400 text-xs">Formats : JPG, PNG, GIF, WebP (max 2 Mo)</small>
+                    </div>
+                </div>
+
+                <!-- Visible -->
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-bold text-slate-700">Projet visible</label>
+                    <ToggleButton v-model="form.is_active" onLabel="Oui" offLabel="Non" class="w-20" />
+                </div>
+
+                <!-- Ordre -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-sm font-bold text-slate-700">Ordre d'affichage</label>
+                    <InputNumber v-model="form.order" class="w-full rounded-xl" :min="0" showButtons />
+                    <small class="text-slate-400 text-xs">L'ordre est prioritairement géré par glisser-déposer dans le tableau.</small>
+                </div>
+            </div>
+
+            <template #footer>
+                <div class="flex gap-2 justify-end border-t border-slate-100 pt-4 mt-4">
+                    <Button label="Annuler" icon="pi pi-times" class="p-button-text p-button-secondary" @click="projectDialog = false" />
+                    <Button label="Enregistrer" icon="pi pi-check" class="bg-amber-500 border-none hover:bg-amber-600" @click="saveProject" :loading="saving" />
+                </div>
+            </template>
+        </Dialog>
+
+        <ConfirmDialog />
+    </AppLayout>
+</template>
 <style scoped>
 :deep(.custom-table .p-datatable-thead > tr > th) {
     background: #f8fafc;

@@ -105,8 +105,6 @@ const checkStatus = () => {
 
                         <!-- Effet de lueur sombre -->
                         <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[80px] opacity-20"></div>
->
-  <template #loadingicon="slotProps"></template>
 
                         <div class="relative z-10">
                             <!-- Barre de progression de l'onboarding -->

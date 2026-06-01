@@ -1,0 +1,1 @@
+import{pt as e}from"./app-DG4kOIOL.js";var t=e();export{t};
