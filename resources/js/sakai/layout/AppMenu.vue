@@ -66,7 +66,6 @@ const model = ref([
             { label: 'Utilisateurs', icon: 'pi pi-fw pi-user', to: '/users' },
             { label: 'Rôles', icon: 'pi pi-fw pi-users', to: '/roles' },
             { label: 'Permissions', icon: 'pi pi-fw pi-lock', to: '/permissions' },
-            { label: 'Équipes', icon: 'pi pi-fw pi-sitemap', to: '/teams' }
         ]
     },
     // ==================== CONFIGURATION SYSTÈME ====================

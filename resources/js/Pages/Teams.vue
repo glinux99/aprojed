@@ -1,9 +1,15 @@
 <script setup>
 /**
  * ==========================================================================================
- * COMPOSANT : Organisation, Équipes & Annuaire (Vue 3 + Composition API + PrimeVue)
+ * SUBNETCONGO LMS - ENTERPRISE HR HUB (Vue 3 + Composition API + PrimeVue)
+ * ==========================================================================================
  * DESCRIPTION : Gestion complète des départements (équipes) et des utilisateurs.
- * AJOUTS : Ordre d'affichage personnalisable (drag & drop) + hiérarchie parent/enfant
+ * MODULES INCLUS :
+ * - Annuaire (Vue Liste & Grille) avec filtres avancés.
+ * - Structure Hiérarchique des Départements (Drag & Drop, Expansion parent/enfant).
+ * - Analytics RH (Graphiques de répartition, Top salaires).
+ * - Master Form (Création/Édition) avec gestion d'upload d'images (Avatar).
+ * - Fiche Employé Premium (Vue détaillée).
  * ==========================================================================================
  */
 
@@ -24,15 +30,12 @@ import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Tag from 'primevue/tag';
 import Dialog from 'primevue/dialog';
-import Sidebar from 'primevue/sidebar';
 import ConfirmDialog from 'primevue/confirmdialog';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Badge from 'primevue/badge';
 import Avatar from 'primevue/avatar';
-import FileUpload from 'primevue/fileupload';
 import InputSwitch from 'primevue/inputswitch';
-import Tooltip from 'primevue/tooltip';
 import Toolbar from 'primevue/toolbar';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
@@ -54,7 +57,7 @@ const props = defineProps({
     users: { type: [Array, Object], default: () => [] }
 });
 
-// --- ÉTATS & COMPUTEDS ---
+// --- ÉTATS & COMPUTEDS GLOBAUX ---
 const teamsList = computed(() => props.teams?.data ?? props.teams ?? []);
 const usersList = computed(() => props.users?.data ?? props.users ?? []);
 
@@ -74,10 +77,12 @@ const viewMode = ref('list');
 const viewModeOptions = ref([{ icon: 'pi pi-bars', value: 'list' }, { icon: 'pi pi-th-large', value: 'grid' }]);
 const isDataLoading = ref(false);
 const activeMainTab = ref(0);
+const submitting = ref(false);
 
+// Modals
 const teamDialog = ref(false);
 const userDialog = ref(false);
-const viewUserSidebar = ref(false);
+const viewUserDialog = ref(false); // Remplace l'ancien Sidebar
 const isEditingTeam = ref(false);
 const isEditingUser = ref(false);
 
@@ -106,13 +111,11 @@ const contractTypes = ['CDI', 'CDD', 'Alternance', 'Stage', 'Freelance', 'Intér
 // --- FILTRES ---
 const filtersTeams = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] }
 });
 
 const filtersUsers = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     'team.id': { value: null, matchMode: FilterMatchMode.EQUALS },
-    contract_type: { value: null, matchMode: FilterMatchMode.EQUALS }
 });
 
 // --- MODÈLES ---
@@ -141,9 +144,10 @@ const defaultUser = {
     linkedin_url: '',
     bio: '',
     is_active: true,
-    avatar: null,
-    avatar_url: null,
-    avatar_file: null
+    profile_photo_url: null, // Provenant du backend (Spatie)
+    avatar_url: null,        // Prévisualisation locale (Vue)
+    avatar_file: null,       // Fichier physique
+    remove_profile_photo: false // Demande de suppression au backend
 };
 
 const currentTeam = ref({ ...defaultTeam });
@@ -151,71 +155,89 @@ const currentUser = ref({ ...defaultUser });
 const formErrors = ref({});
 
 // ====================================================================
-// VALIDATION
+// VALIDATION DES FORMULAIRES
 // ====================================================================
 const validateUserForm = () => {
     formErrors.value = {};
     let isValid = true;
-
-    if (!currentUser.value.name?.trim()) {
-        formErrors.value.name = "Le prénom/nom est requis.";
-        isValid = false;
-    }
-    if (currentUser.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentUser.value.email)) {
-        formErrors.value.email = "Format d'email invalide.";
-        isValid = false;
-    }
-    if (currentUser.value.phone && !/^[\d\s\+\-\(\)]+$/.test(currentUser.value.phone)) {
-        formErrors.value.phone = "Format de numéro invalide.";
-        isValid = false;
-    }
+    if (!currentUser.value.name?.trim()) { formErrors.value.name = "Le prénom est requis."; isValid = false; }
+    if (currentUser.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(currentUser.value.email)) { formErrors.value.email = "Format d'email invalide."; isValid = false; }
     return isValid;
 };
 
 const validateTeamForm = () => {
     formErrors.value = {};
     let isValid = true;
-
-    if (!currentTeam.value.name?.trim()) {
-        formErrors.value.name = "Le nom de l'équipe est requis.";
-        isValid = false;
-    }
-    if (!currentTeam.value.color) {
-        formErrors.value.color = "Une couleur doit être sélectionnée.";
-        isValid = false;
-    }
+    if (!currentTeam.value.name?.trim()) { formErrors.value.name = "Le nom de l'équipe est requis."; isValid = false; }
+    if (!currentTeam.value.color) { formErrors.value.color = "Une couleur doit être sélectionnée."; isValid = false; }
     return isValid;
 };
 
 // ====================================================================
-// GESTION DES UTILISATEURS
+// LOGIQUE UTILISATEURS (CRUD)
 // ====================================================================
-const openNewUser = () => {
+
+// --- GESTION AVATAR ---
+const fileInputRef = ref(null);
+
+const triggerAvatarUpload = () => {
+    if(fileInputRef.value) fileInputRef.value.click();
+};
+
+const onUploadAvatar = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        if (file.size > 2 * 1024 * 1024) { // Limite 2MB
+            toast.add({ severity: 'error', summary: 'Fichier trop lourd', detail: 'La taille maximum autorisée est de 2 Mo.', life: 4000 });
+            fileInputRef.value.value = '';
+            return;
+        }
+        currentUser.value.avatar_file = file;
+        currentUser.value.remove_profile_photo = false; // On annule une potentielle demande de suppression
+
+        // Prévisualisation locale
+        const reader = new FileReader();
+        reader.onload = (e) => currentUser.value.avatar_url = e.target.result;
+        reader.readAsDataURL(file);
+    }
+};
+
+const removeAvatar = () => {
+    currentUser.value.avatar_url = null;
+    currentUser.value.profile_photo_url = null; // Retire l'image provenant de la BDD
+    currentUser.value.avatar_file = null;
+    currentUser.value.remove_profile_photo = true; // Informe le contrôleur Laravel
+    if (fileInputRef.value) fileInputRef.value.value = '';
+};
+
+// --- ACTIONS MODAL ---
+const openCreate = () => {
     currentUser.value = { ...defaultUser };
     formErrors.value = {};
-    if(fileUploadRef.value) fileUploadRef.value.clear();
+    if(fileInputRef.value) fileInputRef.value.value = '';
     isEditingUser.value = false;
     userDialog.value = true;
 };
 
-const editUser = (user) => {
+const openEdit = (user) => {
     currentUser.value = {
         ...user,
-        password: '',
-        hiring_date: user.hiring_date ? new Date(user.hiring_date) : null
+        password: '', // On ne remplit jamais le mot de passe
+        hiring_date: user.hiring_date ? new Date(user.hiring_date) : null,
+        avatar_url: null, // On vide la preview locale
+        avatar_file: null,
+        remove_profile_photo: false
     };
     formErrors.value = {};
-    if(fileUploadRef.value) fileUploadRef.value.clear();
+    if(fileInputRef.value) fileInputRef.value.value = '';
     isEditingUser.value = true;
     userDialog.value = true;
 };
 
 const viewUser = (user) => {
     currentUser.value = { ...user };
-    viewUserSidebar.value = true;
+    viewUserDialog.value = true;
 };
-
-const submitting = ref(false);
 
 const saveUser = () => {
     if (!validateUserForm()) {
@@ -233,60 +255,43 @@ const saveUser = () => {
             email: data.email || '',
             is_active: Boolean(data.is_active),
             roles: Array.isArray(data.roles) ? data.roles : [],
-            remove_avatar: Boolean(data.remove_avatar),
+            remove_profile_photo: Boolean(data.remove_profile_photo),
             hiring_date: data.hiring_date ? new Date(data.hiring_date).toISOString().split('T')[0] : null,
         };
 
+        // Gestion du mot de passe & spoofing de méthode
         if (!isEditingUser.value) {
             payload.password = data.password || '';
         } else {
             if (!data.password) delete payload.password;
-            payload._method = 'put';
+            payload._method = 'put'; // Nécessaire car Laravel n'accepte pas les fichiers en PUT natif
         }
 
-        payload.avatar = data.avatar_file || null;
+        // Ajout du fichier physique s'il a été sélectionné
+        if (data.avatar_file) {
+            payload.profile_photo = data.avatar_file;
+        }
+
         return payload;
     });
 
-    const routeName = isEditingUser.value
-        ? route('users.update', currentUser.value.id)
-        : route('users.store');
-
+    const routeName = isEditingUser.value ? route('users.update', currentUser.value.id) : route('users.store');
     submitting.value = true;
 
     form.post(routeName, {
-        forceFormData: true,
+        forceFormData: true, // IMPORTANT : Autorise l'envoi multipart/form-data
         preserveScroll: true,
         onSuccess: () => {
             userDialog.value = false;
-            toast.add({
-                severity: 'success',
-                summary: 'Succès',
-                detail: isEditingUser.value ? 'Utilisateur mis à jour' : 'Utilisateur créé',
-                life: 3000
-            });
+            toast.add({ severity: 'success', summary: 'Succès', detail: isEditingUser.value ? 'Utilisateur mis à jour' : 'Utilisateur créé', life: 3000 });
             router.reload({ only: ['users'] });
-            resetForm();
         },
         onError: (errors) => {
             formErrors.value = errors;
-            toast.add({
-                severity: 'error',
-                summary: 'Erreur',
-                detail: Object.values(errors).flat().join(' | '),
-                life: 5000
-            });
+            toast.add({ severity: 'error', summary: 'Erreur', detail: 'Veuillez vérifier les informations.', life: 5000 });
         },
-        onFinish: () => {
-            submitting.value = false;
-        }
+        onFinish: () => submitting.value = false
     });
-};
-
-const resetForm = () => {
-  currentUser.value = { ...defaultUser };
-  formErrors.value = {};
-  isEditingUser.value = false;
 };
 
 const confirmDeleteUser = (user) => {
@@ -298,7 +303,7 @@ const confirmDeleteUser = (user) => {
         accept: () => {
             router.delete(route('users.destroy', user.id), {
                 preserveScroll: true,
-                onSuccess: () => toast.add({ severity: 'success', summary: 'Supprimé', detail: 'Utilisateur retiré du système.', life: 3000 })
+                onSuccess: () => toast.add({ severity: 'success', summary: 'Supprimé', detail: 'Utilisateur retiré.', life: 3000 })
             });
         }
     });
@@ -306,7 +311,6 @@ const confirmDeleteUser = (user) => {
 
 const confirmBulkDeleteUsers = () => {
     if (!selectedUsers.value || selectedUsers.value.length === 0) return;
-
     confirm.require({
         message: `Supprimer les ${selectedUsers.value.length} utilisateurs sélectionnés ?`,
         header: 'Action en masse',
@@ -317,41 +321,15 @@ const confirmBulkDeleteUsers = () => {
             router.post(route('users.bulk_destroy'), { ids: ids }, {
                 onSuccess: () => {
                     selectedUsers.value = null;
-                    toast.add({ severity: 'success', summary: 'Succès', detail: 'Opération de suppression réussie.', life: 3000 });
+                    toast.add({ severity: 'success', summary: 'Succès', detail: 'Suppression réussie.', life: 3000 });
                 }
             });
         }
     });
 };
 
-// --- GESTION AVATAR ---
-const fileUploadRef = ref(null);
-const triggerAvatarUpload = () => fileUploadRef.value.$el.querySelector('input[type="file"]')?.click();
-
-const onUploadAvatar = (event) => {
-    const file = event.files[0];
-    if (file) {
-        if (file.size > 2 * 1024 * 1024) {
-            toast.add({ severity: 'error', summary: 'Fichier lourd', detail: 'Max 2 Mo autorisés.', life: 4000 });
-            fileUploadRef.value.clear();
-            return;
-        }
-        currentUser.value.avatar_file = file;
-        const reader = new FileReader();
-        reader.onload = (e) => currentUser.value.avatar_url = e.target.result;
-        reader.readAsDataURL(file);
-    }
-};
-
-const removeAvatar = () => {
-    currentUser.value.avatar_url = null;
-    currentUser.value.avatar_file = null;
-    currentUser.value.avatar = null;
-    if (fileUploadRef.value) fileUploadRef.value.clear();
-};
-
 // ====================================================================
-// GESTION DES DÉPARTEMENTS (TEAMS) AVEC HIÉRARCHIE
+// LOGIQUE ÉQUIPES / DÉPARTEMENTS
 // ====================================================================
 const openNewTeam = () => {
     currentTeam.value = { ...defaultTeam };
@@ -369,11 +347,9 @@ const editTeam = (team) => {
 
 const saveDepartment = () => {
     if (!validateTeamForm()) return;
-
     const form = useForm({ ...currentTeam.value });
     const method = isEditingTeam.value ? 'put' : 'post';
     const routeName = isEditingTeam.value ? route('teams.update', currentTeam.value.id) : route('teams.store');
-
     form.submit(method, routeName, {
         preserveScroll: true,
         onSuccess: () => {
@@ -387,7 +363,7 @@ const saveDepartment = () => {
 
 const confirmDeleteTeam = (team) => {
     confirm.require({
-        message: `Supprimer l'équipe "${team.name}" ? Les utilisateurs liés verront leur affectation retirée (null). Les sous-équipes seront réassignées à l'équipe parente.`,
+        message: `Supprimer l'équipe "${team.name}" ? Les utilisateurs rattachés se retrouveront sans équipe.`,
         header: 'Avertissement',
         icon: 'pi pi-exclamation-triangle',
         acceptClass: 'p-button-danger',
@@ -395,23 +371,15 @@ const confirmDeleteTeam = (team) => {
     });
 };
 
-// --- RÉORGANISATION (drag & drop natif PrimeVue) ---
 const onTeamReorder = (event) => {
     const newOrderIds = event.value.map(team => team.id);
     router.post(route('teams.reorder'), { order: newOrderIds }, {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-            toast.add({ severity: 'success', summary: 'Ordre mis à jour', detail: 'La hiérarchie des départements a été sauvegardée.', life: 3000 });
-        },
-        onError: () => {
-            toast.add({ severity: 'error', summary: 'Erreur', detail: 'Le réordonnancement a échoué.' });
-        }
+        onSuccess: () => toast.add({ severity: 'success', summary: 'Ordre mis à jour', detail: 'La hiérarchie a été sauvegardée.', life: 3000 })
     });
 };
 
 // ====================================================================
-// ANALYTICS & GRAPHIQUES
+// ANALYTICS RH & DATA
 // ====================================================================
 const chartOptions = ref({
     plugins: { legend: { labels: { color: '#475569', font: { family: 'Inter', weight: 'bold' } } } },
@@ -425,38 +393,26 @@ const teamDistributionChart = computed(() => {
         const map = { slate:'#64748b', red:'#ef4444', orange:'#f97316', amber:'#f59e0b', emerald:'#10b981', teal:'#14b8a6', blue:'#3b82f6', indigo:'#6366f1', violet:'#8b5cf6', rose:'#f43f5e' };
         return map[t.color] || '#cbd5e1';
     });
-
     const unassignedCount = usersList.value.filter(u => !u.team_id).length;
-    if (unassignedCount > 0) {
-        labels.push('Sans département');
-        data.push(unassignedCount);
-        bgColors.push('#94a3b8');
-    }
-
-    return {
-        labels: labels,
-        datasets: [{ data: data, backgroundColor: bgColors, hoverOffset: 4, borderWidth: 0 }]
-    };
+    if (unassignedCount > 0) { labels.push('Sans département'); data.push(unassignedCount); bgColors.push('#94a3b8'); }
+    return { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, hoverOffset: 4, borderWidth: 0 }] };
 });
 
 // ====================================================================
-// UTILITAIRES & EXPORT
+// UTILITAIRES
 // ====================================================================
 const getInitials = (name, lastName) => {
     const first = name ? name.charAt(0) : '';
     const last = lastName ? lastName.charAt(0) : '';
-    return (first + last).toUpperCase() || '??';
+    return (first + last).toUpperCase() || 'U';
 };
-
-const getFullName = (u) => {
-    return `${u.name || ''} ${u.last_name || ''}`.trim();
-};
-
+const getFullName = (u) => `${u.name || ''} ${u.last_name || ''}`.trim() || 'Utilisateur';
 const formatDate = (dateStr) => {
     if (!dateStr) return 'N/A';
     return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(dateStr));
 };
 
+// --- EXPORTS ---
 const exportUsersCSV = () => {
     let csv = "ID,Prenom,Nom,Email,Poste,Contrat,Telephone,Taux Horaire,Equipe\n";
     usersList.value.forEach(u => {
@@ -466,7 +422,7 @@ const exportUsersCSV = () => {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "export_utilisateurs.csv";
+    link.download = "export_annuaire.csv";
     link.click();
 };
 
@@ -474,11 +430,10 @@ const exportUsersJSON = () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(usersList.value, null, 2));
     const link = document.createElement('a');
     link.href = dataStr;
-    link.download = "export_utilisateurs.json";
+    link.download = "export_annuaire.json";
     link.click();
 };
 
-// --- LIFECYCLE ---
 onMounted(() => {
     isDataLoading.value = true;
     setTimeout(() => isDataLoading.value = false, 600);
@@ -491,8 +446,11 @@ onMounted(() => {
 
         <div class="min-h-screen bg-[#f8fafc] pb-24 font-sans">
 
-            <!-- HERO HEADER SECTION -->
+            <!-- =================================================================== -->
+            <!-- HERO HEADER SECTION                                                 -->
+            <!-- =================================================================== -->
             <div class="bg-slate-900 pt-10 pb-32 px-4 lg:px-8 relative overflow-hidden shadow-xl">
+                <!-- Arrière-plan stylisé -->
                 <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDIwaDQwTTIwIDB2NDAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-10"></div>
                 <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-teal-500/20 rounded-full blur-[140px] pointer-events-none"></div>
                 <div class="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-indigo-600/30 rounded-full blur-[100px] pointer-events-none"></div>
@@ -501,7 +459,7 @@ onMounted(() => {
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-4">
                             <Badge value="Ressources Humaines" class="bg-teal-500/20 text-teal-300 border border-teal-500/30 font-mono text-[11px] tracking-widest px-3 py-1 shadow-sm backdrop-blur-md" />
-                            <Badge value="Opérations" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono text-[11px] tracking-widest px-3 py-1 shadow-sm backdrop-blur-md" />
+                            <Badge value="Administration" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono text-[11px] tracking-widest px-3 py-1 shadow-sm backdrop-blur-md" />
                         </div>
                         <h1 class="text-4xl lg:text-6xl font-black text-white tracking-tight leading-tight">
                             Structure & <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Annuaire</span>
@@ -520,7 +478,9 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!-- KPI CARDS -->
+            <!-- =================================================================== -->
+            <!-- KPI CARDS                                                           -->
+            <!-- =================================================================== -->
             <div class="max-w-screen-2xl mx-auto px-4 lg:px-8 -mt-20 relative z-20 mb-10">
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                     <!-- KPI 1 -->
@@ -560,22 +520,27 @@ onMounted(() => {
                             <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100 text-rose-600 flex items-center justify-center text-2xl shadow-inner border border-rose-200/50 group-hover:scale-110 transition-transform"><i class="pi pi-globe"></i></div>
                         </div>
                         <div>
-                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Auth. Tierce (OAuth)</p>
+                            <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Auth. Tierce (SSO)</p>
                             <div class="flex items-baseline gap-2"><h3 class="text-4xl font-black text-slate-800">{{ usersList.filter(u => u.provider_name).length }}</h3><span class="text-sm font-medium text-slate-400">comptes liés</span></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- MAIN WORKSPACE (TABVIEW) -->
+            <!-- =================================================================== -->
+            <!-- MAIN WORKSPACE (TABVIEW)                                            -->
+            <!-- =================================================================== -->
             <div class="max-w-screen-2xl mx-auto px-4 lg:px-8 relative z-20">
                 <div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden">
-
                     <TabView v-model:activeIndex="activeMainTab" class="custom-main-tabview">
 
-                        <!-- ONGLET 1 : UTILISATEURS (identique à avant) -->
+                        <!-- ======================================================= -->
+                        <!-- ONGLET 1 : ANNUAIRE / UTILISATEURS                      -->
+                        <!-- ======================================================= -->
                         <TabPanel>
-                            <template #header><div class="flex items-center gap-3 px-3 py-2"><i class="pi pi-users text-lg"></i><span class="font-bold text-base">Annuaire Personnel</span><Badge :value="totalUsers" severity="info" class="bg-slate-100 text-slate-700 font-black" /></div></template>
+                            <template #header>
+                                <div class="flex items-center gap-3 px-3 py-2"><i class="pi pi-users text-lg"></i><span class="font-bold text-base">Annuaire Personnel</span><Badge :value="totalUsers" severity="info" class="bg-slate-100 text-slate-700 font-black" /></div>
+                            </template>
 
                             <Toolbar class="bg-slate-50/50 border-0 border-b border-slate-100 p-5">
                                 <template #start>
@@ -594,7 +559,7 @@ onMounted(() => {
                                             <template #option="slotProps"><i :class="slotProps.option.icon" class="text-slate-600 px-3 py-1"></i></template>
                                         </SelectButton>
                                         <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
-                                        <Button icon="pi pi-user-plus" label="Ajouter Profil" class="bg-indigo-600 hover:bg-indigo-700 border-none shadow-lg shadow-indigo-500/30 text-white font-bold rounded-2xl px-6" @click="openNewUser" />
+                                        <Button icon="pi pi-user-plus" label="Ajouter Profil" class="bg-indigo-600 hover:bg-indigo-700 border-none shadow-lg shadow-indigo-500/30 text-white font-bold rounded-2xl px-6" @click="openCreate" />
                                     </div>
                                 </template>
                             </Toolbar>
@@ -605,33 +570,21 @@ onMounted(() => {
                                 </div>
 
                                 <DataView v-else :value="usersList" :layout="viewMode" :paginator="true" :rows="12" class="border-none">
+                                    <!-- VUE LISTE -->
                                     <template #list>
-                                        <DataTable
-                                            v-model:selection="selectedUsers"
-                                            :value="usersList"
-                                            :filters="filtersUsers"
-                                            dataKey="id"
-                                            class="custom-table"
-                                            responsiveLayout="scroll"
-                                            :rowHover="true"
-                                            stripedRows
-                                            emptyMessage="Aucun utilisateur ne correspond à vos critères."
-                                        >
+                                        <DataTable v-model:selection="selectedUsers" :value="usersList" :filters="filtersUsers" dataKey="id" class="custom-table" responsiveLayout="scroll" :rowHover="true" stripedRows emptyMessage="Aucun utilisateur trouvé.">
                                             <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
                                             <Column field="name" header="Collaborateur" sortable style="min-width: 22rem">
                                                 <template #body="{ data }">
-                                                    <div class="flex items-center gap-4">
+                                                    <div class="flex items-center gap-5 group cursor-pointer" @click="openEdit(data)">
                                                         <div class="relative">
-                                                            <Avatar v-if="data.avatar_url" :image="data.avatar_url" size="xlarge" shape="circle" class="border border-slate-200 shadow-sm w-12 h-12 flex-shrink-0" />
-                                                            <Avatar v-else :label="getInitials(data.name, data.last_name)" size="xlarge" shape="circle" class="bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-700 font-black border border-indigo-200 shadow-sm w-12 h-12 text-lg flex-shrink-0" />
-                                                            <span :class="['absolute bottom-0 right-0 w-3.5 h-3.5 border-2 border-white rounded-full', data.is_active ? 'bg-emerald-500' : 'bg-rose-500']" v-tooltip="data.is_active ? 'Actif' : 'Inactif'"></span>
+                                                            <Avatar :image="data.profile_photo_url || null" :label="!data.profile_photo_url ? getInitials(data.name, data.last_name) : ''" shape="circle" size="xlarge"
+                                                                class="shadow-lg border-2 border-white" :class="{'bg-slate-200 text-slate-700 font-bold': !data.profile_photo_url}" />
+                                                            <span :class="['absolute bottom-0 right-0 w-3.5 h-3.5 border-2 border-white rounded-full z-10', data.is_active ? 'bg-emerald-500' : 'bg-rose-500']"></span>
                                                         </div>
                                                         <div class="flex flex-col">
-                                                            <span class="font-extrabold text-slate-800 text-base cursor-pointer hover:text-indigo-600 transition-colors" @click="viewUser(data)">{{ getFullName(data) }}</span>
-                                                            <div class="flex items-center gap-2 mt-0.5">
-                                                                <span class="text-xs font-medium text-slate-500"><i class="pi pi-envelope text-[10px] mr-1"></i>{{ data.email || 'Sans email' }}</span>
-                                                                <i v-if="data.provider_name" class="pi pi-shield text-emerald-500 text-[10px]" v-tooltip="'Connecté via ' + data.provider_name"></i>
-                                                            </div>
+                                                            <span class="font-bold text-slate-800">{{ getFullName(data) }}</span>
+                                                            <span class="text-xs text-slate-500">{{ data.email }}</span>
                                                         </div>
                                                     </div>
                                                 </template>
@@ -661,14 +614,16 @@ onMounted(() => {
                                             <Column :exportable="false" style="min-width: 10rem; text-align: right;">
                                                 <template #body="{ data }">
                                                     <div class="flex items-center justify-end gap-1">
-                                                        <Button icon="pi pi-eye" class="p-button-rounded p-button-text p-button-secondary hover:bg-slate-100" @click="viewUser(data)" v-tooltip.top="'Profil'" />
-                                                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info hover:bg-indigo-50" @click="editUser(data)" v-tooltip.top="'Modifier'" />
+                                                        <Button icon="pi pi-eye" class="p-button-rounded p-button-text p-button-secondary hover:bg-slate-100" @click="viewUser(data)" v-tooltip.top="'Voir la Fiche'" />
+                                                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info hover:bg-indigo-50" @click="openEdit(data)" v-tooltip.top="'Modifier'" />
                                                         <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger hover:bg-red-50" @click="confirmDeleteUser(data)" v-tooltip.top="'Supprimer'" />
                                                     </div>
                                                 </template>
                                             </Column>
                                         </DataTable>
                                     </template>
+
+                                    <!-- VUE GRILLE -->
                                     <template #grid>
                                         <div class="p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 bg-slate-50/50">
                                             <div v-for="user in usersList" :key="user.id" class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-lg shadow-slate-200/30 flex flex-col items-center relative group hover:-translate-y-2 hover:shadow-2xl hover:border-indigo-200 transition-all duration-300 cursor-pointer" @click="viewUser(user)">
@@ -678,8 +633,7 @@ onMounted(() => {
                                                 <div class="absolute top-6 left-6 flex gap-1">
                                                     <div :class="['w-2.5 h-2.5 rounded-full shadow-sm', user.is_active ? 'bg-emerald-500' : 'bg-rose-500']" v-tooltip="user.is_active ? 'Actif' : 'Inactif'"></div>
                                                 </div>
-                                                <Avatar v-if="user.avatar_url" :image="user.avatar_url" size="xlarge" shape="circle" class="w-24 h-24 shadow-md mb-4 border-4 border-white" />
-                                                <Avatar v-else :label="getInitials(user.name, user.last_name)" size="xlarge" shape="circle" class="w-24 h-24 shadow-md mb-4 border-4 border-white bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-700 font-black text-3xl" />
+                                                <Avatar :image="user.profile_photo_url || null" :label="!user.profile_photo_url ? getInitials(user.name, user.last_name) : ''" size="xlarge" shape="circle" class="w-24 h-24 shadow-md mb-4 border-4 border-white font-black text-3xl" :class="!user.profile_photo_url ? 'bg-gradient-to-br from-indigo-50 to-indigo-100 text-indigo-700' : ''" />
                                                 <h4 class="font-black text-lg text-slate-800 text-center leading-tight mb-1">{{ getFullName(user) }}</h4>
                                                 <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">{{ user.position || 'Collaborateur' }}</p>
                                                 <div v-if="user.team" :class="`text-[10px] font-bold px-3 py-1 rounded-lg bg-${user.team.color}-50 text-${user.team.color}-700 border border-${user.team.color}-100 mb-4`">
@@ -692,7 +646,7 @@ onMounted(() => {
                                                         <Button icon="pi pi-envelope" class="p-button-rounded p-button-text p-button-secondary !w-8 !h-8 bg-slate-50 hover:bg-slate-100" v-tooltip.bottom="user.email" @click.stop="window.location.href=`mailto:${user.email}`" />
                                                         <Button v-if="user.phone" icon="pi pi-phone" class="p-button-rounded p-button-text p-button-secondary !w-8 !h-8 bg-slate-50 hover:bg-slate-100" v-tooltip.bottom="user.phone" />
                                                     </div>
-                                                    <Button label="Modifier" class="p-button-text p-button-sm text-indigo-600 font-bold hover:bg-indigo-50" @click.stop="editUser(user)" />
+                                                    <Button label="Modifier" class="p-button-text p-button-sm text-indigo-600 font-bold hover:bg-indigo-50" @click.stop="openEdit(user)" />
                                                 </div>
                                             </div>
                                             <div v-if="usersList.length === 0" class="col-span-full py-20 text-center flex flex-col items-center">
@@ -706,13 +660,12 @@ onMounted(() => {
                             </div>
                         </TabPanel>
 
-                        <!-- ONGLET 2 : ÉQUIPES / DÉPARTEMENTS AVEC HIÉRARCHIE -->
+                        <!-- ======================================================= -->
+                        <!-- ONGLET 2 : ÉQUIPES / DÉPARTEMENTS                       -->
+                        <!-- ======================================================= -->
                         <TabPanel>
                             <template #header>
-                                <div class="flex items-center gap-3 px-3 py-2">
-                                    <i class="pi pi-sitemap text-lg"></i>
-                                    <span class="font-bold text-base">Départements</span>
-                                </div>
+                                <div class="flex items-center gap-3 px-3 py-2"><i class="pi pi-sitemap text-lg"></i><span class="font-bold text-base">Départements</span></div>
                             </template>
 
                             <Toolbar class="bg-slate-50/50 border-0 border-b border-slate-100 p-5">
@@ -727,16 +680,7 @@ onMounted(() => {
                                 </template>
                             </Toolbar>
 
-                            <DataTable
-                                v-model:expandedRows="expandedTeamRows"
-                                :value="teamsList"
-                                :filters="filtersTeams"
-                                dataKey="id"
-                                class="custom-table"
-                                stripedRows
-                                reorderableRows
-                                @row-reorder="onTeamReorder"
-                            >
+                            <DataTable v-model:expandedRows="expandedTeamRows" :value="teamsList" :filters="filtersTeams" dataKey="id" class="custom-table" stripedRows reorderableRows @row-reorder="onTeamReorder">
                                 <Column :rowReorder="true" headerStyle="width: 3rem" :reorderableColumn="false" />
                                 <Column expander style="width: 3rem" />
                                 <Column field="name" header="Département" sortable style="min-width: 20rem">
@@ -757,12 +701,6 @@ onMounted(() => {
                                         <span class="text-sm text-slate-600 line-clamp-2 leading-relaxed">{{ data.description || 'Aucune description fournie.' }}</span>
                                     </template>
                                 </Column>
-                                <Column field="parent.name" header="Parent" sortable style="min-width: 12rem">
-                                    <template #body="{ data }">
-                                        <span v-if="data.parent" class="text-sm font-medium text-slate-700">{{ data.parent.name }}</span>
-                                        <span v-else class="text-xs italic text-slate-400">Aucun parent</span>
-                                    </template>
-                                </Column>
                                 <Column field="members_count" header="Effectif" sortable style="min-width: 12rem">
                                     <template #body="{ data }">
                                         <Badge :value="(usersList.filter(u => u.team_id === data.id)).length + ' membres'" severity="secondary" class="bg-slate-100 text-slate-700 font-bold px-3 py-1" />
@@ -771,62 +709,49 @@ onMounted(() => {
                                 <Column :exportable="false" style="min-width: 10rem; text-align: right;">
                                     <template #body="{ data }">
                                         <div class="flex justify-end gap-1">
-                                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" @click="editTeam(data)" v-tooltip.top="'Modifier'" />
+                                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-info" @click="openEdit(data)" v-tooltip.top="'Modifier'" />
                                             <Button icon="pi pi-trash" class="p-button-rounded p-button-text p-button-danger" @click="confirmDeleteTeam(data)" v-tooltip.top="'Supprimer'" />
                                         </div>
                                     </template>
                                 </Column>
 
-                                <!-- EXPANSION : montre les sous-équipes et les membres -->
+                                <!-- EXPANSION -->
                                 <template #expansion="{ data }">
                                     <div class="p-8 bg-slate-50 border-y border-slate-100 shadow-inner space-y-8">
-                                        <!-- Sous-équipes (enfants) -->
                                         <div>
-                                            <h5 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-widest">
-                                                <i class="pi pi-sitemap text-slate-400"></i> Sous-départements
-                                            </h5>
+                                            <h5 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-widest"><i class="pi pi-sitemap text-slate-400"></i> Sous-départements</h5>
                                             <div v-if="teamsList.filter(t => t.parent_id === data.id).length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                                 <div v-for="child in teamsList.filter(t => t.parent_id === data.id)" :key="child.id" class="flex items-center gap-4 bg-white border border-slate-200 p-3 rounded-2xl shadow-sm hover:border-slate-300 transition-colors">
-                                                    <div :class="`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm bg-${child.color}-500`">
-                                                        <i class="pi pi-sitemap text-sm"></i>
-                                                    </div>
+                                                    <div :class="`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm bg-${child.color}-500`"><i class="pi pi-sitemap text-sm"></i></div>
                                                     <div class="flex flex-col">
                                                         <span class="text-sm font-bold text-slate-800">{{ child.name }}</span>
                                                         <span class="text-xs text-slate-500">{{ usersList.filter(u => u.team_id === child.id).length }} membre(s)</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div v-else class="text-sm text-slate-500 italic p-4 bg-white rounded-2xl border border-slate-100 text-center shadow-sm">
-                                                <i class="pi pi-inbox text-2xl text-slate-200 mb-1 block"></i>
-                                                Aucun sous-département rattaché.
-                                            </div>
+                                            <div v-else class="text-sm text-slate-500 italic p-4 bg-white rounded-2xl border border-slate-100 text-center shadow-sm">Aucun sous-département.</div>
                                         </div>
-
-                                        <!-- Membres -->
                                         <div>
-                                            <h5 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-widest">
-                                                <i class="pi pi-users text-slate-400"></i> Personnel rattaché
-                                            </h5>
+                                            <h5 class="text-sm font-black text-slate-700 mb-4 flex items-center gap-2 uppercase tracking-widest"><i class="pi pi-users text-slate-400"></i> Personnel rattaché</h5>
                                             <div v-if="usersList.filter(u => u.team_id === data.id).length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                                                 <div v-for="u in usersList.filter(u => u.team_id === data.id)" :key="u.id" class="flex items-center gap-4 bg-white border border-slate-200 p-3 rounded-2xl shadow-sm hover:border-slate-300 transition-colors cursor-pointer group" @click="viewUser(u)">
-                                                    <Avatar :image="u.avatar_url" :label="!u.avatar_url ? getInitials(u.name, u.last_name) : null" shape="circle" class="w-10 h-10 text-sm bg-slate-100 text-slate-600 font-bold flex-shrink-0 group-hover:scale-110 transition-transform" />
+                                                    <Avatar :image="u.profile_photo_url || null" :label="!u.profile_photo_url ? getInitials(u.name, u.last_name) : ''" shape="circle" class="w-10 h-10 text-sm bg-slate-100 text-slate-600 font-bold flex-shrink-0 group-hover:scale-110 transition-transform" />
                                                     <div class="flex flex-col overflow-hidden">
                                                         <span class="text-sm font-bold text-slate-800 truncate">{{ getFullName(u) }}</span>
                                                         <span class="text-[10px] uppercase font-bold text-slate-400 truncate">{{ u.position || 'Collaborateur' }}</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div v-else class="text-sm text-slate-500 italic p-4 bg-white rounded-2xl border border-slate-100 text-center shadow-sm">
-                                                <i class="pi pi-inbox text-2xl text-slate-200 mb-1 block"></i>
-                                                Aucun collaborateur n'est assigné à ce département.
-                                            </div>
+                                            <div v-else class="text-sm text-slate-500 italic p-4 bg-white rounded-2xl border border-slate-100 text-center shadow-sm">Aucun collaborateur n'est assigné à ce département.</div>
                                         </div>
                                     </div>
                                 </template>
                             </DataTable>
                         </TabPanel>
 
-                        <!-- ONGLET 3 : ANALYTICS (inchangé) -->
+                        <!-- ======================================================= -->
+                        <!-- ONGLET 3 : ANALYTICS                                    -->
+                        <!-- ======================================================= -->
                         <TabPanel>
                             <template #header><div class="flex items-center gap-3 px-3 py-2"><i class="pi pi-chart-pie text-lg"></i><span class="font-bold text-base">Analyse RH</span></div></template>
 
@@ -865,7 +790,9 @@ onMounted(() => {
             </div>
         </div>
 
-        <!-- MODALE UTILISATEUR (inchangée) -->
+        <!-- =================================================================== -->
+        <!-- MODAL 1 : CRÉATION / ÉDITION UTILISATEUR (MASTER FORM)              -->
+        <!-- =================================================================== -->
         <Dialog v-model:visible="userDialog" :style="{ width: '850px' }" :modal="true" class="custom-dialog" :closable="false">
             <template #header>
                 <div class="flex items-center justify-between w-full">
@@ -882,37 +809,44 @@ onMounted(() => {
 
             <div class="p-2 -mx-4 -mb-4">
                 <TabView class="custom-modal-tabview">
+                    <!-- Onglet Identité -->
                     <TabPanel header="Identité & Accès">
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 px-4">
+                            <!-- AVATAR UPLOAD AREA -->
                             <div class="lg:col-span-4 flex flex-col items-center border-r border-slate-100 pr-6">
-                                <label class="text-xs font-black text-slate-400 uppercase tracking-widest w-full text-center mb-6">Avatar (Optionnel)</label>
-                                <div v-if="currentUser.avatar_url" class="relative group w-40 h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl mb-4">
-                                    <img :src="currentUser.avatar_url" class="w-full h-full object-cover" />
+                                <label class="text-xs font-black text-slate-400 uppercase tracking-widest w-full text-center mb-6">Avatar</label>
+
+                                <div v-if="currentUser.avatar_url || currentUser.profile_photo_url" class="relative group w-40 h-40 rounded-full overflow-hidden border-4 border-slate-100 shadow-xl mb-4">
+                                    <img :src="currentUser.avatar_url || currentUser.profile_photo_url" class="w-full h-full object-cover" />
                                     <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
                                         <Button icon="pi pi-pencil" class="p-button-rounded p-button-info" @click="triggerAvatarUpload" v-tooltip="'Modifier'" />
                                         <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="removeAvatar" v-tooltip="'Supprimer'" />
                                     </div>
                                 </div>
-                                <div v-else class="w-40 h-40 rounded-[2rem] border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center hover:bg-indigo-50 hover:border-indigo-400 hover:text-indigo-600 cursor-pointer transition-all duration-300 mb-4 group text-slate-400" @click="triggerAvatarUpload">
+                                <div v-else class="w-40 h-40 rounded-full border-2 border-dashed border-slate-300 bg-slate-50 flex flex-col items-center justify-center hover:bg-indigo-50 hover:border-indigo-400 hover:text-indigo-600 cursor-pointer transition-all duration-300 mb-4 group text-slate-400" @click="triggerAvatarUpload">
                                     <i class="pi pi-camera text-4xl mb-3 group-hover:scale-110 transition-transform"></i>
                                     <span class="text-xs font-bold uppercase tracking-widest">Image</span>
                                 </div>
-                                <FileUpload ref="fileUploadRef" mode="basic" :auto="false" accept="image/*" @select="onUploadAvatar" class="hidden" />
+
+                                <!-- Input natif caché pour Spatie -->
+                                <input type="file" ref="fileInputRef" class="hidden" accept="image/png, image/jpeg, image/jpg, image/webp" @change="onUploadAvatar" />
+
                                 <div v-if="currentUser.provider_name" class="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 w-full text-center">
                                     <i class="pi pi-shield text-emerald-500 mb-2 text-2xl"></i>
-                                    <p class="text-xs font-bold text-slate-700">Connecté via OAuth</p>
-                                    <p class="text-[10px] text-slate-500 uppercase">{{ currentUser.provider_name }}</p>
+                                    <p class="text-[10px] font-bold text-slate-700 uppercase">SSO : {{ currentUser.provider_name }}</p>
                                 </div>
                             </div>
+
+                            <!-- DATA FIELDS -->
                             <div class="lg:col-span-8 space-y-6">
                                 <div class="grid grid-cols-2 gap-6">
                                     <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-bold text-slate-700">Prénom (Name) <span class="text-red-500">*</span></label>
+                                        <label class="text-sm font-bold text-slate-700">Prénom <span class="text-red-500">*</span></label>
                                         <InputText v-model="currentUser.name" :class="['w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white px-4 py-3', {'p-invalid': formErrors.name}]" />
                                         <small v-if="formErrors.name" class="text-red-500 font-bold"><i class="pi pi-exclamation-circle mr-1"></i>{{ formErrors.name }}</small>
                                     </div>
                                     <div class="flex flex-col gap-2">
-                                        <label class="text-sm font-bold text-slate-700">Nom (Last Name)</label>
+                                        <label class="text-sm font-bold text-slate-700">Nom</label>
                                         <InputText v-model="currentUser.last_name" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white px-4 py-3" />
                                     </div>
                                 </div>
@@ -927,7 +861,7 @@ onMounted(() => {
                                     </div>
                                     <div class="flex flex-col gap-2">
                                         <label class="text-sm font-bold text-slate-700">Mot de passe</label>
-                                        <InputText v-model="currentUser.password" type="password" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white px-4 py-3" :placeholder="isEditingUser ? 'Laisser vide pour ignorer' : 'Nouveau mot de passe'" />
+                                        <InputText v-model="currentUser.password" type="password" class="w-full rounded-2xl border-slate-200 bg-slate-50 focus:bg-white px-4 py-3" :placeholder="isEditingUser ? 'Laisser vide pour ignorer' : 'Requis pour nouveau'" />
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-6">
@@ -935,64 +869,51 @@ onMounted(() => {
                                         <label class="text-sm font-bold text-slate-700">Téléphone</label>
                                         <InputGroup class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500/20">
                                             <InputGroupAddon class="bg-transparent border-0 px-4"><i class="pi pi-phone text-slate-400"></i></InputGroupAddon>
-                                            <InputText v-model="currentUser.phone" placeholder="+33 6..." class="border-0 bg-transparent w-full focus:ring-0 shadow-none py-3" :class="{'p-invalid': formErrors.phone}" />
+                                            <InputText v-model="currentUser.phone" class="border-0 bg-transparent w-full focus:ring-0 shadow-none py-3" />
                                         </InputGroup>
                                     </div>
                                     <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200 mt-7">
-                                        <div>
-                                            <p class="font-bold text-slate-800 text-sm">Compte Actif</p>
-                                            <p class="text-[10px] text-slate-500">Autoriser la connexion</p>
-                                        </div>
+                                        <div><p class="font-bold text-slate-800 text-sm">Compte Actif</p><p class="text-[10px] text-slate-500">Autoriser la connexion</p></div>
                                         <InputSwitch v-model="currentUser.is_active" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </TabPanel>
+
+                    <!-- Onglet Affectation -->
                     <TabPanel header="Poste & Affectation">
                         <div class="space-y-8 pt-6 px-4">
                             <div class="bg-indigo-50/50 border border-indigo-100 rounded-3xl p-6">
-                                <h3 class="font-black text-indigo-900 mb-2 flex items-center gap-2"><i class="pi pi-sitemap"></i> Département (Équipe)</h3>
-                                <p class="text-xs text-indigo-700/70 mb-6">Sélectionnez l'équipe principale à laquelle l'employé est rattaché (Relation 1-to-N).</p>
-                                <div class="flex flex-col gap-2">
-                                    <Dropdown v-model="currentUser.team_id" :options="teamsList" optionLabel="name" optionValue="id" placeholder="Sélectionnez un département..." :filter="true" class="w-full rounded-2xl border-slate-200 bg-white" :showClear="true">
-                                        <template #value="sp"><div v-if="sp.value" class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${teamsList.find(t=>t.id===sp.value)?.color}-500`"></span><span class="font-bold">{{ teamsList.find(t=>t.id===sp.value)?.name }}</span></div></template>
-                                        <template #option="sp"><div class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${sp.option.color}-500`"></span><span class="font-bold">{{ sp.option.name }}</span></div></template>
-                                    </Dropdown>
-                                </div>
+                                <h3 class="font-black text-indigo-900 mb-2 flex items-center gap-2"><i class="pi pi-sitemap"></i> Département</h3>
+                                <p class="text-xs text-indigo-700/70 mb-6">Sélectionnez l'équipe principale à laquelle l'employé est rattaché.</p>
+                                <Dropdown v-model="currentUser.team_id" :options="teamsList" optionLabel="name" optionValue="id" placeholder="Sélectionnez un département..." :filter="true" class="w-full rounded-2xl border-slate-200 bg-white" :showClear="true">
+                                    <template #value="sp"><div v-if="sp.value" class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${teamsList.find(t=>t.id===sp.value)?.color}-500`"></span><span class="font-bold">{{ teamsList.find(t=>t.id===sp.value)?.name }}</span></div></template>
+                                    <template #option="sp"><div class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${sp.option.color}-500`"></span><span class="font-bold">{{ sp.option.name }}</span></div></template>
+                                </Dropdown>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-slate-700">Intitulé du Poste</label>
-                                    <InputText v-model="currentUser.position" placeholder="Ex: Directeur Commercial" class="w-full rounded-2xl border-slate-200 bg-slate-50 py-3 px-4" />
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-slate-700">Type de Contrat</label>
-                                    <Dropdown v-model="currentUser.contract_type" :options="contractTypes" placeholder="Sélectionnez..." class="w-full rounded-2xl border-slate-200" :showClear="true" />
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-slate-700">Date d'embauche</label>
-                                    <Calendar v-model="currentUser.hiring_date" dateFormat="dd/mm/yy" class="w-full" inputClass="rounded-2xl border-slate-200 bg-slate-50 py-3 px-4 w-full" :showIcon="true" placeholder="JJ/MM/AAAA" />
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label class="text-sm font-bold text-slate-700">Taux Horaire (€/h)</label>
-                                    <InputNumber v-model="currentUser.hourly_rate" mode="currency" currency="EUR" locale="fr-FR" placeholder="Ex: 45,00 €" class="w-full" inputClass="rounded-2xl border-slate-200 bg-slate-50 py-3 px-4 w-full" />
-                                </div>
+                                <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Intitulé du Poste</label><InputText v-model="currentUser.position" class="w-full rounded-2xl border-slate-200 bg-slate-50 py-3 px-4" /></div>
+                                <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Type de Contrat</label><Dropdown v-model="currentUser.contract_type" :options="contractTypes" class="w-full rounded-2xl border-slate-200" :showClear="true" /></div>
+                                <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Date d'embauche</label><Calendar v-model="currentUser.hiring_date" dateFormat="dd/mm/yy" class="w-full" inputClass="rounded-2xl border-slate-200 bg-slate-50 py-3 px-4 w-full" :showIcon="true" /></div>
+                                <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Taux Horaire (€/h)</label><InputNumber v-model="currentUser.hourly_rate" mode="currency" currency="EUR" locale="fr-FR" class="w-full" inputClass="rounded-2xl border-slate-200 bg-slate-50 py-3 px-4 w-full" /></div>
                             </div>
                         </div>
                     </TabPanel>
+
+                    <!-- Onglet Bio -->
                     <TabPanel header="Notes & Réseaux">
                         <div class="space-y-6 pt-6 px-4">
                             <div class="flex flex-col gap-2">
-                                <label class="text-sm font-bold text-slate-700">Profil LinkedIn URL</label>
-                                <InputGroup class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20">
+                                <label class="text-sm font-bold text-slate-700">Profil LinkedIn</label>
+                                <InputGroup class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
                                     <InputGroupAddon class="bg-transparent border-0 px-4"><i class="pi pi-linkedin text-blue-600 text-lg"></i></InputGroupAddon>
-                                    <InputText v-model="currentUser.linkedin_url" placeholder="https://linkedin.com/in/..." class="border-0 bg-transparent w-full focus:ring-0 shadow-none py-3" />
+                                    <InputText v-model="currentUser.linkedin_url" class="border-0 bg-transparent w-full shadow-none py-3" />
                                 </InputGroup>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-sm font-bold text-slate-700">Biographie / Notes RH</label>
-                                <Textarea v-model="currentUser.bio" rows="6" class="w-full rounded-2xl border-slate-200 bg-slate-50 p-4 focus:bg-white" placeholder="Parcours, compétences, observations..." />
+                                <Textarea v-model="currentUser.bio" rows="6" class="w-full rounded-2xl border-slate-200 bg-slate-50 p-4" />
                             </div>
                         </div>
                     </TabPanel>
@@ -1004,13 +925,87 @@ onMounted(() => {
                     <span class="text-xs text-slate-400 font-bold tracking-widest uppercase"><span class="text-red-500">*</span> Champs Obligatoires</span>
                     <div class="flex gap-3">
                         <Button label="Annuler" class="p-button-text text-slate-600 font-bold hover:bg-slate-200 rounded-2xl px-6 py-3" @click="userDialog = false" />
-                        <Button label="Sauvegarder Profil" icon="pi pi-check" class="bg-indigo-600 border-none hover:bg-indigo-700 shadow-xl shadow-indigo-500/40 font-bold rounded-2xl px-8 py-3" @click="saveUser" />
+                        <Button label="Sauvegarder Profil" icon="pi pi-check" class="bg-indigo-600 border-none hover:bg-indigo-700 shadow-xl shadow-indigo-500/40 font-bold rounded-2xl px-8 py-3" @click="saveUser" :loading="submitting" />
                     </div>
                 </div>
             </template>
         </Dialog>
 
-        <!-- MODALE ÉQUIPE AVEC CHAMP PARENT -->
+        <!-- =================================================================== -->
+        <!-- MODAL 2 : FICHE EMPLOYÉ (PREMIUM DESIGN)                            -->
+        <!-- =================================================================== -->
+        <Dialog v-model:visible="viewUserDialog" modal :draggable="false" :dismissableMask="true" class="w-full sm:w-[35rem] mx-4 custom-premium-dialog">
+            <template #header>
+                <div class="flex justify-between w-full relative z-20">
+                    <span class="text-white/80 font-mono text-[10px] uppercase tracking-widest bg-black/20 px-3 py-1 rounded-full backdrop-blur-sm">ID: #{{ currentUser.id }}</span>
+                </div>
+            </template>
+
+            <div class="relative -mt-16 -mx-6 pb-6 bg-slate-50 rounded-b-[2rem]">
+                <!-- Header Card (Cover & Avatar) -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 h-40 relative rounded-t-[2rem] overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PHBhdGggZD0iTTAgMGgyMHYyMEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDEwaDIwTTEwIDB2MjAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+')] opacity-20"></div>
+                </div>
+
+                <div class="px-8 relative -mt-16 flex flex-col items-center">
+                    <!-- Avatar Display -->
+                    <Avatar v-if="currentUser.profile_photo_url" :image="currentUser.profile_photo_url" size="xlarge" shape="circle" class="w-32 h-32 shadow-2xl border-4 border-white mb-4 bg-white" />
+                    <Avatar v-else :label="getInitials(currentUser.name, currentUser.last_name)" size="xlarge" shape="circle" class="w-32 h-32 shadow-2xl border-4 border-white bg-slate-100 text-slate-600 font-black text-4xl mb-4" />
+
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tight text-center">{{ getFullName(currentUser) }}</h2>
+                    <p class="text-indigo-600 font-bold text-sm mt-1">{{ currentUser.position || 'Poste non renseigné' }}</p>
+
+                    <div class="mt-4 flex gap-2">
+                        <Tag :value="currentUser.is_active ? 'Actif' : 'Inactif'" :severity="currentUser.is_active ? 'success' : 'danger'" class="rounded-full font-bold px-3 py-1" />
+                        <Tag v-if="currentUser.team" :value="currentUser.team.name" :class="`bg-${currentUser.team.color}-100 text-${currentUser.team.color}-700 border-${currentUser.team.color}-200 border rounded-full font-bold px-3 py-1`" />
+                    </div>
+                </div>
+
+                <div class="px-8 mt-8 space-y-6">
+                    <!-- Section Contact -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500"><i class="pi pi-envelope text-sm"></i></div>
+                            <div><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Email Pro</p><p class="text-sm font-bold text-slate-800">{{ currentUser.email || '-' }}</p></div>
+                        </div>
+                        <Divider class="m-0 opacity-50" />
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500"><i class="pi pi-phone text-sm"></i></div>
+                            <div><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Téléphone</p><p class="text-sm font-bold text-slate-800 font-mono">{{ currentUser.phone || '-' }}</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Section RH -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 flex flex-col justify-center">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Contrat</p>
+                            <p class="text-base font-black text-slate-800">{{ currentUser.contract_type || 'Indéfini' }}</p>
+                            <p class="text-xs text-slate-500 mt-1">Depuis: {{ formatDate(currentUser.hiring_date) }}</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-3xl p-5 shadow-sm border border-indigo-100 flex flex-col justify-center">
+                            <p class="text-[10px] uppercase font-bold text-indigo-400 tracking-widest mb-1">Taux Horaire</p>
+                            <p class="text-2xl font-black text-indigo-900">{{ currentUser.hourly_rate || 0 }} <span class="text-xs font-bold text-indigo-600">€/h</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Bio & Link -->
+                    <div v-if="currentUser.bio || currentUser.linkedin_url" class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+                        <div v-if="currentUser.bio" class="mb-4">
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-2">Bio / Notes</p>
+                            <p class="text-sm text-slate-600 leading-relaxed italic">{{ currentUser.bio }}</p>
+                        </div>
+                        <div v-if="currentUser.linkedin_url" class="flex items-center gap-3 bg-blue-50/50 p-3 rounded-2xl border border-blue-100 mt-2">
+                            <i class="pi pi-linkedin text-blue-600 text-xl"></i>
+                            <a :href="currentUser.linkedin_url" target="_blank" class="text-sm font-bold text-blue-700 hover:underline">Profil LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Dialog>
+
+        <!-- =================================================================== -->
+        <!-- MODAL 3 : ÉQUIPES / DÉPARTEMENTS                                    -->
+        <!-- =================================================================== -->
         <Dialog v-model:visible="teamDialog" :style="{ width: '600px' }" :modal="true" class="custom-dialog" :closable="false">
             <template #header>
                 <div class="flex items-center gap-4">
@@ -1018,53 +1013,32 @@ onMounted(() => {
                     <h2 class="font-black text-2xl text-slate-800">{{ isEditingTeam ? 'Modifier Département' : 'Nouveau Département' }}</h2>
                 </div>
             </template>
-
             <div class="space-y-6 pt-6">
+                <!-- ... Formulaire Team (Identique) ... -->
                 <div class="flex flex-col gap-2">
                     <label class="text-sm font-bold text-slate-700">Nom du département <span class="text-red-500">*</span></label>
-                    <InputText v-model="currentTeam.name" :class="['w-full rounded-2xl border-slate-200 bg-slate-50 px-4 py-3', {'p-invalid': formErrors.name}]" placeholder="Ex: Support Technique" />
+                    <InputText v-model="currentTeam.name" :class="['w-full rounded-2xl border-slate-200 bg-slate-50 px-4 py-3', {'p-invalid': formErrors.name}]" />
                     <small v-if="formErrors.name" class="text-red-500 font-bold">{{ formErrors.name }}</small>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Description des missions</label>
-                    <Textarea v-model="currentTeam.description" rows="3" class="w-full rounded-2xl border-slate-200 bg-slate-50 p-4" placeholder="Objectifs et responsabilités..." />
+                    <label class="text-sm font-bold text-slate-700">Description</label>
+                    <Textarea v-model="currentTeam.description" rows="3" class="w-full rounded-2xl border-slate-200 bg-slate-50 p-4" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Couleur d'identification <span class="text-red-500">*</span></label>
-                    <Dropdown v-model="currentTeam.color" :options="tailwindColors" optionLabel="name" optionValue="value" class="w-full rounded-2xl border-slate-200 py-1 bg-slate-50">
-                        <template #value="sp"><div v-if="sp.value" class="flex gap-3 items-center px-2"><span :class="`w-5 h-5 rounded-md shadow-sm bg-${sp.value}-500`"></span><span class="font-bold">{{ tailwindColors.find(c => c.value === sp.value)?.name }}</span></div></template>
-                        <template #option="sp"><div class="flex gap-3 items-center"><span :class="`w-5 h-5 rounded-md bg-${sp.option.value}-500`"></span><span class="font-bold">{{ sp.option.name }}</span></div></template>
+                    <label class="text-sm font-bold text-slate-700">Couleur <span class="text-red-500">*</span></label>
+                    <Dropdown v-model="currentTeam.color" :options="tailwindColors" optionLabel="name" optionValue="value" class="w-full rounded-2xl border-slate-200 bg-slate-50">
+                        <template #value="sp"><div v-if="sp.value" class="flex gap-3 items-center px-2"><span :class="`w-4 h-4 rounded-full bg-${sp.value}-500`"></span><span class="font-bold">{{ tailwindColors.find(c => c.value === sp.value)?.name }}</span></div></template>
+                        <template #option="sp"><div class="flex gap-3 items-center"><span :class="`w-4 h-4 rounded-full bg-${sp.option.value}-500`"></span><span class="font-bold">{{ sp.option.name }}</span></div></template>
                     </Dropdown>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-bold text-slate-700">Département parent (optionnel)</label>
-                    <Dropdown
-                        v-model="currentTeam.parent_id"
-                        :options="teamsList.filter(t => t.id !== currentTeam.id)"
-                        optionLabel="name"
-                        optionValue="id"
-                        placeholder="Aucun parent (département racine)"
-                        :showClear="true"
-                        class="w-full rounded-2xl border-slate-200"
-                    >
-                        <template #value="sp">
-                            <div v-if="sp.value" class="flex gap-2 items-center">
-                                <span :class="`w-2 h-2 rounded-full bg-${teamsList.find(t=>t.id===sp.value)?.color}-500`"></span>
-                                <span class="font-bold">{{ teamsList.find(t=>t.id===sp.value)?.name }}</span>
-                            </div>
-                            <span v-else class="text-slate-500 italic">Aucun parent</span>
-                        </template>
-                        <template #option="sp">
-                            <div class="flex gap-2 items-center">
-                                <span :class="`w-2 h-2 rounded-full bg-${sp.option.color}-500`"></span>
-                                <span class="font-bold">{{ sp.option.name }}</span>
-                            </div>
-                        </template>
+                    <label class="text-sm font-bold text-slate-700">Département parent</label>
+                    <Dropdown v-model="currentTeam.parent_id" :options="teamsList.filter(t => t.id !== currentTeam.id)" optionLabel="name" optionValue="id" placeholder="Aucun parent" :showClear="true" class="w-full rounded-2xl border-slate-200">
+                        <template #value="sp"><div v-if="sp.value" class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${teamsList.find(t=>t.id===sp.value)?.color}-500`"></span><span class="font-bold">{{ teamsList.find(t=>t.id===sp.value)?.name }}</span></div></template>
+                        <template #option="sp"><div class="flex gap-2 items-center"><span :class="`w-2 h-2 rounded-full bg-${sp.option.color}-500`"></span><span class="font-bold">{{ sp.option.name }}</span></div></template>
                     </Dropdown>
-                    <small class="text-slate-400 text-xs">Permet de créer une hiérarchie (ex: Direction > Service > Équipe).</small>
                 </div>
             </div>
-
             <template #footer>
                 <div class="flex justify-end gap-3 bg-slate-50 -mx-6 -mb-6 p-6 border-t border-slate-200 rounded-b-[2rem]">
                     <Button label="Annuler" class="p-button-text text-slate-600 font-bold hover:bg-slate-200 rounded-2xl px-6 py-3" @click="teamDialog = false" />
@@ -1073,72 +1047,13 @@ onMounted(() => {
             </template>
         </Dialog>
 
-        <!-- SIDEBAR DÉTAIL UTILISATEUR (inchangé) -->
-        <Sidebar v-model:visible="viewUserSidebar" position="right" class="w-full md:w-[30rem] lg:w-[35rem] custom-sidebar">
-            <template #header>
-                <div class="flex items-center justify-between w-full">
-                    <span class="text-xs font-black uppercase tracking-widest text-slate-400">Dossier RH #{{ currentUser.id }}</span>
-                </div>
-            </template>
-            <div v-if="currentUser.id" class="flex flex-col h-full overflow-y-auto pb-10">
-                <div class="flex flex-col items-center text-center mt-6 mb-8 px-6">
-                    <Avatar v-if="currentUser.avatar_url" :image="currentUser.avatar_url" size="xlarge" shape="circle" class="w-32 h-32 shadow-2xl border-4 border-white mb-4" />
-                    <Avatar v-else :label="getInitials(currentUser.name, currentUser.last_name)" size="xlarge" shape="circle" class="w-32 h-32 shadow-2xl border-4 border-white bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-black text-4xl mb-4" />
-                    <h2 class="text-3xl font-black text-slate-800">{{ getFullName(currentUser) }}</h2>
-                    <p class="text-lg font-bold text-indigo-600 mt-1">{{ currentUser.position || 'Poste non défini' }}</p>
-                    <div class="mt-4">
-                        <Tag v-if="currentUser.team" :value="currentUser.team.name" :class="`bg-${currentUser.team.color}-100 text-${currentUser.team.color}-700 border-${currentUser.team.color}-200 px-3 py-1 text-xs font-bold rounded-lg border`" />
-                        <Tag v-else value="Sans département" severity="secondary" />
-                    </div>
-                </div>
-                <div class="px-8 space-y-6">
-                    <div class="bg-white rounded-[2rem] border border-slate-100 p-6 shadow-xl shadow-slate-200/40 space-y-4">
-                        <div class="flex items-center gap-4 border-b border-slate-50 pb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-500"><i class="pi pi-envelope text-xl"></i></div>
-                            <div><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Email Principal</p><p class="text-sm font-bold text-slate-800">{{ currentUser.email || '-' }}</p></div>
-                        </div>
-                        <div class="flex items-center gap-4 border-b border-slate-50 pb-4">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-500"><i class="pi pi-phone text-xl"></i></div>
-                            <div><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Téléphone</p><p class="text-sm font-bold text-slate-800">{{ currentUser.phone || '-' }}</p></div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-500"><i class="pi pi-file text-xl"></i></div>
-                            <div>
-                                <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Contrat & Ancienneté</p>
-                                <p class="text-sm font-bold text-slate-800">{{ currentUser.contract_type || 'Indéfini' }} <span v-if="currentUser.hiring_date" class="text-slate-400 font-medium">depuis le {{ formatDate(currentUser.hiring_date) }}</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100/50 rounded-[2rem] border border-indigo-100 p-6 shadow-sm flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-indigo-500"><i class="pi pi-euro text-xl font-bold"></i></div>
-                            <div>
-                                <p class="text-[10px] uppercase font-bold text-indigo-400 tracking-widest">Taux Horaire</p>
-                                <p class="text-2xl font-black text-indigo-900">{{ currentUser.hourly_rate || 0 }} <span class="text-sm font-bold text-indigo-600">€/h</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-[2rem] border border-slate-100 p-6 shadow-xl shadow-slate-200/40">
-                        <h4 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Biographie & Liens</h4>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-4">{{ currentUser.bio || 'Aucune biographie fournie pour ce collaborateur.' }}</p>
-                        <div v-if="currentUser.linkedin_url" class="flex items-center gap-3 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
-                            <i class="pi pi-linkedin text-blue-600 text-xl"></i>
-                            <a :href="currentUser.linkedin_url" target="_blank" class="text-sm font-bold text-blue-700 hover:underline">Voir le profil LinkedIn</a>
-                        </div>
-                        <div v-if="currentUser.provider_name" class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mt-2">
-                            <i class="pi pi-key text-slate-400 text-xl"></i>
-                            <span class="text-xs font-bold text-slate-500">SSO OAuth : {{ currentUser.provider_name }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Sidebar>
-
-        <!-- CONFIRMATION DIALOG -->
-        <ConfirmDialog :style="{ width: '450px' }" class="custom-confirm-dialog" :breakpoints="{'960px': '75vw', '640px': '90vw'}">
+        <!-- =================================================================== -->
+        <!-- CONFIRM DIALOG GLOBAL                                               -->
+        <!-- =================================================================== -->
+        <ConfirmDialog :style="{ width: '450px' }" class="custom-confirm-dialog">
             <template #message="slotProps">
                 <div class="flex flex-col items-center w-full gap-4 pb-4">
-                    <div class="w-20 h-20 bg-red-50 rounded-[2rem] flex items-center justify-center text-red-500 text-4xl mb-2 shadow-inner border border-red-100"><i :class="slotProps.message.icon"></i></div>
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center text-red-500 text-4xl mb-2 shadow-inner border border-red-100"><i :class="slotProps.message.icon"></i></div>
                     <p class="text-center text-slate-800 font-bold text-lg leading-snug">{{ slotProps.message.message }}</p>
                 </div>
             </template>
@@ -1149,7 +1064,7 @@ onMounted(() => {
 
 <style scoped>
 /* ==========================================================================
-   STYLES SPECIFIQUES (IDENTIQUES À VOTRE CODE ORIGINAL)
+   STYLES SPECIFIQUES ET OVERRIDES PRIMEVUE
    ========================================================================== */
 :deep(.custom-table) { font-family: 'Inter', system-ui, sans-serif; }
 :deep(.custom-table .p-datatable-header) { background: transparent; border: none; padding: 0; }
@@ -1175,11 +1090,14 @@ onMounted(() => {
 :deep(.custom-dialog .p-dialog-header) { border-bottom: 1px solid #f1f5f9; padding: 1.5rem 2rem; background: #ffffff; }
 :deep(.custom-dialog .p-dialog-content) { padding: 0 2rem 1.5rem 2rem; background: #ffffff; }
 
+/* Nouveau style pour le View User Dialog */
+:deep(.custom-premium-dialog) { border-radius: 2rem; overflow: hidden; background: transparent; border: none; box-shadow: 0 30px 60px -12px rgb(0 0 0 / 0.5); }
+:deep(.custom-premium-dialog .p-dialog-header) { background: transparent; border: none; position: absolute; width: 100%; z-index: 50; padding: 1.5rem; }
+:deep(.custom-premium-dialog .p-dialog-header .p-dialog-header-icon) { color: white !important; background: rgba(0,0,0,0.2) !important; border-radius: 50%; }
+:deep(.custom-premium-dialog .p-dialog-content) { padding: 0; background: transparent; }
+
 :deep(.custom-modal-tabview .p-tabview-nav) { padding: 0; border-bottom: 2px solid #f8fafc; }
 :deep(.custom-modal-tabview .p-tabview-nav li .p-tabview-nav-link) { padding: 1rem 1.5rem; font-size: 0.85rem; }
-
-:deep(.custom-sidebar) { border-top-left-radius: 2rem; border-bottom-left-radius: 2rem; background: #f8fafc; }
-:deep(.custom-sidebar .p-sidebar-header) { padding: 1.5rem 2rem; border-bottom: 1px solid #f1f5f9; background: transparent; }
 
 :deep(.p-inputtext:focus), :deep(.p-dropdown:focus), :deep(.p-dropdown.p-focus), :deep(.p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext) {
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #818cf8;

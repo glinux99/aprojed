@@ -1,17 +1,19 @@
-
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { useForm, router, Head, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import pkg from "lodash";
 import AppLayout from "@/sakai/layout/AppLayout.vue";
-const { _, debounce, pickBy } = pkg;
 
+const { debounce, pickBy } = pkg;
+
+// PrimeVue Composables
 import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import Avatar from 'primevue/avatar';
+
 // PrimeVue Components
+import Avatar from 'primevue/avatar';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -22,7 +24,6 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import Tag from 'primevue/tag';
 import MultiSelect from 'primevue/multiselect';
-import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
@@ -45,18 +46,17 @@ const dt = ref();
 const isModalOpen = ref(false);
 const fileInput = ref(null);
 const selectedUsers = ref([]);
-const submitted = ref(false);
 const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 
-const canImpersonate = computed(() => page.props.auth.user.permissions.includes('impersonate-user'));
+const canImpersonate = computed(() => page.props.auth.user.permissions?.includes('impersonate-user'));
 const authUser = computed(() => page.props.auth.user);
 
+// --- FILTRES DE RECHERCHE ---
 const filters = ref({
     'global': { value: props.filters?.search || null, matchMode: FilterMatchMode.CONTAINS },
     'name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     'email': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-
     'role': { value: props.filters?.role || null, matchMode: FilterMatchMode.EQUALS },
     'region_name': { value: props.filters?.region_id || null, matchMode: FilterMatchMode.EQUALS },
 });
@@ -66,7 +66,6 @@ const search = debounce(() => {
     const preparedFilters = {
         search: filters.value.global.value,
         region_id: filters.value.region_name.value,
-        // Vous pouvez ajouter d'autres filtres ici si nécessaire pour le backend
     };
     router.get(route('user.index'), pickBy(preparedFilters), {
         preserveState: true,
@@ -75,23 +74,15 @@ const search = debounce(() => {
     });
 }, 400);
 
-
 const resetFilters = () => {
-    filters.value = {
-        'global': { value: null, matchMode: FilterMatchMode.CONTAINS },
-        'name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'email': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-        'role': { value: null, matchMode: FilterMatchMode.EQUALS },
-        'region_name': { value: null, matchMode: FilterMatchMode.EQUALS },
-    };
-    // Optionnel: déclencher une recherche pour réinitialiser les données du backend
+    filters.value.global.value = null;
+    filters.value.region_name.value = null;
     search();
 };
 
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
+const exportCSV = () => dt.value.exportCSV();
 
+// --- GESTION DU FORMULAIRE INERTIA ---
 const form = useForm({
     id: null,
     name: '',
@@ -100,13 +91,14 @@ const form = useForm({
     password_confirmation: '',
     phone: '',
     region_id: null,
-    pointure: '',
-    size: '',
     roles: [],
     profile_photo: null,
     profile_photo_preview: null,
+    remove_profile_photo: false, // Flag pour indiquer au backend de supprimer la photo
+    _method: 'post', // Nécessaire pour le spoofing Laravel (Fichiers en PUT)
 });
 
+// --- COLONNES DATATABLE ---
 const allColumns = computed(() => [
     { field: 'name', header: t('users.fields.name'), default: true },
     { field: 'email', header: 'Email', default: false },
@@ -118,39 +110,32 @@ const allColumns = computed(() => [
 
 const selectedColumnFields = ref(allColumns.value.filter(col => col.default).map(c => c.field));
 const displayedColumns = computed(() => allColumns.value.filter(col => selectedColumnFields.value.includes(col.field)));
-const regionOptions = computed(() =>
-    (props.regions || []).map(r => ({ label: r.designation, value: r.id }))
-);
+
+const regionOptions = computed(() => (props.regions || []).map(r => ({ label: r.designation, value: r.id })));
 
 const stats = computed(() => {
     const data = props.users.data || [];
-    // Enrichir les données utilisateur avec le nom de la région pour l'affichage et le filtrage
-    data.forEach(user => {
-        user.region_name = user.region?.designation || 'N/A';
-    });
+    data.forEach(user => { user.region_name = user.region?.designation || 'N/A'; });
 
     const roleStats = (props.roles || []).reduce((acc, role) => {
         acc[role.name] = data.filter(u => u.roles.some(r => r.name === role.name)).length;
         return acc;
     }, {});
 
-    return {
-        total: props.users.total,
-        ...roleStats
-    };
+    return { total: props.users.total, ...roleStats };
 });
 
 const formattedUsers = computed(() => {
-    // Assurez-vous que stats est calculé pour que region_name soit ajouté
-    stats.value;
+    stats.value; // Déclenche l'ajout de region_name
     return props.users.data;
 });
 
+// --- ACTIONS MODAL ---
 const openCreate = () => {
     form.reset();
     form.clearErrors();
     form.id = null;
-    form.profile_photo_preview = null;
+    form.remove_profile_photo = false;
     isModalOpen.value = true;
 };
 
@@ -162,12 +147,14 @@ const openEdit = (user) => {
     form.phone = user.phone;
     form.roles = user.roles.map(r => r.name);
     form.region_id = user.region_id;
-    form.pointure = user.pointure;
-    form.size = user.size;
-    form.profile_photo_preview = user.profile_photo_url;
+    form.profile_photo_preview = user.profile_photo_url; // Spatie Media Library provides the full URL
+    form.remove_profile_photo = false;
+    form.password = ''; // Ne jamais remplir le mot de passe
+    form.password_confirmation = '';
     isModalOpen.value = true;
 };
 
+// --- GESTION DES FICHIERS (IMAGES) ---
 const triggerFileInput = () => fileInput.value.click();
 
 const handlePhotoChange = (e) => {
@@ -178,10 +165,10 @@ const handlePhotoChange = (e) => {
             return;
         }
         form.profile_photo = file;
+        form.remove_profile_photo = false;
+
         const reader = new FileReader();
-        reader.onload = (event) => {
-            form.profile_photo_preview = event.target.result;
-        };
+        reader.onload = (event) => form.profile_photo_preview = event.target.result;
         reader.readAsDataURL(file);
     }
 };
@@ -189,28 +176,19 @@ const handlePhotoChange = (e) => {
 const removePhoto = () => {
     form.profile_photo = null;
     form.profile_photo_preview = null;
+    form.remove_profile_photo = true; // Demande au backend de supprimer l'image
     if (fileInput.value) fileInput.value.value = null;
 };
 
+// --- SOUMISSION DU FORMULAIRE ---
 const submit = () => {
-    // 1. Préparation de l'URL et des données
+    // Spoofing de méthode pour Laravel car multipart/form-data (fichiers) ne passe pas en PUT standard
+    form._method = form.id ? 'put' : 'post';
     const url = form.id ? route('user.update', form.id) : route('user.store');
 
-    // On prépare l'objet à envoyer. On inclut _method pour que Laravel
-    // comprenne qu'il s'agit d'un PUT même si on passe par du POST (requis pour les fichiers).
-    const dataToSend = {
-        ...form.data(),
-        _method: form.id ? 'put' : 'post',
-    };
-
-    // 2. Utilisation de router
-    router.visit(url, {
-        method: 'post', // On utilise physiquement 'post' pour supporter FormData/Fichiers
-        data: dataToSend,
-        forceFormData: true, // Force l'envoi en FormData (indispensable pour les images)
-        onBefore: () => {
-            // Optionnel : form.processing = true;
-        },
+    form.submit('post', url, { // Use form.submit for Inertia forms with files
+        preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
             isModalOpen.value = false;
             toast.add({
@@ -222,11 +200,6 @@ const submit = () => {
             form.reset();
         },
         onError: (errors) => {
-            // Avec router, il faut manuellement assigner les erreurs au formulaire
-            // si vous voulez qu'elles s'affichent sous vos inputs
-            form.setError(errors);
-
-            console.error("Erreur lors de la sauvegarde de l'utilisateur", errors);
             const errorDetail = Object.values(errors).flat().join(' ; ');
             toast.add({
                 severity: 'error',
@@ -238,6 +211,7 @@ const submit = () => {
     });
 };
 
+// --- AUTRES ACTIONS ---
 const deleteUser = (user) => {
     confirm.require({
         message: `Voulez-vous supprimer définitivement ${user.name} ?`,
@@ -253,14 +227,15 @@ const deleteUser = (user) => {
 };
 
 const confirmDeleteSelected = () => {
+    if (!selectedUsers.value.length) return;
     confirm.require({
         message: `Êtes-vous sûr de vouloir supprimer les ${selectedUsers.value.length} utilisateurs sélectionnés ?`,
         header: 'Suppression multiple',
         icon: 'pi pi-exclamation-triangle',
         acceptClass: 'p-button-danger',
-        accept: () => { // Assurez-vous que cette route existe
+        accept: () => {
             const ids = selectedUsers.value.map(u => u.id);
-            router.post(route('users.bulkDestroy'), { ids }, { // Assurez-vous que cette route existe
+            router.post(route('users.bulkDestroy'), { ids }, {
                 onSuccess: () => {
                     toast.add({ severity: 'success', summary: 'Succès', detail: `${ids.length} utilisateurs supprimés.`, life: 3000 });
                     selectedUsers.value = [];
@@ -287,11 +262,8 @@ const onPage = (event) => {
 
 watch(
     () => [filters.value.global.value, filters.value.region_name.value],
-    () => {
-        search();
-    }
+    () => search()
 );
-
 </script>
 
 <template>
@@ -301,6 +273,7 @@ watch(
         <ConfirmDialog />
 
         <div class="p-4 md:p-8 bg-[#F8FAFC] min-h-screen">
+            <!-- En-tête de page -->
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
                 <div class="flex items-center gap-4">
                     <div class="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -312,10 +285,11 @@ watch(
                     </div>
                 </div>
                 <div class="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
-                    <Button :label="t('users.actions.add')" icon="pi pi-plus"  raised @click="openCreate" class="rounded-lg font-bold" />
+                    <Button :label="t('users.actions.add')" icon="pi pi-plus" raised @click="openCreate" class="rounded-lg font-bold" />
                 </div>
             </div>
 
+            <!-- Statistiques -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div v-for="(val, key) in stats" :key="key" class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm flex items-center gap-5">
                      <div class="w-14 h-14 rounded-xl bg-slate-100 flex items-center justify-center">
@@ -330,25 +304,26 @@ watch(
                 </div>
             </div>
 
+            <!-- Table des données -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <DataTable ref="dt" :value="formattedUsers" v-model:selection="selectedUsers" dataKey="id" paginator :rows="users.per_page" :totalRecords="users.total" lazy
-                    :rowsPerPageOptions="[10, 25, 50, 100]" @page="onPage"
-                    removableSort stripedRows class="p-datatable-custom">
+                    :rowsPerPageOptions="[10, 25, 50, 100]" @page="onPage" removableSort stripedRows class="p-datatable-custom">
+
                     <template #header>
                         <div class="flex flex-wrap justify-between items-center gap-4 p-2 w-full">
-                            <div class="flex items-center gap-2">
-                                <IconField iconPosition="left">
+                            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                                <IconField iconPosition="left" class="w-full md:w-80">
                                     <InputIcon class="pi pi-search text-slate-400"/>
-                                    <InputText v-model="filters['global'].value" :placeholder="t('users.searchPlaceholder')" class="w-full md:w-80 rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white"/>
+                                    <InputText v-model="filters['global'].value" :placeholder="t('users.searchPlaceholder')" class="w-full rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white"/>
                                 </IconField>
                                 <Dropdown
                                     v-model="filters['region_name'].value"
                                     :options="regionOptions"
                                     optionLabel="label"
                                     optionValue="value"
-                                    placeholder="Filtrer par région"
                                     :placeholder="t('users.filterByRegionPlaceholder')"
-                                    class="w-full md:w-60 rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white" />
+                                    class="w-full md:w-60 rounded-2xl border-slate-200 bg-slate-50/50 focus:bg-white"
+                                />
                             </div>
 
                             <div class="flex items-center gap-2">
@@ -366,10 +341,8 @@ watch(
                          <template #body="{ data, field }">
                             <template v-if="field === 'name'">
                                 <div class="flex items-center gap-5 group cursor-pointer" @click="openEdit(data)">
-                                    <div class="relative">
-                                        <Avatar :image="data.profile_photo_url || null" :label="data.profile_photo_url ? '' : data.name?.charAt(0) || 'U'" shape="circle" size="xlarge"
-                                            class="shadow-lg" :class="{'bg-slate-200 text-slate-700': !data.profile_photo_url}" />
-                                    </div>
+
+                                    <Avatar :image="data.profile_photo_url || null" :label="data.profile_photo_url ? '' : data.name?.charAt(0) || 'U'" shape="circle" size="xlarge" class="shadow-md" :class="{'bg-slate-200 text-slate-700': !data.profile_photo_url}" />
                                     <div class="flex flex-col">
                                         <span class="font-bold text-slate-800">{{ data.name }}</span>
                                         <span class="text-xs text-slate-500">{{ data.email }}</span>
@@ -380,12 +353,9 @@ watch(
                                 <Tag v-for="role in data.roles" :key="role.id" :value="role.name" severity="secondary" class="mr-1" />
                             </template>
                             <template v-else-if="field === 'phone'">
-                                <span class="font-mono text-sm">{{ data.phone }}</span>
+                                <span class="font-mono text-sm">{{ data.phone || '-' }}</span>
                             </template>
-                            <template v-else-if="field === 'region_name'">
-                                <span class="text-slate-600 text-sm">{{ data.region_name }}</span>
-                            </template>
-                             <template v-else-if="field === 'created_at'">
+                            <template v-else-if="field === 'created_at'">
                                 <span class="text-slate-600 text-sm font-mono">{{ data[field] ? new Date(data[field]).toLocaleDateString() : '-' }}</span>
                             </template>
                             <template v-else>
@@ -409,25 +379,26 @@ watch(
 
         <OverlayPanel ref="op" class="p-4">
             <div class="font-semibold mb-3">{{ t('common.columnSelector.title') }}</div>
-            <MultiSelect
-                v-model="selectedColumnFields"
-                :options="allColumns"
-                optionLabel="header"
-                optionValue="field"
-                display="chip"
-                :placeholder="t('common.columnSelector.placeholder')"
-                class="w-full max-w-xs"  />
+            <MultiSelect v-model="selectedColumnFields" :options="allColumns" optionLabel="header" optionValue="field" display="chip" :placeholder="t('common.columnSelector.placeholder')" class="w-full max-w-xs" />
         </OverlayPanel>
+
+        <!-- DIALOG CREATION / EDITION -->
         <Dialog v-model:visible="isModalOpen" modal position="right" :header="false" :closable="false" :style="{ width: '60vw' }" class="quantum-dialog" :pt="{ mask: { style: 'backdrop-filter: blur(4px)' } }" :draggable="false">
-            <!-- Loading Overlay -->
-            <div v-if="form.processing" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50 rounded-3xl">
-                <i class="pi pi-spin pi-spinner text-5xl text-primary-500"></i>
+
+            <!-- OVERLAY DE CHARGEMENT CIRCULAIRE (Pendant la soumission) -->
+            <div v-if="form.processing" class="absolute inset-0 bg-white/80 backdrop-blur-md flex flex-col items-center justify-center z-[100] rounded-3xl">
+                <i class="pi pi-spin pi-spinner-dotted text-6xl text-primary-500 mb-4 drop-shadow-md"></i>
+                <h3 class="text-lg font-bold text-slate-800">Sauvegarde en cours...</h3>
+                <span v-if="form.progress" class="text-sm font-bold text-primary-600 mt-2 bg-primary-50 px-3 py-1 rounded-full">
+                    Upload : {{ form.progress.percentage }}%
+                </span>
             </div>
 
+            <!-- Header du Dialog -->
             <div class="px-8 py-5 bg-slate-900 text-white rounded-xl flex justify-between items-center relative z-50">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-200">
-                        <i class="pi pi-user-plus text-xl"></i>
+                        <i class="pi pi-user-edit text-xl"></i>
                     </div>
                     <div>
                         <h4 class="font-black text-slate-100 m-0">{{ form.id ? t('users.editTitle') : t('users.createTitle') }}</h4>
@@ -435,116 +406,107 @@ watch(
                 </div>
                 <Button icon="pi pi-times" variant="text" severity="secondary" rounded @click="isModalOpen = false" class="text-white hover:bg-white/10" />
             </div>
+
+            <!-- Formulaire -->
             <form @submit.prevent="submit" class="p-4 space-y-8">
                 <div class="grid grid-cols-12 gap-10">
+
+                    <!-- Colonne Gauche : Upload Photo -->
                     <div class="col-span-12 md:col-span-4">
                         <div class="sticky top-0">
-                            <div class="relative group bg-white rounded-[2.5rem] p-3 border border-slate-200 shadow-2xl transition-all duration-500 hover:border-primary-300">
-                                <div class="relative w-full aspect-square overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-2xl border-4 border-white group">
+                            <div class="relative group bg-white rounded-[2.5rem] p-3 border border-slate-200 shadow-xl transition-all duration-500 hover:border-primary-300">
+                                <div class="relative w-full aspect-square overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-inner border-4 border-white group">
                                     <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-110"
                                         :style="{ backgroundImage: form.profile_photo_preview ? `url(${form.profile_photo_preview})` : 'none' }">
                                         <div v-if="!form.profile_photo_preview" class="w-full h-full flex items-center justify-center">
-                                            <span class="text-[14rem] font-black text-slate-200 uppercase select-none">
+                                            <span class="text-[10rem] font-black text-slate-200 uppercase select-none">
                                                 {{ form.name ? form.name[0] : 'U' }}
                                             </span>
                                         </div>
                                     </div>
-                                    <div @click="triggerFileInput" class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer backdrop-blur-[2px] z-10">
-                                        <div class="w-24 h-24 bg-white/95 text-slate-900 rounded-full flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform duration-500 border-8 border-primary-500/10">
-                                            <i class="pi pi-camera text-4xl"></i>
+                                    <div @click="triggerFileInput" class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer backdrop-blur-sm z-10">
+                                        <div class="w-20 h-20 bg-white text-slate-900 rounded-full flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform duration-500">
+                                            <i class="pi pi-camera text-3xl"></i>
                                         </div>
                                     </div>
                                     <button v-if="form.profile_photo_preview" type="button" @click.stop="removePhoto"
-                                        class="absolute top-5 right-5 w-12 h-12 bg-white/90 text-red-500 rounded-2xl flex items-center justify-center shadow-xl hover:bg-red-500 hover:text-white hover:scale-110 transition-all z-20 border border-white/50 backdrop-blur-md"
-                                        v-tooltip.left="t('users.actions.removePhoto')">
-                                        <i class="pi pi-trash text-xl"></i>
+                                        class="absolute top-4 right-4 w-10 h-10 bg-white/90 text-red-500 rounded-xl flex items-center justify-center shadow-lg hover:bg-red-500 hover:text-white hover:scale-110 transition-all z-20 backdrop-blur-md">
+                                        <i class="pi pi-trash"></i>
                                     </button>
                                 </div>
-                                <input type="file" ref="fileInput" class="hidden" @change="handlePhotoChange" accept="image/*" :aria-label="t('users.uploadPhotoAriaLabel')" />
+                                <input type="file" ref="fileInput" class="hidden" @change="handlePhotoChange" accept="image/*" />
                                 <div class="py-6 text-center">
-                                    <h3 class="font-black text-slate-900 text-2xl tracking-tighter leading-none mb-2">
+                                    <h3 class="font-black text-slate-900 text-2xl tracking-tighter truncate px-2 mb-2">
                                         {{ form.name || 'Nouveau Profil' }}
                                     </h3>
-                                    <span class="text-[10px] font-black text-primary-600 uppercase tracking-[0.3em] bg-primary-50 px-4 py-1.5 rounded-full">
-                                        Identité
+                                    <span class="text-[10px] font-black text-primary-600 uppercase tracking-[0.2em] bg-primary-50 px-4 py-1.5 rounded-full">
+                                        Photo de profil
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Colonne Droite : Champs de données -->
                     <div class="col-span-12 md:col-span-8 space-y-8">
                         <div>
-                            <span class="v11-header-label">{{ t('users.form.generalInfo') }}</span>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-200 pb-2 mb-4 block">{{ t('users.form.generalInfo') }}</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="flex flex-col gap-2">
-                                    <label for="name" class="v11-label">{{ t('users.fields.fullName') }}</label>
-                                    <InputText id="name" v-model="form.name" class="v11-input-ultimate" :placeholder="t('users.placeholders.fullName')" required :invalid="!!form.errors.name" />
-                                    <small class="p-error">{{ form.errors.name }}</small>
+                                    <label for="name" class="text-sm font-bold text-slate-700">{{ t('users.fields.fullName') }}</label>
+                                    <InputText id="name" v-model="form.name" class="w-full rounded-xl" :placeholder="t('users.placeholders.fullName')" required :invalid="!!form.errors.name" />
+                                    <small class="text-red-500 font-medium" v-if="form.errors.name">{{ form.errors.name }}</small>
                                 </div>
                                 <div class="flex flex-col gap-2">
-                                    <label for="email" class="v11-label">{{ t('users.fields.workEmail') }}</label>
-                                    <InputText id="email" v-model="form.email" type="email" class="v11-input-ultimate" :placeholder="t('users.placeholders.workEmail')" required :invalid="!!form.errors.email" />
-                                    <small class="p-error">{{ form.errors.email }}</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="v11-header-label">{{ t('users.form.assignmentAndRole') }}</span>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                                <div class="flex flex-col gap-2">
-                                    <label for="role" class="v11-label">{{ t('users.fields.role') }}</label>
-                                    <MultiSelect v-model="form.roles" :options="props.roles" optionLabel="name" optionValue="name" :placeholder="t('users.placeholders.selectRole')" display="chip" class="v11-dropdown-ultimate" id="role" :invalid="!!form.errors.roles" />
-                                    <small class="p-error">{{ form.errors.roles }}</small>
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label for="phone" class="v11-label">{{ t('users.fields.phone') }}</label>
-                                    <InputText id="phone" v-model="form.phone" class="v11-input-ultimate" :placeholder="t('users.placeholders.phone')" :invalid="!!form.errors.phone" />
-                                    <small class="p-error">{{ form.errors.phone }}</small>
-                                </div>
-                                <div class="flex flex-col gap-2">
-                                    <label for="region" class="v11-label">{{ t('users.fields.region') }}</label>
-                                    <Dropdown v-model="form.region_id" :options="regionOptions" optionLabel="label" optionValue="value" :placeholder="t('users.placeholders.region')" class="v11-dropdown-ultimate" id="region" :invalid="!!form.errors.region_id" />
-                                    <small class="p-error">{{ form.errors.region_id }}</small>
-                                </div>
-                                <div class="flex flex-col gap-2">
+                                    <label for="email" class="text-sm font-bold text-slate-700">{{ t('users.fields.workEmail') }}</label>
+                                    <InputText id="email" v-model="form.email" type="email" class="w-full rounded-xl" :placeholder="t('users.placeholders.workEmail')" required :invalid="!!form.errors.email" />
+                                    <small class="text-red-500 font-medium" v-if="form.errors.email">{{ form.errors.email }}</small>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <span class="v11-header-label">{{ t('users.form.safetyData') }}</span>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                                <InputText id="pointure" v-model="form.pointure" class="v11-input-ultimate !bg-white" :placeholder="t('users.placeholders.shoeSize')" :invalid="!!form.errors.pointure" />
-                                <small class="p-error">{{ form.errors.pointure }}</small>
-                                <InputText id="size" v-model="form.size" class="v11-input-ultimate !bg-white" :placeholder="t('users.placeholders.clothingSize')" :invalid="!!form.errors.size" />
-                                <small class="p-error">{{ form.errors.size }}</small>
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-400 border-b border-slate-200 pb-2 mb-4 block">{{ t('users.form.assignmentAndRole') }}</span>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-2">
+                                    <label for="role" class="text-sm font-bold text-slate-700">{{ t('users.fields.role') }}</label>
+                                    <MultiSelect v-model="form.roles" :options="props.roles" optionLabel="name" optionValue="name" :placeholder="t('users.placeholders.selectRole')" display="chip" class="w-full rounded-xl" :invalid="!!form.errors.roles" />
+                                    <small class="text-red-500 font-medium" v-if="form.errors.roles">{{ form.errors.roles }}</small>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="phone" class="text-sm font-bold text-slate-700">{{ t('users.fields.phone') }}</label>
+                                    <InputText id="phone" v-model="form.phone" class="w-full rounded-xl" :placeholder="t('users.placeholders.phone')" :invalid="!!form.errors.phone" />
+                                    <small class="text-red-500 font-medium" v-if="form.errors.phone">{{ form.errors.phone }}</small>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="p-6 bg-blue-50/30 rounded-3xl border border-blue-100">
-                            <span class="v11-header-label !text-blue-700">{{ t('users.form.accountSecurity') }}</span>
-                            <p v-if="form.id" class="text-xs text-slate-500 mt-2">{{ t('users.form.passwordHelp') }}</p>
-                            <div class="grid grid-cols-2 gap-6 mt-4">
-                                <IconField>
-                                    <InputText v-model="form.password" :type="showPassword ? 'text' : 'password'" :placeholder="t('users.placeholders.password')" class="v11-input-ultimate !bg-white w-full" :invalid="!!form.errors.password" />
-                                    <InputIcon class="cursor-pointer" :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" @click="showPassword = !showPassword" />
-                                </IconField>
-                                <IconField>
-                                    <InputText v-model="form.password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" :placeholder="t('users.placeholders.confirmPassword')" class="v11-input-ultimate !bg-white w-full" />
-                                    <InputIcon class="cursor-pointer" :class="showConfirmPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" @click="showConfirmPassword = !showConfirmPassword" />
-                                </IconField>
+                        <div class="p-6 bg-slate-50/80 rounded-2xl border border-slate-100">
+                            <span class="text-xs font-black uppercase tracking-widest text-slate-500 block mb-2">{{ t('users.form.accountSecurity') }}</span>
+                            <p v-if="form.id" class="text-xs text-slate-400 mb-4">{{ t('users.form.passwordHelp') }}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-2">
+                                    <IconField>
+                                        <InputText v-model="form.password" :type="showPassword ? 'text' : 'password'" :placeholder="t('users.placeholders.password')" class="w-full rounded-xl !bg-white" :invalid="!!form.errors.password" />
+                                        <InputIcon class="cursor-pointer text-slate-400 hover:text-slate-600" :class="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" @click="showPassword = !showPassword" />
+                                    </IconField>
+                                    <small class="text-red-500 font-medium" v-if="form.errors.password">{{ form.errors.password }}</small>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <IconField>
+                                        <InputText v-model="form.password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" :placeholder="t('users.placeholders.confirmPassword')" class="w-full rounded-xl !bg-white" />
+                                        <InputIcon class="cursor-pointer text-slate-400 hover:text-slate-600" :class="showConfirmPassword ? 'pi pi-eye-slash' : 'pi pi-eye'" @click="showConfirmPassword = !showConfirmPassword" />
+                                    </IconField>
+                                </div>
                             </div>
-                             <small class="p-error" v-if="form.errors.password">{{ form.errors.password }}</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center w-full px-2 py-4">
-                    <Button :label="t('common.cancel')" icon="pi pi-times" text severity="secondary" @click="isModalOpen = false" class="font-bold uppercase text-[10px] tracking-widest" /><Button :label="form.id ? t('common.save') : t('common.create')"  icon="pi pi-check-circle"
-                            class="px-10 h-14 rounded-2xl shadow-xl shadow-primary-100 font-black uppercase tracking-widest text-xs"
-                            @click="submit" :loading="form.processing" />
+                <!-- Footer / Actions -->
+                <div class="flex justify-between items-center w-full pt-6 border-t border-slate-100">
+                    <Button :label="t('common.cancel')" icon="pi pi-times" text severity="secondary" @click="isModalOpen = false" class="font-bold" />
+                    <Button :label="form.id ? t('common.save') : t('common.create')" icon="pi pi-check" type="submit" :loading="form.processing" class="px-8 py-3 rounded-xl shadow-lg font-bold" />
                 </div>
             </form>
         </Dialog>
@@ -552,7 +514,6 @@ watch(
 </template>
 
 <style lang="scss">
-
 .p-datatable-thead > tr > th {
     background: #fdfdfd;
     padding: 1rem;
@@ -569,5 +530,10 @@ watch(
 
 .animate-fadein {
     animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 </style>

@@ -11,7 +11,14 @@
     "title": "Dashboard",
     "generatedAt": "Généré à : {time}",
     "liveData": "LIVE",
-
+    "searchPlaceholder": "Rechercher un item, un utilisateur...",
+    "filterByRegionPlaceholder": "Filtrer par région",
+    "actions": {
+      "add": "Ajouter un utilisateur",
+      "deleteSelected": "Supprimer la sélection",
+      "impersonate": "Usurper l'identité",
+      "removePhoto": "Supprimer la photo"
+    },
     "manageSections": "Gérer l'affichage des sections",
     "mainChart":{
         "title":"Gestion des Ressources",
@@ -277,10 +284,6 @@
       "byType": "Filtrer par type",
       "brand": "Filtrer par marque",
       "byUser": "Filtrer par utilisateur"
-    },
-    "toast":{
-        "bulkDeleteSuccess":"Les labels supprimées avec succès.",
-        "bulkDeleteError":"Une erreur est survenue lors de la suppression en masse."
     }
   },
     "keypads": {
@@ -556,6 +559,7 @@
       "parentPlaceholder": "Optionnel: Sélectionner un parent",
       "tag": "Tag",
       "designation": "Désignation",
+      "filterByRegion": "Filtrer par région",
       "type": "Type d'équipement",
       "typePlaceholder": "Sélectionner un type",
       "addType": "Ajouter un nouveau type",
@@ -624,6 +628,7 @@
       "error": "Erreur",
       "deleteError": "Une erreur est survenue lors de la suppression.",
       "bulkDeleteError": "Une erreur est survenue lors de la suppression en masse.",
+      "importStarted": "Importation démarrée avec succès.",
       "typeCreateSuccess": "Type d'équipement créé avec succès.",
       "typeSaveError": "Erreur lors de la sauvegarde du type d'équipement",
       "parentQuantityUpdateError": "Erreur lors de la mise à jour de la quantité du parent."
@@ -940,45 +945,39 @@
             "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer le paiement de {amount} pour {beneficiary} ?",
             "message": "Êtes-vous sûr de vouloir supprimer les {count} compteurs sélectionnés ?",
             "header": "Confirmation de suppression en masse"
-
-
     }
   },
-    "columnSelector": {
-      "title": "Sélectionner les colonnes",
-      "placeholder": "Choisir les colonnes"
-,
-
+  "common": {
     "yes": "Oui",
     "no": "Non",
-
     "info": "Information",
     "actions": "Actions",
     "search": "Rechercher...",
     "searchByName": "Rechercher par nom",
     "export": "Exporter",
+    "exportCsv": "Exporter CSV",
     "errorOccurred": "Une erreur est survenue.",
     "paginationReport": "Affichage de {first} à {last} sur {total} éléments",
     "save": "Sauvegarder",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "import": "Importer",
-    "export": "Exporter",
-    "import": "Importer",
-    "search": "Rechercher...",
     "success": "Succès",
     "error": "Erreur",
     "attention": "Attention",
     "confirmation": "Confirmation",
     "deleteConfirmation": "Confirmation de suppression",
-    "actions": "Actions",
     "chooseFile": "Choisir un fichier",
-    "paginationReport": "Affichage de {first} à {last} sur {total} régions",
-    "errorOccurred": "Une erreur est survenue.",
     "saveChanges": "Valider les modifications",
-    "create": "Créer le profil",
+    "create": "Créer",
     "total": "Total {item}",
-    "customize_columns": "Personnaliser les colonnes"
+    "customize_columns": "Personnaliser les colonnes",
+    "resetFilters": "Réinitialiser les filtres",
+    "columns": "Colonnes",
+    "columnSelector": {
+        "title": "Sélectionner les colonnes",
+        "placeholder": "Choisir les colonnes"
+    }
   },
     "technicians": {
         "title": "Gestion des Techniciens",
@@ -1069,6 +1068,8 @@
         },
         "editTitle": "Modifier l'utilisateur",
         "createTitle": "Créer un utilisateur",
+        "uploadPhotoAriaLabel": "Télécharger une photo de profil",
+        "filterByRegionPlaceholder": "Filtrer par région",
         "dialog": {
             "editTitle": "Modifier l'utilisateur",
             "createTitle": "Créer un utilisateur"
@@ -1080,6 +1081,11 @@
             "bulkDeleteSuccess": "{count} utilisateurs supprimés.",
             "operationSuccess": "Opération réussie",
             "validationError": "Veuillez corriger les erreurs."
+        },
+        "toast": {
+            "updateSuccess": "Utilisateur mis à jour avec succès.",
+            "createSuccess": "Utilisateur créé avec succès.",
+            "saveError": "Une erreur est survenue lors de l'enregistrement de l'utilisateur."
         },
         "confirm": {
             "deleteMessage": "Voulez-vous supprimer définitivement {name} ?",
@@ -1098,13 +1104,13 @@
             "phone":"Téléphone",
             "region" :"Région",
             "selectRole": "Selectionner un rôle"
-
         },
         "form":{
             "generalInfo":"Information Générale",
             "assignmentAndRole":"Assignation et rôle",
             "accountSecurity":"Sécurité du compte",
-            "safetyData":"Données de sécurité"
+            "safetyData":"Données de sécurité",
+            "passwordHelp": "Laissez vide pour conserver le mot de passe actuel."
         }
     },
     "teams": {

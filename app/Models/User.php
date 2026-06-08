@@ -42,6 +42,7 @@ class User extends Authenticatable implements HasMedia
         'is_active',
         'status',           // online/offline/busy/away
         'last_activity_at',
+
     ];
 
     /**
@@ -170,17 +171,17 @@ class User extends Authenticatable implements HasMedia
      * Accesseur pour l’avatar (URL).
      * Priorité à l’image depuis Spatie Media, sinon le champ `avatar` (chemin local), sinon null.
      */
-    protected function avatar(): Attribute
-    {
-        return Attribute::make(
-            get: function ($value) {
-                if ($this->profile_photo_url) {
-                    return $this->profile_photo_url;
-                }
-                return $value ? asset('storage/' . $value) : null;
-            }
-        );
-    }
+    // protected function avatar(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: function ($value) {
+    //             if ($this->profile_photo_url) {
+    //                 return $this->profile_photo_url;
+    //             }
+    //             return $value ? asset('media/' . $value) : null;
+    //         }
+    //     );
+    // }
 
     /**
      * Accesseur pour l’URL de la photo de profil (Spatie Media).
