@@ -33,6 +33,7 @@ class SettingController extends Controller
      */
     public function update(Request $request)
     {
+
         // Liste des champs texte autorisés
         $textFields = [
             'site_name', 'tagline', 'description',
@@ -46,7 +47,7 @@ class SettingController extends Controller
             'hero_campaign_active', 'hero_campaign_badge',
             'hero_campaign_title', 'hero_campaign_description',
             'hero_campaign_current', 'hero_campaign_target',
-            'hero_campaign_btn_text',
+            'hero_campaign_btn_text', 'additional_offices'
         ];
 
         // Validation de base
@@ -58,6 +59,7 @@ class SettingController extends Controller
             'hero_campaign_active' => 'boolean',
             'hero_campaign_current' => 'nullable|numeric|min:0',
             'hero_campaign_target' => 'nullable|numeric|min:0',
+            'additional_offices'=> 'nullable'
         ]);
 
         // Mise à jour des champs texte

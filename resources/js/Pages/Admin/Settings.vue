@@ -523,12 +523,12 @@ const sendTestEmail = () => {
 
                                             <div v-for="(office, index) in form.additional_offices" :key="index" class="md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-slate-200 relative group">
                                                 <Button icon="pi pi-trash" class="p-button-danger p-button-text absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" @click="removeOffice(index)" />
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <div class="flex flex-col gap-1">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div class="flex flex-col">
                                                         <label class="text-xs font-bold text-slate-500 uppercase">Ville</label>
                                                         <InputText v-model="office.city" class="w-full rounded-lg" placeholder="Ex: Kinshasa" />
                                                     </div>
-                                                    <div class="flex flex-col gap-1">
+                                                    <div class="flex flex-col">
                                                         <label class="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
                                                         <InputText v-model="office.phone" class="w-full rounded-lg" placeholder="+243..." />
                                                     </div>

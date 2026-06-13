@@ -37,7 +37,14 @@ const secondaryEmail = computed(() => settings.value.secondary_email || 'info@ap
 const sitePhone = computed(() => settings.value.phone || '+243 810 000 000');
 const secondaryPhone = computed(() => settings.value.secondary_phone || '+243 980 000 000');
 const addressGoma = computed(() => settings.value.address || 'Avenue du Lac, Quartier Himbi, Goma, RDC');
-const addressKinshasa = computed(() => settings.value.address_kinshasa || 'Commune de la Gombe, Kinshasa');
+
+const additionalOffices = computed(() => {
+    try {
+        return settings.value.additional_offices ? JSON.parse(settings.value.additional_offices) : [];
+    } catch (e) {
+        return [];
+    }
+});
 
 const facebookUrl = computed(() => settings.value.facebook || '#');
 const twitterUrl = computed(() => settings.value.twitter || '#');
@@ -139,22 +146,23 @@ const getInitials = (name) => {
                             </div>
                         </div>
 
-                        <!-- Bureau Kinshasa -->
-                        <!-- <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-lg transition-shadow duration-300 group">
+                        <!-- Bureaux Additionnels -->
+                        <div v-for="(office, index) in additionalOffices" :key="index" class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-lg transition-shadow duration-300 group">
                             <div class="flex items-start gap-5">
                                 <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl group-hover:bg-indigo-500 group-hover:text-white transition-colors shadow-sm shrink-0">
                                     <i class="pi pi-building"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-black text-slate-900">Bureau de liaison (Kinshasa)</h3>
-                                    <p class="text-slate-500 text-sm mt-2 leading-relaxed">{{ addressKinshasa }}</p>
+                                    <h3 class="text-lg font-black text-slate-900">Bureau de liaison ({{ office.city }})</h3>
+                                    <p class="text-slate-500 text-sm mt-2 leading-relaxed">{{ office.address }}</p>
                                     <div class="mt-4 space-y-2">
-                                        <a :href="`tel:${secondaryPhone}`" class="flex items-center text-slate-600 text-sm hover:text-indigo-600 transition-colors font-medium"><i class="pi pi-phone mr-3 text-indigo-500"></i> {{ secondaryPhone }}</a>
-                                        <a :href="`mailto:${secondaryEmail}`" class="flex items-center text-slate-600 text-sm hover:text-indigo-600 transition-colors font-medium"><i class="pi pi-envelope mr-3 text-indigo-500"></i> {{ secondaryEmail }}</a>
+                                        <a v-if="office.phone" :href="`tel:${office.phone}`" class="flex items-center text-slate-600 text-sm hover:text-indigo-600 transition-colors font-medium">
+                                            <i class="pi pi-phone mr-3 text-indigo-500"></i> {{ office.phone }}
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
 
                         <!-- Réseaux sociaux -->
                         <div class="pt-4 border-t border-slate-100">
