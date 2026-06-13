@@ -196,6 +196,12 @@ const form = useForm({
     hero_campaign_btn_text: props.settings.hero_campaign_btn_text || 'Faire un don',
 });
 
+// --- TEMPLATE REFS ---
+const logo_light_ref = ref(null);
+const logo_dark_ref = ref(null);
+const favicon_ref = ref(null);
+const og_image_ref = ref(null);
+
 // --- GESTION DES PREVIEWS D'IMAGES (Anti-Leak) ---
 const previews = ref({
     logo_light: props.settings.logo_light_url || null,
@@ -216,7 +222,12 @@ const handleFileUpload = (event, field) => {
     }
 };
 
-const triggerFileInput = (refName) => document.getElementById(refName).click();
+const triggerFileInput = (field) => {
+    const refs = { logo_light: logo_light_ref, logo_dark: logo_dark_ref, favicon: favicon_ref, og_image: og_image_ref };
+    if (refs[field] && refs[field].value) {
+        refs[field].value.click();
+    }
+};
 
 const removeFile = (field) => {
     form[field] = null;
@@ -225,7 +236,6 @@ const removeFile = (field) => {
         URL.revokeObjectURL(previews.value[field]);
     }
     previews.value[field] = null;
-    document.getElementById(field + '_input').value = '';
 };
 
 onBeforeUnmount(() => {
@@ -382,7 +392,7 @@ const sendTestEmail = () => {
                                                         <Button v-if="previews.logo_light" icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="removeFile('logo_light')" />
                                                     </div>
                                                 </div>
-                                                <input type="file" id="logo_light_input" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'logo_light')" />
+                                                <input type="file" ref="logo_light_ref" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'logo_light')" />
                                             </div>
 
                                             <!-- Logo Dark -->
@@ -396,7 +406,7 @@ const sendTestEmail = () => {
                                                         <Button v-if="previews.logo_dark" icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="removeFile('logo_dark')" />
                                                     </div>
                                                 </div>
-                                                <input type="file" id="logo_dark_input" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'logo_dark')" />
+                                                <input type="file" ref="logo_dark_ref" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'logo_dark')" />
                                             </div>
 
                                             <!-- Favicon -->
@@ -410,7 +420,7 @@ const sendTestEmail = () => {
                                                         <Button v-if="previews.favicon" icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="removeFile('favicon')" />
                                                     </div>
                                                 </div>
-                                                <input type="file" id="favicon_input" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'favicon')" />
+                                                <input type="file" ref="favicon_ref" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'favicon')" />
                                             </div>
                                         </div>
                                     </div>
@@ -472,7 +482,7 @@ const sendTestEmail = () => {
                                                         <Button icon="pi pi-upload" class="p-button-info" @click="triggerFileInput('og_image')" /><Button v-if="previews.og_image" icon="pi pi-trash" class="p-button-danger" @click="removeFile('og_image')" />
                                                     </div>
                                                 </div>
-                                                <input type="file" id="og_image_input" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'og_image')" />
+                                                <input type="file" ref="og_image_ref" class="hidden" accept="image/*" @change="e => handleFileUpload(e, 'og_image')" />
                                             </div>
                                         </div>
                                     </div>
