@@ -1,0 +1,1 @@
+import{pt as e}from"./app-x8O5w0N6.js";var t=e();export{t};

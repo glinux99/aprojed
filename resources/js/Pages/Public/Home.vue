@@ -267,7 +267,31 @@ const formatDate = (date) => {
 const openDonationWithAmount = (amount) => {
     window.dispatchEvent(new CustomEvent('open-donation-modal', { detail: { amount } }));
 };
+// CRUCIAL : La logique de parsing doit être dans une "computed property"
+const parsedBanks = computed(() => {
+    // Vérifie si settings et additional_banks existent
+    if (!props.settings?.additional_banks) return [];
 
+    try {
+        const banks = JSON.parse(props.settings.additional_banks);
+        // S'assure que c'est bien un tableau
+        return Array.isArray(banks) ? banks : [];
+    } catch (error) {
+        console.error("Erreur de parsing des coordonnées bancaires:", error);
+        return []; // Renvoie un tableau vide en cas d'erreur de JSON pour éviter de casser la page
+    }
+});
+
+// Optionnel mais très pro : Fonction pour copier le compte
+const copyToClipboard = async (text) => {
+    try {
+        await navigator.clipboard.writeText(text);
+        // Ici, tu peux ajouter une notification Toast (ex: "Numéro copié !")
+        alert("Numéro de compte copié !");
+    } catch (err) {
+        console.error('Erreur lors de la copie', err);
+    }
+};
 // ==================== HOOKS ====================
 onMounted(() => {
     startSlider();
@@ -612,42 +636,75 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <div class="mt-12 bg-slate-900 rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
-                    <div class="absolute top-0 right-0 -mt-32 -mr-32 w-96 h-96 bg-emerald-500 rounded-full blur-[120px] opacity-20 pointer-events-none"></div>
-                    <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
-                        <div class="lg:w-1/3">
-                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest mb-4">
-                                <i class="pi pi-shield"></i> Transaction Sécurisée
+               <div class="mt-12 bg-slate-900 rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden shadow-2xl">
+    <!-- Effet de lueur en arrière-plan -->
+    <div class="absolute top-0 right-0 -mt-32 -mr-32 w-96 h-96 bg-emerald-500 rounded-full blur-[120px] opacity-20 pointer-events-none aria-hidden='true'"></div>
+
+    <div class="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+
+        <!-- En-tête / Explications -->
+        <div class="lg:w-1/3">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-widest mb-4">
+                <i class="pi pi-shield" aria-hidden="true"></i> Transaction Sécurisée
+            </div>
+            <h3 class="text-2xl lg:text-3xl font-black text-white leading-tight">Coordonnées Bancaires</h3>
+            <p class="text-slate-400 mt-3 text-sm leading-relaxed">
+                Pour soutenir nos actions via un virement bancaire, veuillez utiliser l'un des comptes ci-dessous. Précisez <strong class="text-slate-200">"Don"</strong> dans le motif.
+            </p>
+        </div>
+
+        <!-- Liste des banques -->
+        <div class="lg:w-2/3 w-full bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-slate-700/50">
+            <div class="space-y-6">
+
+                <!-- Boucle sur les banques (utilisation de la computed property) -->
+                <template v-if="parsedBanks.length > 0">
+                    <div v-for="(bank, index) in parsedBanks" :key="index"
+                         class="grid grid-cols-1 md:grid-cols-2 gap-5 pb-6 border-b border-slate-700/50 last:border-0 last:pb-0">
+
+                        <!-- Nom de la banque -->
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Banque</span>
+                            <div class="flex items-center gap-2 text-white font-bold text-lg">
+                                <i class="pi pi-building text-emerald-400" aria-hidden="true"></i>
+                                {{ bank.bank_name }}
                             </div>
-                            <h3 class="text-2xl lg:text-3xl font-black text-white leading-tight">Coordonnées Bancaires</h3>
-                            <p class="text-slate-400 mt-3 text-sm leading-relaxed">
-                                Pour soutenir nos actions via un virement bancaire, veuillez utiliser l'un des comptes ci-dessous. Précisez "Don" dans le motif.
-                            </p>
                         </div>
-                        <div class="lg:w-2/3 w-full bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-slate-700/50">
-                            <div class="space-y-6">
-                                <div v-for="(bank, index) in (settings.additional_banks ? JSON.parse(settings.additional_banks) : [])" :key="index"
-                                     class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6 border-b border-slate-700/50 last:border-0 last:pb-0">
-                                    <div class="flex flex-col">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Banque</span>
-                                        <div class="flex items-center gap-2 text-white font-bold"><i class="pi pi-building text-emerald-400"></i> {{ bank.bank_name }}</div>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Intitulé du compte</span>
-                                        <div class="flex items-center gap-2 text-white font-medium">{{ bank.account_name }}</div>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Numéro de compte</span>
-                                        <div class="flex items-center gap-2 text-emerald-400 font-mono text-lg tracking-wider">{{ bank.account_number }}</div>
-                                    </div>
-                                </div>
-                                <div v-if="!settings.additional_banks || JSON.parse(settings.additional_banks).length === 0" class="text-slate-500 italic text-sm">
-                                    Aucune coordonnée bancaire configurée.
-                                </div>
+
+                        <!-- Intitulé -->
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Intitulé du compte</span>
+                            <div class="flex items-center text-white font-medium">
+                                {{ bank.account_name }}
+                            </div>
+                        </div>
+
+                        <!-- Numéro de compte mis en valeur -->
+                        <div class="flex flex-col md:col-span-2 mt-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Numéro de compte (IBAN / RIB)</span>
+                            <div class="flex items-center justify-between bg-slate-900/60 border border-slate-700/50 rounded-xl p-3 group">
+                                <span class="text-emerald-400 font-mono text-lg tracking-[0.15em] break-all">{{ bank.account_number }}</span>
+                                <!-- Optionnel: Bouton pour copier le numéro de compte -->
+                                <button @click="copyToClipboard(bank.account_number)"
+                                        class="p-2 ml-4 rounded-lg bg-slate-800 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 transition-all duration-200"
+                                        title="Copier le numéro">
+                                    <i class="pi pi-copy"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </template>
+
+                <!-- État vide (Aucune banque) -->
+                <div v-else class="flex flex-col items-center justify-center py-8 text-center">
+                    <i class="pi pi-credit-card text-3xl text-slate-600 mb-3" aria-hidden="true"></i>
+                    <p class="text-slate-400 font-medium">Aucune coordonnée bancaire configurée pour le moment.</p>
                 </div>
+
+            </div>
+        </div>
+    </div>
+</div>
             </div>
         </section>
 
