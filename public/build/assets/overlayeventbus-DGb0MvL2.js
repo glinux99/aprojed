@@ -1,0 +1,1 @@
+import{pt as e}from"./app-DJ2FsJIl.js";var t=e();export{t};

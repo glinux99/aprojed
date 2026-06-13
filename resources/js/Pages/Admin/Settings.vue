@@ -611,34 +611,102 @@ const sendTestEmail = () => {
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Mode PayPal</label><Dropdown v-model="form.paypal_mode" :options="[{label:'Sandbox',value:'sandbox'},{label:'Live',value:'live'}]" optionLabel="label" optionValue="value" class="w-full rounded-xl" /></div>
                                         </div>
 
-                                        <div class="space-y-6">
-                                            <div class="flex justify-between items-center border-b pb-2">
-                                                <h3 class="text-lg font-black text-slate-700"><i class="pi pi-credit-card text-emerald-500 mr-2"></i> Comptes Bancaires</h3>
-                                                <Button icon="pi pi-plus" label="Ajouter une banque" class="p-button-sm p-button-outlined rounded-lg" @click="addBank" />
-                                            </div>
+                                        <div class="space-y-8">
+    <!-- En-tête de la section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-5 border-b border-slate-200/80">
+        <div>
+            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shadow-sm">
+                    <i class="pi pi-credit-card text-emerald-600 text-lg" aria-hidden="true"></i>
+                </div>
+                Comptes Bancaires
+            </h3>
+            <p class="text-sm text-slate-500 mt-1.5 ml-[3.25rem]">Gérez les coordonnées bancaires pour recevoir vos virements.</p>
+        </div>
+        <Button icon="pi pi-plus"
+                label="Ajouter un compte"
+                class="p-button-outlined hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all rounded-xl shadow-sm whitespace-nowrap font-semibold"
+                @click="addBank" />
+    </div>
 
-                                            <div v-if="form.additional_banks.length === 0" class="text-center py-8 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                                                <p class="text-slate-400 text-sm">Aucun compte bancaire configuré.</p>
-                                            </div>
+    <!-- État vide (Empty State Premium) -->
+    <div v-if="!form.additional_banks || form.additional_banks.length === 0"
+         class="flex flex-col items-center justify-center p-12 bg-slate-50/50 rounded-[2rem] border-2 border-dashed border-slate-200 hover:border-emerald-400/40 transition-colors duration-300 group cursor-pointer"
+         @click="addBank">
+        <div class="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+            <i class="pi pi-wallet text-3xl text-slate-300 group-hover:text-emerald-500 transition-colors duration-300" aria-hidden="true"></i>
+        </div>
+        <h4 class="text-slate-700 font-bold text-lg mb-2">Aucun compte bancaire</h4>
+        <p class="text-slate-400 text-sm text-center max-w-sm mb-6 leading-relaxed">
+            Ajoutez vos coordonnées bancaires (RIB/IBAN) pour permettre à vos utilisateurs d'effectuer des virements en toute sécurité.
+        </p>
+        <Button label="Ajouter le premier compte" icon="pi pi-plus" class="p-button-text p-button-success font-bold" @click.stop="addBank" />
+    </div>
 
-                                            <div v-for="(bank, index) in form.additional_banks" :key="index" class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative group">
-                                                <Button icon="pi pi-trash" class="p-button-danger p-button-text absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" @click="removeBank(index)" />
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div class="flex flex-col md:col-span-2">
-                                                        <label class="text-xs font-bold text-slate-500 uppercase">Nom de la Banque</label>
-                                                        <InputText v-model="bank.bank_name" class="w-full rounded-lg" placeholder="Ex: Rawbank RDC" />
-                                                    </div>
-                                                    <div class="flex flex-col">
-                                                        <label class="text-xs font-bold text-slate-500 uppercase">Intitulé du compte</label>
-                                                        <InputText v-model="bank.account_name" class="w-full rounded-lg" placeholder="Ex: APROJED ASBL" />
-                                                    </div>
-                                                    <div class="flex flex-col md:col-span-2">
-                                                        <label class="text-xs font-bold text-slate-500 uppercase">Numéro de compte local</label>
-                                                        <InputText v-model="bank.account_number" class="w-full rounded-lg font-mono" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+    <!-- Liste des formulaires (Cartes) -->
+    <div v-else class="space-y-6">
+        <div v-for="(bank, index) in form.additional_banks" :key="index"
+             class="relative bg-white p-6 sm:p-8 rounded-[1.5rem] border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-400 group">
+
+            <!-- Entête de la carte Banque -->
+            <div class="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 text-slate-500 text-xs font-black tracking-tighter">{{ index + 1 }}</span>
+                    <h4 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Détails de la banque</h4>
+                </div>
+
+                <!-- Bouton Supprimer optimisé Mobile/PC -->
+                <Button icon="pi pi-trash"
+                        class="p-button-danger p-button-text p-button-rounded w-10 h-10 bg-red-50 hover:bg-red-100 transition-all flex-shrink-0 lg:opacity-0 lg:group-hover:opacity-100 focus:opacity-100 z-10"
+                        title="Supprimer ce compte"
+                        aria-label="Supprimer ce compte"
+                        @click="removeBank(index)" />
+            </div>
+
+            <!-- Grille du formulaire parfaitement proportionnée -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+
+                <!-- Nom de la Banque -->
+                <div class="flex flex-col gap-2">
+                    <label :for="'bank-name-' + index" class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5">
+                        <i class="pi pi-building text-slate-400 text-xs"></i> Nom de la Banque
+                    </label>
+                    <InputText :id="'bank-name-' + index"
+                               v-model="bank.bank_name"
+                               class="w-full rounded-xl border-slate-300 focus:border-emerald-500 shadow-sm p-3"
+                               placeholder="Ex: Rawbank RDC" />
+                </div>
+
+                <!-- Intitulé du compte -->
+                <div class="flex flex-col gap-2">
+                    <label :for="'account-name-' + index" class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5">
+                        <i class="pi pi-user text-slate-400 text-xs"></i> Intitulé du compte
+                    </label>
+                    <InputText :id="'account-name-' + index"
+                               v-model="bank.account_name"
+                               class="w-full rounded-xl border-slate-300 focus:border-emerald-500 shadow-sm p-3"
+                               placeholder="Ex: APROJED ASBL" />
+                </div>
+
+                <!-- Numéro de compte (Pleine largeur) -->
+                <div class="flex flex-col gap-2 md:col-span-2 mt-2">
+                    <label :for="'account-number-' + index" class="text-[13px] font-semibold text-slate-600 flex items-center gap-1.5">
+                        <i class="pi pi-hashtag text-slate-400 text-xs"></i> Numéro de compte / IBAN
+                    </label>
+                    <div class="relative">
+                        <InputText :id="'account-number-' + index"
+                                   v-model="bank.account_number"
+                                   class="w-full rounded-xl border-slate-300 focus:border-emerald-500 shadow-sm p-3 pl-4 font-mono text-emerald-700 font-semibold tracking-wider text-lg"
+                                   placeholder="Ex: 0101-1234567-89" />
+                        <!-- Petite icône décorative dans l'input -->
+                        <i class="pi pi-verified absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500/50"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
                                     </div>
                                 </transition>
 
