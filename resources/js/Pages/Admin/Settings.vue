@@ -158,10 +158,10 @@ const form = useForm({
     cookie_banner_text: props.settings.cookie_banner_text || 'Ce site utilise des cookies pour améliorer votre expérience.',
 
     // 7. Banque & Facturation
-    bank_name: props.settings.bank_name || '',
-    bank_iban: props.settings.bank_iban || '',
-    bank_bic: props.settings.bank_bic || '',
-    bank_account: props.settings.bank_account || '',
+    additional_banks: props.settings.additional_banks ? JSON.parse(props.settings.additional_banks) : [],
+    paypal_email: props.settings.paypal_email || '',
+    paypal_client_id: props.settings.paypal_client_id || '',
+    paypal_mode: props.settings.paypal_mode || 'sandbox',
     rccm: props.settings.rccm || '',
     tax_id: props.settings.tax_id || '',
     capital: props.settings.capital || '',
@@ -254,6 +254,14 @@ const removeOffice = (index) => {
     form.additional_offices.splice(index, 1);
 };
 
+const addBank = () => {
+    form.additional_banks.push({ bank_name: '', account_name: '', account_number: '' });
+};
+
+const removeBank = (index) => {
+    form.additional_banks.splice(index, 1);
+};
+
 // --- COMPUTED PROPERTIES ---
 const completionPercentage = computed(() => {
     const keyFields = ['site_name', 'email', 'phone', 'address', 'primary_color', 'meta_title', 'bank_iban', 'smtp_host'];
@@ -276,6 +284,7 @@ const saveSettings = () => {
         meta_keywords: Array.isArray(data.meta_keywords) ? data.meta_keywords.join(',') : data.meta_keywords,
         allowed_ips: Array.isArray(data.allowed_ips) ? data.allowed_ips.join(',') : data.allowed_ips,
         additional_offices: JSON.stringify(data.additional_offices),
+        additional_banks: JSON.stringify(data.additional_banks),
     }));
 
     payload.post(route('settings.update'), {
@@ -594,18 +603,41 @@ const sendTestEmail = () => {
                                     <div v-show="activeTab === 'bank'" class="space-y-8">
                                         <div><h2 class="text-2xl font-black text-slate-800 mb-2">Banque & Facturation</h2><p class="text-sm text-slate-500 mb-6">Informations nécessaires à l'édition des factures et contrats.</p></div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-6">
-                                            <h3 class="md:col-span-2 text-lg font-black text-slate-700"><i class="pi pi-building text-indigo-500 mr-2"></i> Identifiants Entreprise</h3>
+                                            <h3 class="md:col-span-2 text-lg font-black text-slate-700"><i class="pi pi-building text-indigo-500 mr-2"></i> Identifiants & PayPal</h3>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">N° RCCM / SIRET</label><InputText v-model="form.rccm" class="w-full rounded-xl" /></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">NIF / N° TVA Intracommunautaire</label><InputText v-model="form.tax_id" class="w-full rounded-xl" /></div>
-                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Capital Social</label><InputText v-model="form.capital" placeholder="Ex: 10 000 USD" class="w-full rounded-xl" /></div>
-                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Préfixe Factures</label><InputText v-model="form.invoice_prefix" placeholder="FAC-" class="w-full rounded-xl font-mono" /></div>
+                                            <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Email PayPal (Donations)</label><InputText v-model="form.paypal_email" placeholder="paypal@aprojed.org" class="w-full rounded-xl" /></div>
+                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">PayPal Client ID</label><InputText v-model="form.paypal_client_id" class="w-full rounded-xl font-mono" /></div>
+                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Mode PayPal</label><Dropdown v-model="form.paypal_mode" :options="[{label:'Sandbox',value:'sandbox'},{label:'Live',value:'live'}]" optionLabel="label" optionValue="value" class="w-full rounded-xl" /></div>
                                         </div>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-3xl border border-slate-100">
-                                            <h3 class="md:col-span-2 text-lg font-black text-slate-700"><i class="pi pi-credit-card text-emerald-500 mr-2"></i> Coordonnées Bancaires</h3>
-                                            <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Nom de la Banque</label><InputText v-model="form.bank_name" class="w-full rounded-xl" /></div>
-                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">IBAN</label><InputText v-model="form.bank_iban" class="w-full rounded-xl font-mono" /></div>
-                                            <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">BIC / SWIFT</label><InputText v-model="form.bank_bic" class="w-full rounded-xl font-mono" /></div>
-                                            <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Numéro de compte (si hors IBAN)</label><InputText v-model="form.bank_account" class="w-full rounded-xl font-mono" /></div>
+
+                                        <div class="space-y-6">
+                                            <div class="flex justify-between items-center border-b pb-2">
+                                                <h3 class="text-lg font-black text-slate-700"><i class="pi pi-credit-card text-emerald-500 mr-2"></i> Comptes Bancaires</h3>
+                                                <Button icon="pi pi-plus" label="Ajouter une banque" class="p-button-sm p-button-outlined rounded-lg" @click="addBank" />
+                                            </div>
+
+                                            <div v-if="form.additional_banks.length === 0" class="text-center py-8 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                                                <p class="text-slate-400 text-sm">Aucun compte bancaire configuré.</p>
+                                            </div>
+
+                                            <div v-for="(bank, index) in form.additional_banks" :key="index" class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative group">
+                                                <Button icon="pi pi-trash" class="p-button-danger p-button-text absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" @click="removeBank(index)" />
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    <div class="flex flex-col md:col-span-2">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Nom de la Banque</label>
+                                                        <InputText v-model="bank.bank_name" class="w-full rounded-lg" placeholder="Ex: Rawbank RDC" />
+                                                    </div>
+                                                    <div class="flex flex-col">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Intitulé du compte</label>
+                                                        <InputText v-model="bank.account_name" class="w-full rounded-lg" placeholder="Ex: APROJED ASBL" />
+                                                    </div>
+                                                    <div class="flex flex-col md:col-span-2">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Numéro de compte local</label>
+                                                        <InputText v-model="bank.account_number" class="w-full rounded-lg font-mono" />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </transition>

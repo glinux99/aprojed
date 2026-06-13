@@ -605,7 +605,7 @@ onUnmounted(() => {
                             <i class="pi pi-map-marker text-2xl"></i>
                         </div>
                         <h3 class="text-lg font-bold text-slate-800 mb-2">Siège social</h3>
-                        <p class="text-base font-medium text-slate-700 mb-3 leading-relaxed">
+                        <p class="text-base font-medium text-slate-700 mb-3 leading-relaxed line-clamp-2">
                             {{ [settings.address, settings.city, settings.postal_code, settings.country].filter(Boolean).join(', ') || 'Adresse non configurée' }}
                         </p>
                         <p class="text-sm text-slate-500 mt-auto">Bureaux ouverts du Lundi au Vendredi, sur rendez-vous.</p>
@@ -621,45 +621,28 @@ onUnmounted(() => {
                             </div>
                             <h3 class="text-2xl lg:text-3xl font-black text-white leading-tight">Coordonnées Bancaires</h3>
                             <p class="text-slate-400 mt-3 text-sm leading-relaxed">
-                                Pour soutenir nos actions via un virement bancaire classique, veuillez utiliser les informations ci-contre. Précisez "Don" dans le motif.
+                                Pour soutenir nos actions via un virement bancaire, veuillez utiliser l'un des comptes ci-dessous. Précisez "Don" dans le motif.
                             </p>
                         </div>
                         <div class="lg:w-2/3 w-full bg-slate-800/50 backdrop-blur-md rounded-2xl p-6 border border-slate-700/50">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="flex flex-col">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Établissement</span>
-                                    <div class="flex items-center gap-3 text-white font-medium bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                                        <i class="pi pi-building text-emerald-400"></i>
-                                        {{ settings.bank_name || 'Nom de la banque non renseigné' }}
+                            <div class="space-y-6">
+                                <div v-for="(bank, index) in (settings.additional_banks ? JSON.parse(settings.additional_banks) : [])" :key="index"
+                                     class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6 border-b border-slate-700/50 last:border-0 last:pb-0">
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Banque</span>
+                                        <div class="flex items-center gap-2 text-white font-bold"><i class="pi pi-building text-emerald-400"></i> {{ bank.bank_name }}</div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Intitulé du compte</span>
+                                        <div class="flex items-center gap-2 text-white font-medium">{{ bank.account_name }}</div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Numéro de compte</span>
+                                        <div class="flex items-center gap-2 text-emerald-400 font-mono text-lg tracking-wider">{{ bank.account_number }}</div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Titulaire du compte</span>
-                                    <div class="flex items-center gap-3 text-white font-medium bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                                        <i class="pi pi-user text-emerald-400"></i>
-                                        APROJED ASBL
-                                    </div>
-                                </div>
-                                <div class="flex flex-col md:col-span-2">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">IBAN / Numéro de compte international</span>
-                                    <div class="flex items-center justify-between gap-3 text-white font-mono text-lg bg-slate-900/50 p-4 rounded-xl border border-slate-700 shadow-inner">
-                                        <span class="tracking-widest">{{ settings.bank_iban || 'XX00 0000 0000 0000 0000 00' }}</span>
-                                        <i class="pi pi-check-circle text-emerald-500 opacity-50" v-tooltip.top="'IBAN Vérifié'"></i>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">BIC / SWIFT</span>
-                                    <div class="flex items-center gap-3 text-white font-mono bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                                        <i class="pi pi-globe text-emerald-400"></i>
-                                        {{ settings.bank_bic || 'XXXXXX' }}
-                                    </div>
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Numéro de Compte Local</span>
-                                    <div class="flex items-center gap-3 text-white font-mono bg-slate-900/50 p-3 rounded-xl border border-slate-700">
-                                        <i class="pi pi-credit-card text-emerald-400"></i>
-                                        {{ settings.bank_account || 'Non applicable' }}
-                                    </div>
+                                <div v-if="!settings.additional_banks || JSON.parse(settings.additional_banks).length === 0" class="text-slate-500 italic text-sm">
+                                    Aucune coordonnée bancaire configurée.
                                 </div>
                             </div>
                         </div>

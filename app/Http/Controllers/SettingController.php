@@ -47,7 +47,7 @@ class SettingController extends Controller
             'hero_campaign_active', 'hero_campaign_badge',
             'hero_campaign_title', 'hero_campaign_description',
             'hero_campaign_current', 'hero_campaign_target',
-            'hero_campaign_btn_text', 'additional_offices'
+            'hero_campaign_btn_text', 'additional_offices', 'additional_banks'
         ];
 
         // Validation de base
@@ -59,7 +59,8 @@ class SettingController extends Controller
             'hero_campaign_active' => 'boolean',
             'hero_campaign_current' => 'nullable|numeric|min:0',
             'hero_campaign_target' => 'nullable|numeric|min:0',
-            'additional_offices'=> 'nullable'
+            'additional_offices'=> 'nullable',
+            'additional_banks'=> 'nullable',
         ]);
 
         // Mise à jour des champs texte
