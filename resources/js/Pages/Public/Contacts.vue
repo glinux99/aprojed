@@ -36,7 +36,7 @@ const siteEmail = computed(() => settings.value.email || 'contact@aprojed.org');
 const secondaryEmail = computed(() => settings.value.secondary_email || 'info@aprojed.org');
 const sitePhone = computed(() => settings.value.phone || '+243 810 000 000');
 const secondaryPhone = computed(() => settings.value.secondary_phone || '+243 980 000 000');
-const addressGoma = computed(() => settings.value.address_goma || 'Avenue du Lac, Quartier Himbi, Goma, RDC');
+const addressGoma = computed(() => settings.value.address || 'Avenue du Lac, Quartier Himbi, Goma, RDC');
 const addressKinshasa = computed(() => settings.value.address_kinshasa || 'Commune de la Gombe, Kinshasa');
 
 const facebookUrl = computed(() => settings.value.facebook || '#');
@@ -140,7 +140,7 @@ const getInitials = (name) => {
                         </div>
 
                         <!-- Bureau Kinshasa -->
-                        <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-lg transition-shadow duration-300 group">
+                        <!-- <div class="bg-slate-50 rounded-[2rem] p-8 border border-slate-100 hover:shadow-lg transition-shadow duration-300 group">
                             <div class="flex items-start gap-5">
                                 <div class="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl group-hover:bg-indigo-500 group-hover:text-white transition-colors shadow-sm shrink-0">
                                     <i class="pi pi-building"></i>
@@ -154,7 +154,7 @@ const getInitials = (name) => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Réseaux sociaux -->
                         <div class="pt-4 border-t border-slate-100">
