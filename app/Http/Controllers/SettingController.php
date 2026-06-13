@@ -82,7 +82,7 @@ class SettingController extends Controller
         }
         if ($request->hasFile('logo_light')) {
             $this->deleteFileSetting('logo_light_url');
-            $path = $request->file('logo_light')->store('settings', 'media');
+            $path = $request->file('logo_light')->store('settings', 'media_public');
             $this->setSetting('logo_light_url', $path);
         }
 
@@ -93,7 +93,7 @@ class SettingController extends Controller
         }
         if ($request->hasFile('logo_dark')) {
             $this->deleteFileSetting('logo_dark_url');
-            $path = $request->file('logo_dark')->store('settings', 'media');
+            $path = $request->file('logo_dark')->store('settings', 'media_public');
             $this->setSetting('logo_dark_url', $path);
         }
 
@@ -104,7 +104,7 @@ class SettingController extends Controller
         }
         if ($request->hasFile('favicon')) {
             $this->deleteFileSetting('favicon_url');
-            $path = $request->file('favicon')->store('settings', 'media');
+            $path = $request->file('favicon')->store('settings', 'media_public');
             $this->setSetting('favicon_url', $path);
         }
 
