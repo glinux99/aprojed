@@ -19,7 +19,7 @@ class SettingController extends Controller
         $fileKeys = ['logo_url', 'favicon_url'];
         foreach ($fileKeys as $key) {
             if (!empty($settings[$key])) {
-                $settings[$key] = Storage::disk('media')->url($settings[$key]);
+                $settings[$key] = Storage::disk('media_public')->url($settings[$key]);
             }
         }
 
@@ -131,7 +131,7 @@ class SettingController extends Controller
         $setting = \App\Models\Setting::where('key', $key)->first();
         if ($setting && !empty($setting->value)) {
             // La valeur est le chemin relatif (ex: settings/logo.jpg)
-            Storage::disk('media')->delete($setting->value);
+            Storage::disk('media_public')->delete($setting->value);
         }
     }
 }

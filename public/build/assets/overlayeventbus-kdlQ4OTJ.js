@@ -1,0 +1,1 @@
+import{pt as e}from"./app-BXLH0-50.js";var t=e();export{t};

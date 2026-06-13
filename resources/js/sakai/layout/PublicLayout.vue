@@ -62,6 +62,9 @@ const facebookUrl = computed(() => settings.value.facebook || '#');
 const twitterUrl = computed(() => settings.value.twitter || '#');
 const linkedinUrl = computed(() => settings.value.linkedin || '#');
 const instagramUrl = computed(() => settings.value.instagram || '#');
+const youtubeUrl = computed(() => settings.value.youtube || '#');
+const tiktokUrl = computed(() => settings.value.tiktok || '#');
+const githubUrl = computed(() => settings.value.github || '#');
 const copyrightText = computed(() => settings.value.copyright_text || `© ${new Date().getFullYear()} APROJED R.D. Congo. Tous droits réservés.`);
 
 // ==================== ÉTATS INTERACTIFS ====================
@@ -253,6 +256,9 @@ onUnmounted(() => {
                     <div class="flex items-center gap-3">
                         <a :href="facebookUrl" target="_blank" class="hover:text-emerald-400 transition-colors"><i class="pi pi-facebook"></i></a>
                         <a :href="linkedinUrl" target="_blank" class="hover:text-emerald-400 transition-colors"><i class="pi pi-linkedin"></i></a>
+                        <a :href="twitterUrl" target="_blank" class="hover:text-emerald-400 transition-colors"><i class="pi pi-twitter"></i></a>
+                        <a :href="instagramUrl" target="_blank" class="hover:text-emerald-400 transition-colors"><i class="pi pi-instagram"></i></a>
+                        <a :href="youtubeUrl" target="_blank" class="hover:text-emerald-400 transition-colors"><i class="pi pi-youtube"></i></a>
                     </div>
                     <span class="w-px h-4 bg-slate-700"></span>
                     <button @click="donationModalVisible = true" class="text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
@@ -338,6 +344,9 @@ onUnmounted(() => {
                             <a :href="facebookUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-facebook"></i></a>
                             <a :href="twitterUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-twitter"></i></a>
                             <a :href="linkedinUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-linkedin"></i></a>
+                            <a :href="instagramUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-instagram"></i></a>
+                            <a :href="youtubeUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-youtube"></i></a>
+                            <a :href="tiktokUrl" target="_blank" class="social-icon-mobile"><i class="pi pi-video"></i></a>
                         </div>
 
                         <!-- Lien Admin discret -->
@@ -497,7 +506,10 @@ onUnmounted(() => {
                             { icon: 'pi-facebook', url: facebookUrl, label: 'Facebook' },
                             { icon: 'pi-twitter', url: twitterUrl, label: 'Twitter' },
                             { icon: 'pi-linkedin', url: linkedinUrl, label: 'LinkedIn' },
-                            { icon: 'pi-instagram', url: instagramUrl, label: 'Instagram' }
+                            { icon: 'pi-instagram', url: instagramUrl, label: 'Instagram' },
+                            { icon: 'pi-youtube', url: youtubeUrl, label: 'YouTube' },
+                            { icon: 'pi-video', url: tiktokUrl, label: 'TikTok' },
+                            { icon: 'pi-github', url: githubUrl, label: 'GitHub' }
                         ]" :key="'social-' + i" :href="social.url || '#'" target="_blank" rel="noopener noreferrer" :aria-label="social.label" class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-emerald-500/40 hover:bg-emerald-500/20 transition-all shadow-sm">
                             <i :class="['pi', social.icon, 'text-xs md:text-sm']"></i>
                         </a>
