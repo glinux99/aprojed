@@ -47,14 +47,16 @@ class SettingController extends Controller
             'hero_campaign_active', 'hero_campaign_badge',
             'hero_campaign_title', 'hero_campaign_description',
             'hero_campaign_current', 'hero_campaign_target',
-            'hero_campaign_btn_text', 'additional_offices', 'additional_banks'
+            'hero_campaign_btn_text', 'additional_offices', 'additional_banks',
         ];
 
         // Validation de base
         $request->validate([
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'logo_light' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
+            'logo_dark' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
             'favicon' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:1024',
-            'delete_logo' => 'boolean',
+            'delete_logo_light' => 'boolean',
+            'delete_logo_dark' => 'boolean',
             'delete_favicon' => 'boolean',
             'hero_campaign_active' => 'boolean',
             'hero_campaign_current' => 'nullable|numeric|min:0',
@@ -73,15 +75,26 @@ class SettingController extends Controller
             }
         }
 
-        // Gestion du logo
-        if ($request->boolean('delete_logo')) {
-            $this->deleteFileSetting('logo_url');
-            $this->setSetting('logo_url', '');
+        // Gestion du logo Light
+        if ($request->boolean('delete_logo_light')) {
+            $this->deleteFileSetting('logo_light_url');
+            $this->setSetting('logo_light_url', '');
         }
-        if ($request->hasFile('logo')) {
-            $this->deleteFileSetting('logo_url'); // supprime l'ancien
-            $path = $request->file('logo')->store('settings', 'media'); // retourne un chemin relatif (ex: settings/abc.jpg)
-            $this->setSetting('logo_url', $path); // stocke le chemin relatif, pas l'URL
+        if ($request->hasFile('logo_light')) {
+            $this->deleteFileSetting('logo_light_url');
+            $path = $request->file('logo_light')->store('settings', 'media');
+            $this->setSetting('logo_light_url', $path);
+        }
+
+        // Gestion du logo Dark
+        if ($request->boolean('delete_logo_dark')) {
+            $this->deleteFileSetting('logo_dark_url');
+            $this->setSetting('logo_dark_url', '');
+        }
+        if ($request->hasFile('logo_dark')) {
+            $this->deleteFileSetting('logo_dark_url');
+            $path = $request->file('logo_dark')->store('settings', 'media');
+            $this->setSetting('logo_dark_url', $path);
         }
 
         // Gestion du favicon

@@ -47,7 +47,11 @@ const volunteerForm = ref({
 
 // ==================== VALEURS PAR DÉFAUT DU SITE ====================
 const siteName = computed(() => settings.value.site_name || 'APROJED');
-const siteLogo = computed(() => settings.value.logo_url || 'https://aprojed.org/storage/uploads/logo.png');
+const siteLogo = computed(() => {
+    const isDark = document.documentElement.classList.contains('app-dark');
+    if (isDark && settings.value.logo_dark_url) return settings.value.logo_dark_url;
+    return settings.value.logo_light_url || settings.value.logo_url || 'https://aprojed.org/storage/uploads/logo.png';
+});
 const siteEmail = computed(() => settings.value.email || 'contact@aprojed.org');
 const sitePhone = computed(() => settings.value.phone || '+243 123 456 789');
 const secondaryPhone = computed(() => settings.value.secondary_phone || '');
