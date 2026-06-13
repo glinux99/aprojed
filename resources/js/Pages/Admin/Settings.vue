@@ -133,6 +133,7 @@ const form = useForm({
     secondary_email: props.settings.secondary_email || '',
     phone: props.settings.phone || '',
     secondary_phone: props.settings.secondary_phone || '',
+    additional_offices: props.settings.additional_offices ? JSON.parse(props.settings.additional_offices) : [],
     address: props.settings.address || '',
     city: props.settings.city || '',
     postal_code: props.settings.postal_code || '',
@@ -244,6 +245,15 @@ onBeforeUnmount(() => {
     });
 });
 
+// --- GESTION DES BUREAUX SECONDAIRES ---
+const addOffice = () => {
+    form.additional_offices.push({ city: '', address: '', phone: '' });
+};
+
+const removeOffice = (index) => {
+    form.additional_offices.splice(index, 1);
+};
+
 // --- COMPUTED PROPERTIES ---
 const completionPercentage = computed(() => {
     const keyFields = ['site_name', 'email', 'phone', 'address', 'primary_color', 'meta_title', 'bank_iban', 'smtp_host'];
@@ -265,6 +275,7 @@ const saveSettings = () => {
         ...data,
         meta_keywords: Array.isArray(data.meta_keywords) ? data.meta_keywords.join(',') : data.meta_keywords,
         allowed_ips: Array.isArray(data.allowed_ips) ? data.allowed_ips.join(',') : data.allowed_ips,
+        additional_offices: JSON.stringify(data.additional_offices),
     }));
 
     payload.post(route('settings.update'), {
@@ -495,14 +506,38 @@ const sendTestEmail = () => {
                                     <div v-show="activeTab === 'contact'" class="space-y-8">
                                         <div><h2 class="text-2xl font-black text-slate-800 mb-2">Contact & Adresses</h2><p class="text-sm text-slate-500 mb-6">Informations affichées publiquement.</p></div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <h3 class="md:col-span-2 text-lg font-black text-slate-700 border-b pb-2">Bureau Central (Siège)</h3>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Email Principal</label><InputGroup class="rounded-xl overflow-hidden border border-slate-200"><InputGroupAddon class="bg-slate-50"><i class="pi pi-envelope text-slate-400"></i></InputGroupAddon><InputText v-model="form.email" /></InputGroup></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Email Support</label><InputGroup class="rounded-xl overflow-hidden border border-slate-200"><InputGroupAddon class="bg-slate-50"><i class="pi pi-envelope text-slate-400"></i></InputGroupAddon><InputText v-model="form.secondary_email" /></InputGroup></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Tél Principal</label><InputGroup class="rounded-xl overflow-hidden border border-slate-200"><InputGroupAddon class="bg-slate-50"><i class="pi pi-phone text-slate-400"></i></InputGroupAddon><InputText v-model="form.phone" /></InputGroup></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Tél Secondaire</label><InputGroup class="rounded-xl overflow-hidden border border-slate-200"><InputGroupAddon class="bg-slate-50"><i class="pi pi-phone text-slate-400"></i></InputGroupAddon><InputText v-model="form.secondary_phone" /></InputGroup></div>
-                                            <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Adresse / Siège</label><InputText v-model="form.address" class="w-full rounded-xl bg-slate-50 px-4 py-3" /></div>
+                                            <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Adresse Complète</label><InputText v-model="form.address" class="w-full rounded-xl bg-slate-50 px-4 py-3" /></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Code Postal</label><InputText v-model="form.postal_code" class="w-full rounded-xl bg-slate-50 px-4 py-3" /></div>
                                             <div class="flex flex-col gap-2"><label class="text-sm font-bold text-slate-700">Ville</label><InputText v-model="form.city" class="w-full rounded-xl bg-slate-50 px-4 py-3" /></div>
                                             <div class="flex flex-col gap-2 md:col-span-2"><label class="text-sm font-bold text-slate-700">Pays</label><InputText v-model="form.country" class="w-full rounded-xl bg-slate-50 px-4 py-3" /></div>
+
+                                            <div class="md:col-span-2 mt-8 flex justify-between items-center border-b pb-2">
+                                                <h3 class="text-lg font-black text-slate-700">Bureaux Secondaires</h3>
+                                                <Button icon="pi pi-plus" label="Ajouter un bureau" class="p-button-sm p-button-outlined rounded-lg" @click="addOffice" />
+                                            </div>
+
+                                            <div v-for="(office, index) in form.additional_offices" :key="index" class="md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-slate-200 relative group">
+                                                <Button icon="pi pi-trash" class="p-button-danger p-button-text absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" @click="removeOffice(index)" />
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                    <div class="flex flex-col gap-1">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Ville</label>
+                                                        <InputText v-model="office.city" class="w-full rounded-lg" placeholder="Ex: Kinshasa" />
+                                                    </div>
+                                                    <div class="flex flex-col gap-1">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Téléphone</label>
+                                                        <InputText v-model="office.phone" class="w-full rounded-lg" placeholder="+243..." />
+                                                    </div>
+                                                    <div class="flex flex-col gap-1 md:col-span-3">
+                                                        <label class="text-xs font-bold text-slate-500 uppercase">Adresse</label>
+                                                        <InputText v-model="office.address" class="w-full rounded-lg" placeholder="Avenue, Quartier, Commune..." />
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </transition>

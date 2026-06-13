@@ -1,0 +1,1 @@
+import{pt as e}from"./app-Bgif3YTa.js";var t=e();export{t};
