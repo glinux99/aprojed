@@ -87,7 +87,7 @@ Route::get('/conditions-generales', function () {
     return Inertia::render('Public/ConditionsGenerales');
 })->name('cgu');
 Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
- Route::get('/activites', [PostController::class, 'activities'])->name('activites.activities');
+ Route::get('/activites', [PublicController::class, 'activities'])->name('activites.activities');
 Route::get('activites/{slug}', [PublicController::class, 'activityDetails']);
 Route::get('contact', [PublicController::class, 'contact']);
 Route::get('/', [PublicController::class, 'home'])->name('home');

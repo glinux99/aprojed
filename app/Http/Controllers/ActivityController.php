@@ -297,7 +297,7 @@ public function store(Request $request)
                             $paths = [];
                             foreach ($value as $file) {
                                 if (is_a($file, 'Illuminate\Http\UploadedFile')) {
-                                    $paths[] = $file->store('instruction_answers', 'public');
+                                    $paths[] = $file->store('instruction_answers', 'media');
                                 }
                             }
                             $finalValue = json_encode($paths);

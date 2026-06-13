@@ -75,7 +75,7 @@ class PublicController extends Controller
 
         $categories = Category::has('posts')->get();
         $settings = Setting::pluck('value', 'key')->toArray();
-
+        // return $settings;
         return Inertia::render('Public/Activities', [
             'posts' => $posts,
             'featuredPost' => $featured,
@@ -186,11 +186,12 @@ class PublicController extends Controller
     ->get();
    $testimonials =Testimonial::where('is_active', true)->orderBy('order')->get();
   $partners = Partner::where('is_active', true)->orderBy('order')->get();
+   $settings = Setting::pluck('value', 'key')->toArray();
     return Inertia::render('Public/About', [
         'teams' => $teams,
         'testimonials' => $testimonials,
         'partners' => $partners,
-
+          'settings' => $settings,
         // ... autres props
     ]);
     }

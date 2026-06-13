@@ -841,7 +841,7 @@ watch(() => postSidebarVisible.value, (isVisible) => {
                             <!-- Image de couverture -->
                             <section>
                                 <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2"><i class="pi pi-image"></i> Image de couverture</h4>
-
+                                    <!-- {{ currentPost.cover_image }} -->
                                 <div v-if="currentPost?.cover_image" class="relative rounded-2xl overflow-hidden group border border-slate-200 shadow-sm aspect-video bg-slate-100">
                                     <img :src="currentPost.cover_image" alt="Cover" class="w-full h-full object-cover" />
                                     <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
